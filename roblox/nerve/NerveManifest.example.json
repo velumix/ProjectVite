@@ -4021,6 +4021,190 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "DarkChatService": {
+      "GetChannels": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "name": {
+                    "kind": "string"
+                  },
+                  "topic": {
+                    "kind": "string"
+                  },
+                  "memberCount": {
+                    "kind": "float64"
+                  },
+                  "hasPasscode": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "GetMessages": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "channelId": {
+              "kind": "string"
+            },
+            "passcode": {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "channelId": {
+                    "kind": "string"
+                  },
+                  "senderBurner": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "isSelf": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "SendMessage": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "channelId": {
+              "kind": "string"
+            },
+            "body": {
+              "kind": "string"
+            },
+            "burnerName": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "channelId": {
+                    "kind": "string"
+                  },
+                  "senderBurner": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "isSelf": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "DarkMessageReceived": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "channelId": {
+                  "kind": "string"
+                },
+                "senderBurner": {
+                  "kind": "string"
+                },
+                "body": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "isSelf": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

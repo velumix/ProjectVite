@@ -4130,6 +4130,198 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "DarkChatService",
+      "Methods": [
+        {
+          "Name": "GetChannels",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "topic": {
+                      "kind": "string"
+                    },
+                    "memberCount": {
+                      "kind": "float64"
+                    },
+                    "hasPasscode": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "GetMessages",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "channelId": {
+                "kind": "string"
+              },
+              "passcode": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "channelId": {
+                      "kind": "string"
+                    },
+                    "senderBurner": {
+                      "kind": "string"
+                    },
+                    "body": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "isSelf": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SendMessage",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "channelId": {
+                "kind": "string"
+              },
+              "body": {
+                "kind": "string"
+              },
+              "burnerName": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "channelId": {
+                      "kind": "string"
+                    },
+                    "senderBurner": {
+                      "kind": "string"
+                    },
+                    "body": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "isSelf": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "DarkMessageReceived",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "channelId": {
+                    "kind": "string"
+                  },
+                  "senderBurner": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "isSelf": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -4277,6 +4469,16 @@
       "Name": "EmergencyController",
       "ServiceDependencies": [
         "EmergencyService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "DarkChatController",
+      "ServiceDependencies": [
+        "DarkChatService"
       ],
       "Lifecycle": {
         "NerveInit": true,

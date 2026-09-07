@@ -5804,6 +5804,413 @@
   font-size: 0.8em;
 }
 
+
+/* -------------------------------------------------------------
+   DARKCHAT APP
+   ------------------------------------------------------------- */
+.darkchat-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #05070a;
+  color: #00ff88;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+.darkchat-header {
+  padding: 0.6em 0.8em 0.5em;
+  background: #080d14;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.15);
+  flex-shrink: 0;
+}
+
+.darkchat-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.darkchat-branding {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+}
+
+.darkchat-logo {
+  font-size: 1.3em;
+}
+
+.darkchat-branding h3 {
+  margin: 0;
+  font-size: 1.05em;
+  color: #00ff88;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.darkchat-branding small {
+  font-size: 0.65em;
+  color: #6ee7b7;
+}
+
+.darkchat-burner-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.65em;
+  color: #a7f3d0;
+}
+
+.darkchat-burner-input {
+  background: transparent;
+  border: 0;
+  color: #00ff88;
+  font-weight: 700;
+  font-family: inherit;
+  width: 75px;
+  outline: none;
+  font-size: 1em;
+}
+
+/* Toast */
+.darkchat-toast {
+  position: absolute;
+  top: 60px;
+  left: 14px;
+  right: 14px;
+  z-index: 40;
+  background: rgba(8, 13, 20, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #00ff88;
+  border-radius: 8px;
+  padding: 0.45em 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 4px 14px rgba(0, 255, 136, 0.2);
+  animation: slideDown 0.2s ease-out;
+}
+
+.darkchat-toast small {
+  color: #00ff88;
+  font-size: 0.75em;
+}
+
+/* Passcode Modal */
+.darkchat-passcode-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  padding: 1.5em;
+}
+
+.darkchat-passcode-dialog {
+  background: #0d1522;
+  border: 1px solid #00ff88;
+  border-radius: 12px;
+  padding: 1.2em;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  text-align: center;
+}
+
+.darkchat-passcode-dialog h4 {
+  margin: 0;
+  color: #00ff88;
+  font-size: 0.95em;
+}
+
+.darkchat-passcode-dialog p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.72em;
+}
+
+.darkchat-passcode-dialog input {
+  background: #05070a;
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  color: #00ff88;
+  padding: 0.5em;
+  border-radius: 6px;
+  text-align: center;
+  letter-spacing: 0.2em;
+  font-size: 1.1em;
+  outline: none;
+}
+
+.darkchat-modal-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 0.4em;
+}
+
+.darkchat-cancel-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 0;
+  color: #94a3b8;
+  padding: 0.4em 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.72em;
+}
+
+.darkchat-unlock-btn {
+  flex: 2;
+  background: #00ff88;
+  border: 0;
+  color: #000;
+  font-weight: 800;
+  padding: 0.4em 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.72em;
+}
+
+/* Channels list */
+.darkchat-channels-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.darkchat-section-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.62em;
+  color: #64748b;
+  font-weight: 800;
+  padding: 0 0.2em;
+}
+
+.darkchat-channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.darkchat-channel-card {
+  background: #0a111a;
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 10px;
+  padding: 0.75em 0.85em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.darkchat-channel-card:hover {
+  background: #0f1a26;
+  border-color: rgba(0, 255, 136, 0.4);
+  transform: translateY(-1px);
+}
+
+.darkchat-channel-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.darkchat-channel-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.darkchat-channel-title {
+  color: #00ff88;
+  font-size: 0.88em;
+}
+
+.darkchat-lock-tag {
+  font-size: 0.58em;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.darkchat-channel-topic {
+  margin: 0;
+  font-size: 0.68em;
+  color: #94a3b8;
+}
+
+.darkchat-members-badge {
+  font-size: 0.65em;
+  color: #64748b;
+}
+
+/* Room Container */
+.darkchat-room-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.darkchat-room-header {
+  padding: 0.5em 0.8em;
+  background: #091018;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.12);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.darkchat-back-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 0;
+  color: #00ff88;
+  padding: 0.3em 0.6em;
+  border-radius: 6px;
+  font-size: 0.7em;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.darkchat-room-info {
+  text-align: center;
+}
+
+.darkchat-room-info strong {
+  display: block;
+  font-size: 0.85em;
+  color: #00ff88;
+}
+
+.darkchat-room-info small {
+  font-size: 0.6em;
+  color: #6ee7b7;
+}
+
+.darkchat-sec-badge {
+  font-size: 0.58em;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: #00ff88;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.darkchat-messages-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65em;
+}
+
+.darkchat-msg-row {
+  display: flex;
+  width: 100%;
+}
+
+.darkchat-msg-row.self {
+  justify-content: flex-end;
+}
+
+.darkchat-msg-bubble {
+  max-width: 80%;
+  border-radius: 8px;
+  padding: 0.5em 0.7em;
+  font-size: 0.78em;
+  background: #0d1824;
+  border: 1px solid rgba(0, 255, 136, 0.12);
+}
+
+.darkchat-msg-row.self .darkchat-msg-bubble {
+  background: rgba(0, 255, 136, 0.12);
+  border-color: rgba(0, 255, 136, 0.3);
+}
+
+.darkchat-msg-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.darkchat-sender {
+  font-size: 0.65em;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.darkchat-msg-row.self .darkchat-sender {
+  color: #00ff88;
+}
+
+.darkchat-time {
+  font-size: 0.58em;
+  color: #64748b;
+}
+
+.darkchat-msg-text {
+  margin: 0;
+  color: #f1f5f9;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.darkchat-input-bar {
+  display: flex;
+  gap: 6px;
+  padding: 0.5em 0.8em;
+  background: #080d14;
+  border-top: 1px solid rgba(0, 255, 136, 0.15);
+}
+
+.darkchat-input-bar input {
+  flex: 1;
+  background: #05070a;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+  font-family: inherit;
+  font-size: 0.78em;
+  padding: 0.4em 0.6em;
+  border-radius: 6px;
+  outline: none;
+}
+
+.darkchat-input-bar button {
+  background: #00ff88;
+  border: 0;
+  color: #000;
+  font-family: inherit;
+  font-size: 0.72em;
+  font-weight: 800;
+  padding: 0.4em 0.9em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.darkchat-input-bar button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {

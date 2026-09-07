@@ -726,3 +726,51 @@ test('citywarn app displays emergency broadcasts, filters by category, resolves 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('darkchat app displays encrypted channels, unlocks passcode-protected rooms, and transmits ephemeral messages via Roblox DarkChatService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch DarkChat
+  await page.getByRole('button', { name: 'Open DarkChat' }).click()
+  await expect(page.locator('.darkchat-app-root')).toBeVisible()
+  await expect(page.locator('.darkchat-branding h3')).toHaveText('DarkChat')
+
+  // Channels list
+  const channels = page.locator('.darkchat-channel-card')
+  await expect(channels).toHaveCount(3)
+
+  // Open first open channel (#ghost-drop)
+  await channels.first().click()
+  await expect(page.locator('.darkchat-room-container')).toBeVisible()
+  await expect(page.locator('.darkchat-room-info strong')).toHaveText('#ghost-drop')
+  await expect(page.locator('.darkchat-msg-row')).toHaveCount(2)
+
+  // Transmit encrypted message
+  await page.locator('.darkchat-input-bar input').fill('Meet at Pier 400 at 0200 hours')
+  await page.getByRole('button', { name: 'SEND' }).click()
+  await expect(page.locator('.darkchat-msg-row')).toHaveCount(3)
+  await expect(page.locator('.darkchat-msg-text').last()).toHaveText('Meet at Pier 400 at 0200 hours')
+
+  // Return to channels
+  await page.getByRole('button', { name: '← Channels' }).click()
+  await expect(page.locator('.darkchat-channels-scroll')).toBeVisible()
+
+  // Open passcode protected channel (#night-market)
+  await page.locator('.darkchat-channel-title', { hasText: '#night-market' }).click()
+  await expect(page.locator('.darkchat-passcode-modal')).toBeVisible()
+
+  // Wrong passcode
+  await page.locator('.darkchat-passcode-dialog input').fill('0000')
+  await page.getByRole('button', { name: 'Decrypt & Enter' }).click()
+  await expect(page.locator('.darkchat-toast')).toContainText('Incorrect channel passcode')
+
+  // Correct passcode
+  await page.locator('.darkchat-passcode-dialog input').fill('7701')
+  await page.getByRole('button', { name: 'Decrypt & Enter' }).click()
+  await expect(page.locator('.darkchat-room-info strong')).toHaveText('#night-market')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

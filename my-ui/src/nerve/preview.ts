@@ -733,6 +733,31 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type DarkMessage = {
+  id: string
+  channelId: string
+  senderBurner: string
+  body: string
+  timestamp: number
+  isSelf: boolean
+}
+
+export type DarkChannel = {
+  id: string
+  name: string
+  topic: string
+  memberCount: number
+  hasPasscode: boolean
+}
+
+export type PreviewDarkChatService = {
+  GetChannels: NerveMethod<Record<string, never> | undefined, [DarkChannel[]]>
+  GetMessages: NerveMethod<{ channelId: string; passcode?: string }, [boolean, string?, DarkMessage[]?]>
+  SendMessage: NerveMethod<{ channelId: string; body: string; burnerName: string }, [boolean, string?, DarkMessage?]>
+  DarkMessageReceived: NerveSignal<[DarkMessage]>
+}
+
 export type EmergencyAlert = {
   id: string
   title: string
@@ -1029,6 +1054,72 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const darkChannels: DarkChannel[] = [
+    {
+      id: 'chan-drop',
+      name: 'ghost-drop',
+      topic: 'Anonymous dead drop coordination. 256-bit ephemeral.',
+      memberCount: 14,
+      hasPasscode: false,
+    },
+    {
+      id: 'chan-market',
+      name: 'night-market',
+      topic: 'Unregulated goods, clean crypto swaps & hardware.',
+      memberCount: 28,
+      hasPasscode: true,
+    },
+    {
+      id: 'chan-intel',
+      name: 'zero-trace',
+      topic: 'Surveillance scans, scanner frequencies & wiretaps.',
+      memberCount: 9,
+      hasPasscode: false,
+    },
+  ]
+
+  const darkMessages: Record<string, DarkMessage[]> = {
+    'chan-drop': [
+      {
+        id: 'msg-1',
+        channelId: 'chan-drop',
+        senderBurner: 'Phantom_X',
+        body: 'Drop package secured at North Docks container 44B.',
+        timestamp: Date.now() - 600000,
+        isSelf: false,
+      },
+      {
+        id: 'msg-2',
+        channelId: 'chan-drop',
+        senderBurner: 'ZeroK',
+        body: 'Confirming visual. Area is clear of state troopers.',
+        timestamp: Date.now() - 300000,
+        isSelf: false,
+      },
+    ],
+    'chan-market': [
+      {
+        id: 'msg-3',
+        channelId: 'chan-market',
+        senderBurner: 'SilkBroker',
+        body: 'Bulk thermal drill kits available. Inquire via burner PGP.',
+        timestamp: Date.now() - 1200000,
+        isSelf: false,
+      },
+    ],
+    'chan-intel': [
+      {
+        id: 'msg-4',
+        channelId: 'chan-intel',
+        senderBurner: 'ByteWraith',
+        body: 'State Police TAC-1 patched through to 154.400 MHz.',
+        timestamp: Date.now() - 1800000,
+        isSelf: false,
+      },
+    ],
+  }
+
   const emergencyAlerts: EmergencyAlert[] = [
     {
       id: 'alert-01',
@@ -1213,7 +1304,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -1742,6 +1833,38 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'DarkChatService.GetChannels': () => {
+        return [darkChannels.map((c) => ({ ...c }))]
+      },
+      'DarkChatService.GetMessages': (payload) => {
+        if (!isRecord(payload) || typeof payload.channelId !== 'string') return [false, 'Invalid payload', []]
+        if (payload.channelId === 'chan-market' && payload.passcode !== '7701') {
+          return [false, 'Incorrect channel passcode', []]
+        }
+        const msgs = darkMessages[payload.channelId] ?? []
+        return [true, undefined, msgs.map((m) => ({ ...m }))]
+      },
+      'DarkChatService.SendMessage': (payload) => {
+        if (!isRecord(payload) || typeof payload.channelId !== 'string' || typeof payload.body !== 'string') {
+          return [false, 'Invalid payload', undefined]
+        }
+        const msg: DarkMessage = {
+          id: 'msg-' + Date.now(),
+          channelId: payload.channelId,
+          senderBurner: String(payload.burnerName || 'CipherGhost'),
+          body: String(payload.body),
+          timestamp: Date.now(),
+          isSelf: true,
+        }
+        if (!darkMessages[payload.channelId]) {
+          darkMessages[payload.channelId] = []
+        }
+        darkMessages[payload.channelId].push(msg)
+        adapter.emitSignal('DarkChatService', 'DarkMessageReceived', { ...msg })
+        return [true, undefined, { ...msg }]
+      },
+
       'EmergencyService.GetAlerts': () => {
         return [emergencyAlerts.map((a) => ({ ...a }))]
       },
@@ -2026,3 +2149,4 @@ export const CryptoService = nervePreview.GetService<PreviewCryptoService>('Cryp
 export const HouseService = nervePreview.GetService<PreviewHouseService>('HouseService')
 export const BillingService = nervePreview.GetService<PreviewBillingService>('BillingService')
 export const EmergencyService = nervePreview.GetService<PreviewEmergencyService>('EmergencyService')
+export const DarkChatService = nervePreview.GetService<PreviewDarkChatService>('DarkChatService')
