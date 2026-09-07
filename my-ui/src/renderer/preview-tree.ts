@@ -1,4 +1,5 @@
 import type { RobloxInstanceJson } from './RobloxRenderer.tsx'
+import { bind, computed } from '../bindings/reactive-bindings.ts'
 
 const scaleAndAnchorTree: RobloxInstanceJson = {
   ClassName: 'Frame',
@@ -50,13 +51,17 @@ const layoutAndTextTree: RobloxInstanceJson = {
       TextColor3: { R: 0.96, G: 0.97, B: 0.98 },
       Size: { X: { Scale: 1, Offset: 0 }, Y: { Scale: 0, Offset: 48 } },
       BackgroundColor3: { R: 0.09, G: 0.106, B: 0.133 },
-      Children: [{ ClassName: 'UICorner', CornerRadius: { Scale: 0, Offset: 8 } }],
+      Children: [
+        { ClassName: 'UICorner', CornerRadius: { Scale: 0, Offset: 8 } },
+        { ClassName: 'UIStroke', Transparency: 1, Thickness: 2, Color: { R: 0.13, G: 0.77, B: 0.35 } },
+        { ClassName: 'UIGradient', Rotation: 0, Transparency: [{ Time: 0, Value: 0 }, { Time: 1, Value: 0.25 }] },
+      ],
     },
     {
       ClassName: 'TextLabel',
       Name: 'FirstByLayoutOrder',
       LayoutOrder: 1,
-      Text: '<b>First item</b> via RichText',
+      Text: bind('Player.Money', { Format: (value) => `<b>Money: $${typeof value === 'number' ? value : 0}</b>` }),
       RichText: true,
       TextSize: 15,
       TextXAlignment: 'Left',
@@ -96,6 +101,7 @@ const scrollingTree: RobloxInstanceJson = {
       ClassName: 'TextLabel',
       Name: 'ScrollHeader',
       Text: 'ScrollingFrame canvas',
+      Visible: bind('EMS.HasActiveCall'),
       TextSize: 16,
       TextColor3: { R: 0.96, G: 0.65, B: 0.14 },
       Size: { X: { Scale: 1, Offset: -24 }, Y: { Scale: 0, Offset: 36 } },
@@ -122,7 +128,7 @@ const constraintsTree: RobloxInstanceJson = {
     {
       ClassName: 'TextLabel',
       Name: 'ConstraintLabel',
-      Text: 'Aspect + Size + Text constraints',
+      Text: computed(['Player.HealthPercent'], (state) => `Health ${Math.round(Number((state.Player as { HealthPercent?: number })?.HealthPercent ?? 0) * 100)}%`),
       TextSize: 20,
       TextWrapped: true,
       TextXAlignment: 'Center',

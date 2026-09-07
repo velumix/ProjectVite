@@ -1,0 +1,33 @@
+{
+  "Services": [
+    {
+      "Name": "InventoryService",
+      "Methods": [
+        {
+          "Name": "BuyItem",
+          "Request": { "kind": "tuple", "items": [{ "kind": "string" }] },
+          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }, { "kind": "optional", "value": { "kind": "float64" } }] },
+          "RateLimit": { "Requests": 12, "Window": 1 }
+        },
+        {
+          "Name": "GetInventory",
+          "Request": { "kind": "tuple", "items": [] },
+          "Response": { "kind": "tuple", "items": [{ "kind": "array", "value": { "kind": "struct", "fields": { "ItemId": { "kind": "string" }, "Quantity": { "kind": "int32" } } } }] }
+        }
+      ],
+      "Signals": [
+        { "Name": "MoneyChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "float64" }] } },
+        { "Name": "InventoryChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "string" }, { "kind": "int32" }] } },
+        { "Name": "EquipItem", "Arguments": { "kind": "tuple", "items": [{ "kind": "string" }] }, "Direction": "client" }
+      ],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    }
+  ],
+  "Controllers": [
+    {
+      "Name": "InventoryController",
+      "ServiceDependencies": ["InventoryService"],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    }
+  ]
+}

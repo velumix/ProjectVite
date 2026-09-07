@@ -82,6 +82,7 @@ export type BrowserNetworkAdapterOptions = {
 export type BrowserNetworkAdapter = {
   Network: RobloxNetworkApi
   transport: NetworkTransport
+  setHandlers(handlers: BrowserNetworkHandlers): void
   preview: {
     emitMoneyChanged(payload: MoneyChangedPayload): void
     emitInventoryChanged(payload: InventoryChangedPayload): void
@@ -161,6 +162,9 @@ export function createBrowserNetworkAdapter(
   return {
     Network,
     transport,
+    setHandlers: (handlers) => {
+      options.handlers = handlers
+    },
     preview: {
       emitMoneyChanged: (payload) => {
         assertPayload<MoneyChangedPayload>('MoneyChangedPayload', payload)

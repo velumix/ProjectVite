@@ -1,0 +1,53 @@
+--!strict
+
+-- This is the canonical Nerve contract. The browser preview consumes the
+-- generated manifest; Roblox runs this module with the real Nerve package.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Nerve = require(ReplicatedStorage.Nerve)
+local S = Nerve.Schema
+
+local InventoryService = Nerve.CreateService({
+	Name = "InventoryService",
+	Client = {
+		MoneyChanged = Nerve.Signal(S.Tuple({ S.Float64 })),
+		InventoryChanged = Nerve.Signal(S.Tuple({ S.String, S.Int32 })),
+		EquipItem = Nerve.Signal(S.Tuple({ S.String }), { Direction = "client" }),
+	},
+	Network = {
+		BuyItem = Nerve.Method({
+			Request = S.Tuple({ S.String }),
+			Response = S.Tuple({ S.Boolean, S.Optional(S.String), S.Optional(S.Float64) }),
+			RateLimit = { Requests = 12, Window = 1 },
+		}),
+		GetInventory = Nerve.Method({
+			Request = S.Tuple({}),
+			Response = S.Tuple({ S.Array(S.Struct({
+				ItemId = S.String,
+				Quantity = S.Int32,
+			})) }),
+		}),
+	},
+})
+
+function InventoryService.Client:BuyItem(_player: Player, itemId: string)
+	if itemId == "" then
+		return false, "Invalid item", nil
+	end
+	return true, nil, 100
+end
+
+function InventoryService.Client:GetInventory(_player: Player)
+	return {
+		{ ItemId = "Bat", Quantity = 1 },
+	}
+end
+
+function InventoryService:NerveInit()
+	-- Service initialization belongs here when the game wires its data layer.
+end
+
+function InventoryService:NerveStart()
+	-- Service startup belongs here when the game wires its data layer.
+end
+
+return InventoryService

@@ -1,4 +1,5 @@
 import type { RobloxInstanceJson, RobloxColor3, RobloxUDim, RobloxUDim2, RobloxVector2 } from './RobloxRenderer.tsx'
+import type { CompiledRobloxProject } from '../features/project-compiler.ts'
 
 type ExportContext = {
   usedIdentifiers: Set<string>
@@ -192,4 +193,8 @@ export function exportRobloxTreeToLuau(tree: RobloxInstanceJson | RobloxInstance
   context.lines.push('}')
 
   return `${context.lines.join('\n')}\n`
+}
+
+export function exportCompiledRobloxProjectToLuau(project: CompiledRobloxProject): string {
+  return exportRobloxTreeToLuau(project.Tree)
 }

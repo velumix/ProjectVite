@@ -1,4 +1,5 @@
-import { useEffect, type CSSProperties, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react'
+import { createRobloxAssetResolver, type RobloxAssetResolver } from '../assets/roblox-asset-resolver.ts'
 import {
   ROBLOX_API_METADATA,
   type RobloxUiClassName,
@@ -29,6 +30,7 @@ export type RobloxRendererProps = {
   tree: RobloxInstanceJson | RobloxInstanceJson[]
   Handlers?: RobloxHandlerRegistry
   eventAdapter?: RobloxEventAdapter
+  assetResolver?: RobloxAssetResolver
   onWarning?: (message: string) => void
   onInstanceActivated?: (instance: RobloxInstanceJson) => void
 }
@@ -43,6 +45,7 @@ type RenderContext = {
   eventAdapter: RobloxEventAdapter
   onWarning: (message: string) => void
   onInstanceActivated?: (instance: RobloxInstanceJson) => void
+  assetResolver: RobloxAssetResolver
 }
 
 type RobloxClassMetadata = (typeof ROBLOX_API_METADATA.Classes)[RobloxUiClassName]
@@ -54,6 +57,7 @@ const RENDERABLE_CLASSES = new Set([
   'TextLabel',
   'TextButton',
   'ImageLabel',
+  'ImageButton',
   'ScrollingFrame',
 ])
 
@@ -83,6 +87,7 @@ const ROBLOX_EVENT_NAMES: RobloxEventName[] = [
 ]
 
 const defaultEventAdapter = createRobloxEventAdapter()
+const defaultAssetResolver = createRobloxAssetResolver()
 
 function read<T>(instance: RobloxInstanceJson, propertyName: string): T | undefined {
   return instance[propertyName] as T | undefined
@@ -346,7 +351,7 @@ function applyComponentStyles(children: RobloxInstanceJson[], style: CSSProperti
   return listLayout
 }
 
-function buildStyle(instance: RobloxInstanceJson, parentLayout?: ListLayoutInfo): CSSProperties {
+function buildStyle(instance: RobloxInstanceJson, parentLayout: ListLayoutInfo | undefined, assetResolver: RobloxAssetResolver): CSSProperties {
   const style: CSSProperties = {
     boxSizing: 'border-box',
     position: parentLayout ? 'relative' : 'absolute',
@@ -404,7 +409,7 @@ function buildStyle(instance: RobloxInstanceJson, parentLayout?: ListLayoutInfo)
   if (textSize !== undefined) style.fontSize = `${textSize}px`
   const fontFace = read<{ Family: string; Weight: string; Style: string }>(instance, 'FontFace')
   const font = read<string>(instance, 'Font')
-  if (fontFace?.Family) style.fontFamily = fontFace.Family.split('/').pop()?.replace(/\.json$/i, '') ?? fontFace.Family
+  if (fontFace?.Family) style.fontFamily = assetResolver.resolveFontFamily(fontFace.Family)
   else if (font) style.fontFamily = font
   if (fontFace?.Weight) style.fontWeight = fontFace.Weight === 'Bold' ? 700 : 400
   if (fontFace?.Style) style.fontStyle = fontFace.Style === 'Italic' ? 'italic' : 'normal'
@@ -463,7 +468,7 @@ function renderInstance(instance: RobloxInstanceJson, context: RenderContext, ke
   const children = instance.Children ?? []
   const componentChildren = children.filter((child) => UI_COMPONENT_CLASS_NAMES.has(child.ClassName))
   const visualChildren = children.filter((child) => !UI_COMPONENT_CLASS_NAMES.has(child.ClassName))
-  const style = buildStyle(instance, context.parentLayout)
+  const style = buildStyle(instance, context.parentLayout, context.assetResolver)
   const listLayout = applyComponentStyles(componentChildren, style)
   const sortedChildren = sortChildren(visualChildren, listLayout)
   const childContext: RenderContext = { ...context, parentLayout: listLayout }
@@ -528,9 +533,19 @@ function renderInstance(instance: RobloxInstanceJson, context: RenderContext, ke
     const image = read<string>(instance, 'Image')
     return (
       <div {...commonProps} key={key}>
-        {image ? <img src={image} alt={instance.Name ?? ''} style={{ width: '100%', height: '100%' }} /> : null}
+        {image ? <RobloxAssetImage reference={image} resolver={context.assetResolver} alt={instance.Name ?? ''} /> : null}
         {renderedChildren}
       </div>
+    )
+  }
+
+  if (className === 'ImageButton') {
+    const image = read<string>(instance, 'Image')
+    return (
+      <button {...commonProps} key={key} type="button" onClick={() => context.onInstanceActivated?.(instance)}>
+        {image ? <RobloxAssetImage reference={image} resolver={context.assetResolver} alt={instance.Name ?? ''} /> : null}
+        {renderedChildren}
+      </button>
     )
   }
 
@@ -542,10 +557,26 @@ function renderInstance(instance: RobloxInstanceJson, context: RenderContext, ke
   )
 }
 
+function RobloxAssetImage({ reference, resolver, alt }: { reference: string; resolver: RobloxAssetResolver; alt: string }) {
+  const [record, setRecord] = useState(() => resolver.resolve(reference, 'thumbnail'))
+  return (
+    <img
+      src={record.url}
+      alt={alt}
+      data-roblox-asset={record.canonical}
+      data-roblox-asset-state={record.state}
+      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+      onLoad={() => setRecord((current) => ({ ...current, state: 'ready' }))}
+      onError={() => setRecord((current) => ({ ...current, state: 'error', error: 'Asset failed to load' }))}
+    />
+  )
+}
+
 export function RobloxRenderer({
   tree,
   Handlers,
   eventAdapter = defaultEventAdapter,
+  assetResolver = defaultAssetResolver,
   onWarning,
   onInstanceActivated,
 }: RobloxRendererProps) {
@@ -557,6 +588,7 @@ export function RobloxRenderer({
     eventAdapter,
     onWarning: reportWarning,
     onInstanceActivated,
+    assetResolver,
   }
 
   return <>{instances.map((instance, index) => renderInstance(instance, context, `${instance.ClassName}-${index}`))}</>
