@@ -32,6 +32,7 @@ import { NumberMergeApp } from './apps/NumberMergeApp.tsx'
 import { MinesweeperApp } from './apps/MinesweeperApp.tsx'
 import { TowerStackApp } from './apps/TowerStackApp.tsx'
 import { SkyFlappyApp } from './apps/SkyFlappyApp.tsx'
+import { NeonDropApp } from './apps/NeonDropApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -358,6 +359,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'minesweeper' && <MinesweeperApp />}
             {activeApp === 'tower-stack' && <TowerStackApp />}
             {activeApp === 'sky-flappy' && <SkyFlappyApp />}
+            {activeApp === 'neon-drop' && <NeonDropApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -398,6 +400,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'minesweeper' &&
               activeApp !== 'tower-stack' &&
               activeApp !== 'sky-flappy' &&
+              activeApp !== 'neon-drop' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

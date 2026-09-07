@@ -12288,6 +12288,224 @@
   letter-spacing: 0.04em;
 }
 
+
+/* -------------------------------------------------------------
+   NEON DROP TETRIS GAME APP
+   ------------------------------------------------------------- */
+.neondrop-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #020617;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.neondrop-header {
+  padding: 0.6em 0.8em 0.3em;
+  background: #090d16;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.neondrop-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.neondrop-title {
+  font-size: 0.9em;
+  font-weight: 900;
+  color: #00f0ff;
+  letter-spacing: 0.04em;
+  display: block;
+}
+
+.neondrop-high {
+  font-size: 0.58em;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.neondrop-stats-box {
+  display: flex;
+  gap: 12px;
+}
+
+.neondrop-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.neondrop-stat label {
+  font-size: 0.5em;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.neondrop-stat span {
+  font-size: 0.95em;
+  font-weight: 900;
+  color: #fff;
+  font-family: monospace;
+}
+
+.neondrop-sub-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.neondrop-next-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.neondrop-next-box label {
+  font-size: 0.55em;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.next-badge {
+  font-size: 0.8em;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.neondrop-ctrl-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.neondrop-btn {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 0.6em;
+  font-weight: 800;
+  padding: 0.25em 0.8em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Matrix */
+.neondrop-matrix-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4em;
+}
+
+.neondrop-matrix {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 10 / 18;
+  background: #050811;
+  border: 2px solid rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+  border-radius: 6px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(18, 1fr);
+  gap: 1px;
+  padding: 2px;
+  position: relative;
+}
+
+.neondrop-cell {
+  border-radius: 2px;
+}
+
+.neondrop-gameover {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  z-index: 20;
+}
+
+.neondrop-gameover h3 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #ff0055;
+  font-weight: 900;
+}
+
+.neondrop-gameover p {
+  margin: 0;
+  font-size: 0.8em;
+  color: #cbd5e1;
+}
+
+.neondrop-retry-btn {
+  border: 0;
+  background: #00f0ff;
+  color: #000;
+  font-size: 0.75em;
+  font-weight: 800;
+  padding: 0.4em 1em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Arcade Controls */
+.neondrop-controls {
+  padding: 0.5em;
+  background: #090d16;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: center;
+}
+
+.neondrop-dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.nd-mid {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nd-btn {
+  width: 44px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #1e293b;
+  color: #00f0ff;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nd-btn.drop {
+  background: #ff0055;
+  color: #fff;
+  border-color: #ff0055;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {

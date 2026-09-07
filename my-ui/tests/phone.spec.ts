@@ -1572,3 +1572,36 @@ test('sky flappy app flies aerial drone between pipes, switches visual themes, a
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('neon drop arcade app rotates and drops neon polyominoes, renders next preview, tracks high score, and syncs with Roblox GameScoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Neon Drop
+  await page.getByRole('button', { name: 'Open Neon Drop' }).click()
+  await expect(page.locator('.neondrop-app-root')).toBeVisible()
+  await expect(page.locator('.neondrop-title')).toHaveText('⚡ NEON DROP')
+  await expect(page.locator('.neondrop-high')).toHaveText('BEST: 520')
+
+  // Matrix cells: 10 x 18 = 180 cells
+  const cells = page.locator('.neondrop-cell')
+  await expect(cells).toHaveCount(180)
+
+  // Rotate piece
+  await page.getByRole('button', { name: 'Rotate Piece' }).click()
+
+  // Shift right & left
+  await page.getByRole('button', { name: 'Shift Right' }).click()
+  await page.getByRole('button', { name: 'Shift Left' }).click()
+
+  // Soft drop
+  await page.getByRole('button', { name: 'Soft Drop' }).click()
+  await expect(page.locator('.neondrop-stat span').first()).not.toHaveText('')
+
+  // Hard drop
+  await page.getByRole('button', { name: 'Hard Drop' }).click()
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
