@@ -15,56 +15,189 @@ export const previewActionBindings = {
   },
 } as const
 
-export function createPreviewActions(dependencies: { bindings: ReactiveBindingStore; effects: EffectPlayer; nerve: NervePreviewAdapter; network: BrowserNetworkAdapter; persistence: RobloxPersistence; getTimeMs: () => number; getTrace: () => import('../scenarios/scenario-trace.ts').ScenarioTrace }, additionalDefinitions: Record<string, ActionDefinition> = {}): ActionRegistry {
-  return createActionRegistry({
-    BuyItem: {
-      async run(payload: { ItemId: string }, context) {
-        if (context.signal.aborted) return
-        const service = context.nerve.GetService<PreviewInventoryService>('InventoryService')
-        try {
-          const response = await service.BuyItem.request(payload.ItemId)
+export function createPreviewActions(
+  dependencies: {
+    bindings: ReactiveBindingStore
+    effects: EffectPlayer
+    nerve: NervePreviewAdapter
+    network: BrowserNetworkAdapter
+    persistence: RobloxPersistence
+    getTimeMs: () => number
+    getTrace: () => import('../scenarios/scenario-trace.ts').ScenarioTrace
+  },
+  additionalDefinitions: Record<string, ActionDefinition> = {},
+): ActionRegistry {
+  return createActionRegistry(
+    {
+      BuyItem: {
+        async run(payload: { ItemId: string }, context) {
           if (context.signal.aborted) return
-          const [success, reason, remainingMoney] = response
-          context.trace.record('method', 'BuyItem', context.timeMs, { Success: success, reason })
-          if (success) {
-            context.bindings.set('Player.Money', remainingMoney ?? context.bindings.get('Player.Money'))
-            context.nerve.GetService<PreviewInventoryService>('InventoryService').EquipItem.emit(payload.ItemId)
+          const service = context.nerve.GetService<PreviewInventoryService>('InventoryService')
+          try {
+            const response = await service.BuyItem.request(payload?.ItemId ?? 'Bat')
+            if (context.signal.aborted) return
+            const [success, reason, remainingMoney] = response
+            context.trace.record('method', 'BuyItem', context.timeMs, { Success: success, reason })
+            if (success) {
+              const currentMoney = (context.bindings.get('Player.Money') as number) ?? 500
+              const updatedMoney = remainingMoney ?? Math.max(0, currentMoney - 50)
+              context.bindings.set('Player.Money', updatedMoney)
+              context.nerve.GetService<PreviewInventoryService>('InventoryService').EquipItem.emit(payload?.ItemId ?? 'Bat')
+              context.effects.play('PurchaseSuccess', context.timeMs)
+            } else {
+              context.effects.play('PurchaseFailed', context.timeMs)
+              context.bindings.set('UI.LastError', reason ?? 'Purchase failed')
+            }
+          } catch (error) {
+            context.trace.record('error', 'BuyItem', context.timeMs, error instanceof Error ? error.message : String(error))
+            if (!context.signal.aborted) {
+              context.effects.play('PurchaseFailed', context.timeMs)
+              context.bindings.set('UI.LastError', error instanceof Error ? error.message : String(error))
+            }
+          }
+        },
+      },
+      BuyPotion: {
+        async run(_payload: unknown, context) {
+          const money = (context.bindings.get('Player.Money') as number) ?? 500
+          if (money >= 25) {
+            context.bindings.set('Player.Money', money - 25)
+            context.bindings.set('Player.HealthPercent', 1.0)
             context.effects.play('PurchaseSuccess', context.timeMs)
+            context.trace.record('action', 'BuyPotion', context.timeMs, { RestoredHealth: true, Cost: 25 })
           } else {
             context.effects.play('PurchaseFailed', context.timeMs)
-            context.bindings.set('UI.LastError', reason ?? 'Purchase failed')
           }
-        } catch (error) {
-          context.trace.record('error', 'BuyItem', context.timeMs, error instanceof Error ? error.message : String(error))
-          if (!context.signal.aborted) {
-            context.effects.play('PurchaseFailed', context.timeMs)
-            context.bindings.set('UI.LastError', error instanceof Error ? error.message : String(error))
-          }
-        }
+        },
       },
+      BuyShield: {
+        async run(_payload: unknown, context) {
+          const money = (context.bindings.get('Player.Money') as number) ?? 500
+          if (money >= 100) {
+            context.bindings.set('Player.Money', money - 100)
+            context.effects.play('PurchaseSuccess', context.timeMs)
+            context.trace.record('action', 'BuyShield', context.timeMs, { Cost: 100 })
+          } else {
+            context.effects.play('PurchaseFailed', context.timeMs)
+          }
+        },
+      },
+      TogglePanel: {
+        run(payload: { Panel: string }, context) {
+          const current = (context.bindings.get('UI.ActivePanel') as string) ?? 'None'
+          const next = current === payload.Panel ? 'None' : payload.Panel
+          context.bindings.set('UI.ActivePanel', next)
+          context.trace.record('action', 'TogglePanel', context.timeMs, { Panel: next })
+        },
+      },
+      ClosePanel: {
+        run(_payload: unknown, context) {
+          context.bindings.set('UI.ActivePanel', 'None')
+          context.trace.record('action', 'ClosePanel', context.timeMs)
+        },
+      },
+      SelectSlot: {
+        run(payload: { Slot: number }, context) {
+          context.bindings.set('Player.SelectedSlot', payload.Slot)
+          context.trace.record('action', 'SelectSlot', context.timeMs, { Slot: payload.Slot })
+        },
+      },
+      ...additionalDefinitions,
     },
-    ...additionalDefinitions,
-  }, dependencies)
+    dependencies,
+  )
 }
 
-export function createPreviewHandlers(actions: ActionRegistry, actionBindings: ComponentActionBinding[] = [], effectHooks: ComponentEffectHook[] = [], effects?: EffectPlayer, getTimeMs?: () => number): RobloxHandlerRegistry {
+export function createPreviewHandlers(
+  actions: ActionRegistry,
+  actionBindings: ComponentActionBinding[] = [],
+  effectHooks: ComponentEffectHook[] = [],
+  effects?: EffectPlayer,
+  getTimeMs?: () => number,
+): RobloxHandlerRegistry {
   const handlers: RobloxHandlerRegistry = {
     BuyButton: {
-      Activated: () => { void actions.run('BuyItem', previewActionBindings.BuyButton.Activated.Payload).promise },
-      MouseButton1Click: () => console.info('BuyButton.MouseButton1Click'),
-      MouseButton1Down: (input) => console.info('BuyButton.MouseButton1Down', input.UserInputType),
-      MouseButton1Up: (input) => console.info('BuyButton.MouseButton1Up', input.UserInputType),
-      InputBegan: (input) => console.info('BuyButton.InputBegan', input.UserInputType),
-      InputEnded: (input) => console.info('BuyButton.InputEnded', input.UserInputType),
+      Activated: () => {
+        void actions.run('BuyItem', previewActionBindings.BuyButton.Activated.Payload).promise
+      },
     },
-    Inventory: {
-      Changed: (propertyName) => console.info('Inventory.Changed', propertyName),
-      MouseEnter: () => console.info('Inventory.MouseEnter'),
-      MouseLeave: () => console.info('Inventory.MouseLeave'),
-      InputChanged: (input) => console.info('Inventory.InputChanged', input.Position),
-      GetPropertyChangedSignal: { Text: () => console.info('Inventory.GetPropertyChangedSignal("Text")') },
+    BuyPotionButton: {
+      Activated: () => {
+        void actions.run('BuyPotion', {}).promise
+      },
+    },
+    BuyShieldButton: {
+      Activated: () => {
+        void actions.run('BuyShield', {}).promise
+      },
+    },
+    SideShopButton: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Shop' }).promise
+      },
+    },
+    SideInventoryButton: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Inventory' }).promise
+      },
+    },
+    SideQuestsButton: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Quests' }).promise
+      },
+    },
+    SideSettingsButton: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Settings' }).promise
+      },
+    },
+    CloseShopButton: {
+      Activated: () => {
+        void actions.run('ClosePanel', {}).promise
+      },
+    },
+    CloseInventoryButton: {
+      Activated: () => {
+        void actions.run('ClosePanel', {}).promise
+      },
+    },
+    CloseQuestsButton: {
+      Activated: () => {
+        void actions.run('ClosePanel', {}).promise
+      },
+    },
+    CloseSettingsButton: {
+      Activated: () => {
+        void actions.run('ClosePanel', {}).promise
+      },
+    },
+    HotbarSlot_1: {
+      Activated: () => {
+        void actions.run('SelectSlot', { Slot: 1 }).promise
+      },
+    },
+    HotbarSlot_2: {
+      Activated: () => {
+        void actions.run('SelectSlot', { Slot: 2 }).promise
+      },
+    },
+    HotbarSlot_3: {
+      Activated: () => {
+        void actions.run('SelectSlot', { Slot: 3 }).promise
+      },
+    },
+    HotbarSlot_4: {
+      Activated: () => {
+        void actions.run('SelectSlot', { Slot: 4 }).promise
+      },
+    },
+    HotbarSlot_5: {
+      Activated: () => {
+        void actions.run('SelectSlot', { Slot: 5 }).promise
+      },
     },
   }
+
   for (const binding of actionBindings) {
     const effectHook = effectHooks.find((hook) => hook.Instance === binding.Instance && hook.Event === binding.Event)
     const instanceHandlers = handlers[binding.Instance] ?? {}
@@ -74,5 +207,6 @@ export function createPreviewHandlers(actions: ActionRegistry, actionBindings: C
     }) as never
     handlers[binding.Instance] = instanceHandlers
   }
+
   return handlers
 }

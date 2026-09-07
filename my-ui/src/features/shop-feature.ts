@@ -13,7 +13,10 @@ const BuyItem: ActionDefinition<{ ItemId: string }> = {
     if (context.signal.aborted) return
     if (success) {
       context.bindings.set('Player.Money', remainingMoney ?? context.bindings.get('Player.Money'))
-      await context.persistence.DataStoreService.GetDataStore('PlayerData').SetAsync('player_1', { Money: context.bindings.get('Player.Money'), Inventory: context.bindings.get('Player.Inventory') })
+      await context.persistence.DataStoreService.GetDataStore('PlayerData').SetAsync('player_1', {
+        Money: context.bindings.get('Player.Money'),
+        Inventory: context.bindings.get('Player.Inventory'),
+      })
       service.EquipItem.emit(payload.ItemId)
       context.effects.play('PurchaseSuccess', context.timeMs)
     } else {
@@ -25,13 +28,54 @@ const BuyItem: ActionDefinition<{ ItemId: string }> = {
 
 export const ShopFeature: RobloxFeature = {
   Name: 'ShopFeature',
-  UI: resolveRobloxComponents(component('ScreenGui', { Name: 'ShopFeatureGui' }, [
-    component('MoneyDisplay', { Name: 'ShopMoneyDisplay', Position: { X: { Scale: 0, Offset: 24 }, Y: { Scale: 0, Offset: 24 } } }),
-    component('InventoryCard', { Name: 'ShopInventoryCard', Position: { X: { Scale: 0, Offset: 24 }, Y: { Scale: 0, Offset: 88 } } }),
-    component('PurchaseButton', { Name: 'ShopPurchaseButton', Action: 'BuyItem', Payload: { ItemId: 'Bat' }, Effect: 'PurchaseSuccess', Position: { X: { Scale: 0, Offset: 24 }, Y: { Scale: 0, Offset: 224 } } }),
-    component('EMSAlert', { Name: 'ShopEMSAlert', Position: { X: { Scale: 0, Offset: 224 }, Y: { Scale: 0, Offset: 24 } } }),
-  ])),
-  State: { Player: { Money: 500, Inventory: [], HealthPercent: 1 }, EMS: { HasActiveCall: false } },
+  UI: resolveRobloxComponents(
+    component('ScreenGui', { Name: 'ShopFeatureGui' }, [
+      component('MoneyDisplay', {
+        Name: 'ShopMoneyDisplay',
+        Visible: false,
+        Position: { X: { Scale: 0, Offset: 24 }, Y: { Scale: 0, Offset: 24 } },
+      }),
+      component('InventoryCard', {
+        Name: 'ShopInventoryCard',
+        Visible: false,
+        Position: { X: { Scale: 0, Offset: 24 }, Y: { Scale: 0, Offset: 88 } },
+      }),
+      component('PurchaseButton', {
+        Name: 'ShopPurchaseButton',
+        Visible: false,
+        Action: 'BuyItem',
+        Payload: { ItemId: 'Bat' },
+        Effect: 'PurchaseSuccess',
+        Position: { X: { Scale: 0, Offset: 24 }, Y: { Scale: 0, Offset: 224 } },
+      }),
+      component('EMSAlert', {
+        Name: 'ShopEMSAlert',
+        Visible: false,
+        Position: { X: { Scale: 0, Offset: 224 }, Y: { Scale: 0, Offset: 24 } },
+      }),
+    ]),
+  ),
+  State: {
+    Player: {
+      Name: 'Player1',
+      Level: 42,
+      Money: 500,
+      HealthPercent: 1,
+      SelectedSlot: 1,
+      Inventory: [{ ItemId: 'Bat', Quantity: 1 }],
+    },
+    EMS: { HasActiveCall: false },
+    Loading: {
+      Visible: true,
+      Progress: 0,
+      Status: 'Initializing game engine...',
+    },
+    UI: {
+      HUDVisible: false,
+      ActivePanel: 'None',
+      LastError: null,
+    },
+  },
   Actions: { BuyItem },
   Effects: previewEffects,
   Scenarios: previewScenarios,
