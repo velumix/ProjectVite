@@ -8924,6 +8924,454 @@
   cursor: pointer;
 }
 
+
+/* -------------------------------------------------------------
+   PICSTAGRAM APP
+   ------------------------------------------------------------- */
+.picstagram-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.picstagram-header {
+  padding: 0.6em 0.8em 0.3em;
+  background: #0b0c0f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.picstagram-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.picstagram-brand {
+  margin: 0;
+  font-size: 1.15em;
+  font-family: serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: linear-gradient(45deg, #f59e0b, #ec4899, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.picstagram-new-btn {
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  background: rgba(236, 72, 153, 0.15);
+  color: #f472b6;
+  font-size: 0.68em;
+  font-weight: 800;
+  padding: 0.3em 0.7em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.picstagram-stories-tray {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 0.2em 0 0.4em;
+}
+
+.picstagram-story-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.picstagram-story-bubble small {
+  font-size: 0.58em;
+  color: #94a3b8;
+  max-width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picstagram-story-ring {
+  padding: 2px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.picstagram-story-ring.unread {
+  background: linear-gradient(45deg, #f59e0b, #ec4899, #8b5cf6);
+}
+
+.picstagram-story-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 2px solid #000;
+  color: #fff;
+  font-size: 0.95em;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Toast */
+.picstagram-toast {
+  position: absolute;
+  top: 100px;
+  left: 14px;
+  right: 14px;
+  z-index: 50;
+  background: rgba(11, 12, 15, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #ec4899;
+  border-radius: 10px;
+  padding: 0.45em 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3);
+  animation: slideDown 0.2s ease-out;
+}
+
+.picstagram-toast small {
+  color: #f1f5f9;
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+/* Modal */
+.picstagram-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-end;
+}
+
+.picstagram-modal-dialog {
+  width: 100%;
+  background: #111318;
+  border-top: 1px solid rgba(236, 72, 153, 0.3);
+  border-radius: 16px 16px 0 0;
+  padding: 0.9em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.picstagram-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82em;
+  font-weight: 800;
+  color: #f472b6;
+}
+
+.picstagram-modal-close {
+  border: 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.picstagram-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.picstagram-form input,
+.picstagram-form textarea,
+.picstagram-select {
+  background: #1c1f26;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.4em 0.6em;
+  font-size: 0.75em;
+  outline: none;
+}
+
+.picstagram-filter-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74em;
+  color: #cbd5e1;
+}
+
+.picstagram-share-btn {
+  border: 0;
+  background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 800;
+  padding: 0.55em;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 0.2em;
+}
+
+/* Comments Drawer */
+.picstagram-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-end;
+}
+
+.picstagram-drawer {
+  width: 100%;
+  height: 60%;
+  background: #111318;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.picstagram-drawer-header {
+  padding: 0.6em 0.8em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75em;
+  font-weight: 800;
+}
+
+.picstagram-comments-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.picstagram-comment-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.picstagram-comment-item strong {
+  font-size: 0.72em;
+  color: #e2e8f0;
+}
+
+.picstagram-comment-item p {
+  margin: 0;
+  font-size: 0.74em;
+  color: #94a3b8;
+}
+
+.picstagram-comment-item small {
+  font-size: 0.55em;
+  color: #64748b;
+}
+
+.picstagram-no-comments {
+  text-align: center;
+  padding: 2em;
+  color: #64748b;
+  font-size: 0.75em;
+}
+
+.picstagram-comment-input-bar {
+  padding: 0.5em 0.8em;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #090a0d;
+  display: flex;
+  gap: 6px;
+}
+
+.picstagram-comment-input-bar input {
+  flex: 1;
+  background: #1c1f26;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 0.4em 0.8em;
+  font-size: 0.74em;
+  color: #fff;
+  outline: none;
+}
+
+.picstagram-post-comm-btn {
+  border: 0;
+  background: #ec4899;
+  color: #fff;
+  font-size: 0.72em;
+  font-weight: 800;
+  padding: 0 0.8em;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* Feed List */
+.picstagram-feed-scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.picstagram-post-card {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.8em;
+}
+
+.picstagram-post-header {
+  padding: 0.5em 0.8em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.picstagram-post-author-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.picstagram-author-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #334155;
+  color: #fff;
+  font-size: 0.78em;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.picstagram-post-author-row strong {
+  display: block;
+  font-size: 0.75em;
+  color: #fff;
+}
+
+.picstagram-post-author-row small {
+  display: block;
+  font-size: 0.6em;
+  color: #94a3b8;
+}
+
+.picstagram-filter-badge {
+  font-size: 0.58em;
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.picstagram-photo-canvas {
+  height: 200px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.6em;
+}
+
+.picstagram-photo-watermark {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.55em;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.picstagram-actions-bar {
+  padding: 0.5em 0.8em 0.2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.picstagram-left-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.picstagram-action-icon {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 1.15em;
+  cursor: pointer;
+  padding: 0;
+}
+
+.picstagram-likes-count {
+  font-size: 0.72em;
+  font-weight: 800;
+  color: #fff;
+}
+
+.picstagram-caption-block {
+  padding: 0.2em 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.picstagram-caption-block p {
+  margin: 0;
+  font-size: 0.74em;
+  line-height: 1.35;
+  color: #e2e8f0;
+}
+
+.picstagram-caption-block strong {
+  color: #fff;
+  margin-right: 4px;
+}
+
+.picstagram-view-comments-btn {
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.68em;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.picstagram-post-time {
+  font-size: 0.55em;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {

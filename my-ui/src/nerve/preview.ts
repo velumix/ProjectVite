@@ -741,6 +741,51 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type PicStory = {
+  id: string
+  username: string
+  hasUnread: boolean
+}
+
+export type PicPost = {
+  id: string
+  author: string
+  location: string
+  caption: string
+  likes: number
+  isLiked: boolean
+  commentsCount: number
+  timestamp: number
+  gradient: string
+  filterName: string
+}
+
+export type PicComment = {
+  id: string
+  postId: string
+  author: string
+  text: string
+  timestamp: number
+}
+
+export type PicLikeEvent = {
+  postId: string
+  likes: number
+  isLiked: boolean
+}
+
+export type PreviewPicstagramService = {
+  GetFeed: NerveMethod<Record<string, never> | undefined, [{ stories: PicStory[]; posts: PicPost[] }]>
+  LikePost: NerveMethod<{ postId: string }, [boolean, string?, number?]>
+  GetComments: NerveMethod<{ postId: string }, [PicComment[]]>
+  AddComment: NerveMethod<{ postId: string; text: string }, [boolean, string?, PicComment?]>
+  CreatePost: NerveMethod<{ caption: string; location: string; filterName: string }, [boolean, string?, PicPost?]>
+  PostLiked: NerveSignal<[PicLikeEvent]>
+  PostCommentAdded: NerveSignal<[PicComment]>
+  PostCreated: NerveSignal<[PicPost]>
+}
+
 export type FlipTokReel = {
   id: string
   creator: string
@@ -1301,6 +1346,51 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const picStoriesData: PicStory[] = [
+    { id: 'story-1', username: 'Your Story', hasUnread: false },
+    { id: 'story-2', username: 'samantha.ls', hasUnread: true },
+    { id: 'story-3', username: 'tony_tuner', hasUnread: true },
+    { id: 'story-4', username: 'bahama_mamas', hasUnread: true },
+  ]
+
+  const picPostsData: PicPost[] = [
+    {
+      id: 'post-1',
+      author: 'samantha.ls',
+      location: 'Del Perro Pier, Los Santos',
+      caption: 'Golden hour hitting the Ferris wheel just right 🎡🌅 Always good vibes by the ocean.',
+      likes: 428,
+      isLiked: false,
+      commentsCount: 29,
+      timestamp: Date.now() - 3600000,
+      gradient: 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
+      filterName: 'Valencia',
+    },
+    {
+      id: 'post-2',
+      author: 'tony_tuner',
+      location: "Hao's Special Works",
+      caption: 'Fresh turbo install and dyno tune on this Bravado Gauntlet Hellfire. 850whp ready for the strip 🏎️💨',
+      likes: 1250,
+      isLiked: true,
+      commentsCount: 88,
+      timestamp: Date.now() - 14400000,
+      gradient: 'linear-gradient(135deg, #0284c7 0%, #1e1b4b 100%)',
+      filterName: 'Clarendon',
+    },
+  ]
+
+  const picCommentsData: PicComment[] = [
+    {
+      id: 'comm-1',
+      postId: 'post-1',
+      author: 'alex_mercer',
+      text: 'Stunning sunset shots! Del Perro never gets old.',
+      timestamp: Date.now() - 1800000,
+    },
+  ]
+
   const fliptokReelsData: FlipTokReel[] = [
     {
       id: 'reel-1',
@@ -1826,7 +1916,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2363,6 +2453,73 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'PicstagramService.GetFeed': () => {
+        return [{
+          stories: picStoriesData.map((s) => ({ ...s })),
+          posts: picPostsData.map((p) => ({ ...p })),
+        }]
+      },
+      'PicstagramService.LikePost': (payload) => {
+        if (!isRecord(payload) || typeof payload.postId !== 'string') return [false, 'Invalid payload', undefined]
+        const p = picPostsData.find((x) => x.id === payload.postId)
+        if (!p) return [false, 'Post not found', undefined]
+        if (p.isLiked) {
+          p.isLiked = false
+          p.likes = Math.max(0, p.likes - 1)
+        } else {
+          p.isLiked = true
+          p.likes += 1
+        }
+        adapter.emitSignal('PicstagramService', 'PostLiked', {
+          postId: p.id,
+          likes: p.likes,
+          isLiked: p.isLiked,
+        })
+        return [true, undefined, p.likes]
+      },
+      'PicstagramService.GetComments': (payload) => {
+        if (!isRecord(payload) || typeof payload.postId !== 'string') return [[]]
+        return [picCommentsData.filter((c) => c.postId === payload.postId).map((c) => ({ ...c }))]
+      },
+      'PicstagramService.AddComment': (payload) => {
+        if (!isRecord(payload) || typeof payload.postId !== 'string' || typeof payload.text !== 'string' || !payload.text) {
+          return [false, 'Invalid payload', undefined]
+        }
+        const comm: PicComment = {
+          id: 'comm-' + Date.now(),
+          postId: payload.postId,
+          author: 'alex_mercer',
+          text: payload.text,
+          timestamp: Date.now(),
+        }
+        picCommentsData.unshift(comm)
+        const p = picPostsData.find((x) => x.id === payload.postId)
+        if (p) p.commentsCount += 1
+        adapter.emitSignal('PicstagramService', 'PostCommentAdded', { ...comm })
+        return [true, undefined, { ...comm }]
+      },
+      'PicstagramService.CreatePost': (payload) => {
+        if (!isRecord(payload) || typeof payload.caption !== 'string' || !payload.caption) {
+          return [false, 'Caption required', undefined]
+        }
+        const post: PicPost = {
+          id: 'post-' + Date.now(),
+          author: 'alex_mercer',
+          location: typeof payload.location === 'string' && payload.location ? payload.location : 'Los Santos, SA',
+          caption: payload.caption,
+          likes: 1,
+          isLiked: true,
+          commentsCount: 0,
+          timestamp: Date.now(),
+          gradient: 'linear-gradient(135deg, #10b981 0%, #064e3b 100%)',
+          filterName: typeof payload.filterName === 'string' && payload.filterName ? payload.filterName : 'Normal',
+        }
+        picPostsData.unshift(post)
+        adapter.emitSignal('PicstagramService', 'PostCreated', { ...post })
+        return [true, undefined, { ...post }]
+      },
+
       'FlipTokService.GetFeed': () => {
         return [fliptokReelsData.map((r) => ({ ...r }))]
       },
@@ -2965,3 +3122,4 @@ export const LocalPagesService = nervePreview.GetService<PreviewLocalPagesServic
 export const NewsService = nervePreview.GetService<PreviewNewsService>('NewsService')
 export const FlareService = nervePreview.GetService<PreviewFlareService>('FlareService')
 export const FlipTokService = nervePreview.GetService<PreviewFlipTokService>('FlipTokService')
+export const PicstagramService = nervePreview.GetService<PreviewPicstagramService>('PicstagramService')

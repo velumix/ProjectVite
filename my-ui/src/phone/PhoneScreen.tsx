@@ -20,6 +20,7 @@ import { LocalPagesApp } from './apps/LocalPagesApp.tsx'
 import { WeazelNewsApp } from './apps/WeazelNewsApp.tsx'
 import { FlareApp } from './apps/FlareApp.tsx'
 import { FlipTokApp } from './apps/FlipTokApp.tsx'
+import { PicstagramApp } from './apps/PicstagramApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -334,6 +335,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'weazel-news' && <WeazelNewsApp />}
             {activeApp === 'flare' && <FlareApp />}
             {activeApp === 'fliptok' && <FlipTokApp />}
+            {activeApp === 'picstagram' && <PicstagramApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -362,6 +364,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'weazel-news' &&
               activeApp !== 'flare' &&
               activeApp !== 'fliptok' &&
+              activeApp !== 'picstagram' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

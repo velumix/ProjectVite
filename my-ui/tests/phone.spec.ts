@@ -1058,7 +1058,7 @@ test('fliptok app plays vertical video reels, likes clips, comments in drawer, c
 
   // Add comment
   await page.locator('.fliptok-comment-input-bar input').fill('Sick drift angle!')
-  await page.getByRole('button', { name: 'Post' }).click()
+  await page.locator('.picstagram-post-comm-btn').click()
   await expect(page.locator('.fliptok-comment-item')).toHaveCount(2)
   await expect(page.locator('.fliptok-comment-text').first()).toHaveText('Sick drift angle!')
 
@@ -1080,6 +1080,62 @@ test('fliptok app plays vertical video reels, likes clips, comments in drawer, c
   // Verify toast and newly active reel
   await expect(page.locator('.fliptok-toast')).toContainText('Reel uploaded to FlipTok')
   await expect(page.locator('.fliptok-creator')).toHaveText('@alex_mercer')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
+
+test('picstagram app browses photo feed, views stories tray, likes photos, adds comments, and publishes new photos with filters via Roblox PicstagramService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Picstagram
+  await page.getByRole('button', { name: 'Open Picstagram' }).click()
+  await expect(page.locator('.picstagram-app-root')).toBeVisible()
+  await expect(page.locator('.picstagram-brand')).toHaveText('Picstagram')
+
+  // Stories tray
+  await expect(page.locator('.picstagram-story-bubble')).toHaveCount(4)
+
+  // Posts feed
+  const posts = page.locator('.picstagram-post-card')
+  await expect(posts).toHaveCount(2)
+
+  // Like first post
+  const likeBtn = page.locator('.picstagram-action-icon.like').first()
+  await expect(page.locator('.picstagram-likes-count').first()).toHaveText('428 likes')
+  await likeBtn.click()
+  await expect(page.locator('.picstagram-likes-count').first()).toHaveText('429 likes')
+
+  // Open comments
+  await page.locator('.picstagram-action-icon[aria-label="Comments"]').first().click()
+  await expect(page.locator('.picstagram-drawer')).toBeVisible()
+  await expect(page.locator('.picstagram-comment-item')).toHaveCount(1)
+
+  // Post comment
+  await page.locator('.picstagram-comment-input-bar input').fill('Love this vibe!')
+  await page.locator('.picstagram-post-comm-btn').click()
+  await expect(page.locator('.picstagram-comment-item')).toHaveCount(2)
+  await expect(page.locator('.picstagram-comment-item p').first()).toHaveText('Love this vibe!')
+
+  // Close drawer
+  await page.locator('.picstagram-drawer .picstagram-modal-close').click()
+  await expect(page.locator('.picstagram-drawer')).not.toBeVisible()
+
+  // Create new post
+  await page.getByRole('button', { name: '+ New Post' }).click()
+  await expect(page.locator('.picstagram-modal-backdrop')).toBeVisible()
+
+  await page.locator('input[placeholder*="Add location"]').fill('Puerto Del Sol Marina')
+  await page.locator('textarea[placeholder*="Write a caption"]').fill('Sunset cruise on the yacht #lossantos')
+  await page.locator('.picstagram-select').selectOption('Clarendon')
+  await page.getByRole('button', { name: 'SHARE TO FEED' }).click()
+
+  // Verify toast and new post
+  await expect(page.locator('.picstagram-toast')).toContainText('Photo posted to Picstagram feed')
+  await expect(page.locator('.picstagram-post-card')).toHaveCount(3)
+  await expect(page.locator('.picstagram-post-author-row strong').first()).toHaveText('alex_mercer')
 
   // Return to Springboard
   await page.getByRole('button', { name: 'Return to Springboard' }).click()

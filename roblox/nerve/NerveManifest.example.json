@@ -5965,6 +5965,369 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "PicstagramService": {
+      "GetFeed": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "stories": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "username": {
+                        "kind": "string"
+                      },
+                      "hasUnread": {
+                        "kind": "bool"
+                      }
+                    }
+                  }
+                },
+                "posts": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "author": {
+                        "kind": "string"
+                      },
+                      "location": {
+                        "kind": "string"
+                      },
+                      "caption": {
+                        "kind": "string"
+                      },
+                      "likes": {
+                        "kind": "float64"
+                      },
+                      "isLiked": {
+                        "kind": "bool"
+                      },
+                      "commentsCount": {
+                        "kind": "float64"
+                      },
+                      "timestamp": {
+                        "kind": "float64"
+                      },
+                      "gradient": {
+                        "kind": "string"
+                      },
+                      "filterName": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "LikePost": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "postId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "GetComments": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "postId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "postId": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "AddComment": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "postId": {
+              "kind": "string"
+            },
+            "text": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "postId": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CreatePost": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "caption": {
+              "kind": "string"
+            },
+            "location": {
+              "kind": "string"
+            },
+            "filterName": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "caption": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "commentsCount": {
+                    "kind": "float64"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "gradient": {
+                    "kind": "string"
+                  },
+                  "filterName": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PostLiked": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "postId": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "isLiked": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "PostCommentAdded": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "postId": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "string"
+                },
+                "text": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "PostCreated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "string"
+                },
+                "location": {
+                  "kind": "string"
+                },
+                "caption": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "isLiked": {
+                  "kind": "bool"
+                },
+                "commentsCount": {
+                  "kind": "float64"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "gradient": {
+                  "kind": "string"
+                },
+                "filterName": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

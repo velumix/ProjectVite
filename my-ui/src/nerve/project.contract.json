@@ -6131,6 +6131,375 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "PicstagramService",
+      "Methods": [
+        {
+          "Name": "GetFeed",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "stories": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "username": {
+                          "kind": "string"
+                        },
+                        "hasUnread": {
+                          "kind": "bool"
+                        }
+                      }
+                    }
+                  },
+                  "posts": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "author": {
+                          "kind": "string"
+                        },
+                        "location": {
+                          "kind": "string"
+                        },
+                        "caption": {
+                          "kind": "string"
+                        },
+                        "likes": {
+                          "kind": "float64"
+                        },
+                        "isLiked": {
+                          "kind": "bool"
+                        },
+                        "commentsCount": {
+                          "kind": "float64"
+                        },
+                        "timestamp": {
+                          "kind": "float64"
+                        },
+                        "gradient": {
+                          "kind": "string"
+                        },
+                        "filterName": {
+                          "kind": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "LikePost",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "postId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "GetComments",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "postId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "postId": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "text": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "AddComment",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "postId": {
+                "kind": "string"
+              },
+              "text": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "postId": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "text": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "CreatePost",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "caption": {
+                "kind": "string"
+              },
+              "location": {
+                "kind": "string"
+              },
+              "filterName": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "location": {
+                      "kind": "string"
+                    },
+                    "caption": {
+                      "kind": "string"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    },
+                    "isLiked": {
+                      "kind": "bool"
+                    },
+                    "commentsCount": {
+                      "kind": "float64"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "gradient": {
+                      "kind": "string"
+                    },
+                    "filterName": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "PostLiked",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "postId": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "PostCommentAdded",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "postId": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "PostCreated",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "caption": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "commentsCount": {
+                    "kind": "float64"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "gradient": {
+                    "kind": "string"
+                  },
+                  "filterName": {
+                    "kind": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -6358,6 +6727,16 @@
       "Name": "FlipTokController",
       "ServiceDependencies": [
         "FlipTokService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "PicstagramController",
+      "ServiceDependencies": [
+        "PicstagramService"
       ],
       "Lifecycle": {
         "NerveInit": true,
