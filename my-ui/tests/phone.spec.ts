@@ -1507,3 +1507,35 @@ test('minesweeper app generates randomized minefields, toggles digging and flagg
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('tower stack app aligns sliding blocks, trims overhangs, triggers combos, and records floor records via Roblox GameScoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Tower Stack
+  await page.getByRole('button', { name: 'Open Tower Stack' }).click()
+  await expect(page.locator('.towerstack-app-root')).toBeVisible()
+  await expect(page.locator('.towerstack-title')).toHaveText('🏗️ TOWER STACK')
+  await expect(page.locator('.towerstack-high')).toHaveText('RECORD: 34 FLOORS')
+
+  // Initial base block
+  const placedBlocks = page.locator('.towerstack-block.placed')
+  await expect(placedBlocks).toHaveCount(1)
+
+  // Start game by clicking DROP BLOCK
+  const dropBtn = page.locator('.towerstack-drop-btn')
+  await expect(dropBtn).toHaveText('START GAME')
+  await dropBtn.click()
+  await expect(dropBtn).toHaveText('DROP BLOCK (TAP)')
+
+  // Drop sliding block
+  await dropBtn.click()
+
+  // Height score incremented
+  await expect(page.locator('.towerstack-score-badge span')).toHaveText('1')
+  await expect(placedBlocks).toHaveCount(2)
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

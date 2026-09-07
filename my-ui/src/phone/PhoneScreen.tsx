@@ -30,6 +30,7 @@ import { SnakeApp } from './apps/SnakeApp.tsx'
 import { MemoryApp } from './apps/MemoryApp.tsx'
 import { NumberMergeApp } from './apps/NumberMergeApp.tsx'
 import { MinesweeperApp } from './apps/MinesweeperApp.tsx'
+import { TowerStackApp } from './apps/TowerStackApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -354,6 +355,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'memory' && <MemoryApp />}
             {activeApp === 'number-merge' && <NumberMergeApp />}
             {activeApp === 'minesweeper' && <MinesweeperApp />}
+            {activeApp === 'tower-stack' && <TowerStackApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -392,6 +394,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'memory' &&
               activeApp !== 'number-merge' &&
               activeApp !== 'minesweeper' &&
+              activeApp !== 'tower-stack' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}
