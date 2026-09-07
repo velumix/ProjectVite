@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { NervePreviewAdapter } from '../nerve/contracts.ts'
-import { type PhoneContact, type PhoneMessage, type PhoneSettings, type PhoneState, type PreviewPhoneService } from '../nerve/preview.ts'
+import { MusicService, type PhoneContact, type PhoneMessage, type PhoneSettings, type PhoneState, type PreviewPhoneService } from '../nerve/preview.ts'
 import { BankingApp } from './apps/BankingApp.tsx'
 import { CalculatorApp } from './apps/CalculatorApp.tsx'
 import { CameraApp } from './apps/CameraApp.tsx'
 import { ClockApp } from './apps/ClockApp.tsx'
 import { MailApp } from './apps/MailApp.tsx'
 import { MapApp } from './apps/MapApp.tsx'
+import { MusicApp } from './apps/MusicApp.tsx'
 import { NotesApp } from './apps/NotesApp.tsx'
 import { PhotosApp } from './apps/PhotosApp.tsx'
 import { WeatherApp } from './apps/WeatherApp.tsx'
@@ -72,8 +73,31 @@ export function PhoneScreen({ nerve }: Props) {
   const [volume, setVolume] = useState(70)
   const [flashlightActive, setFlashlightActive] = useState(false)
   const [musicPlaying, setMusicPlaying] = useState(false)
-  const [currentTrack] = useState({ title: 'Midnight Drive', artist: 'Kavinsky' })
+  const [currentTrack, setCurrentTrack] = useState({ title: 'Midnight City', artist: 'M83' })
   const [notifications, setNotifications] = useState<PhoneNotificationItem[]>(defaultNotifications)
+
+  
+  useEffect(() => {
+    const unsub = MusicService.PlaybackChanged.connect((playback) => {
+      setMusicPlaying(playback.isPlaying)
+      if (playback.track) {
+        setCurrentTrack({ title: playback.track.title, artist: playback.track.artist })
+      }
+    })
+    return () => unsub()
+  }, [])
+
+  const toggleMusicPlayback = async () => {
+    const [ok, state] = await MusicService.TogglePlayback.request(undefined)
+    if (ok && state) {
+      setMusicPlaying(state.isPlaying)
+      if (state.track) {
+        setCurrentTrack({ title: state.track.title, artist: state.track.artist })
+      }
+    } else {
+      setMusicPlaying((prev) => !prev)
+    }
+  }
 
   const activeContact = useMemo(
     () => state.contacts.find((contact) => contact.id === activeContactId) ?? state.contacts[0],
@@ -177,7 +201,7 @@ export function PhoneScreen({ nerve }: Props) {
           onEndCall={endCall}
           musicPlaying={musicPlaying}
           currentTrack={currentTrack}
-          onToggleMusic={() => setMusicPlaying(!musicPlaying)}
+          onToggleMusic={toggleMusicPlayback}
           flashlightActive={flashlightActive}
           onToggleFlashlight={() => setFlashlightActive(!flashlightActive)}
         />
@@ -257,6 +281,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'notes' && <NotesApp />}
             {activeApp === 'mail' && <MailApp />}
             {activeApp === 'map' && <MapApp />}
+            {activeApp === 'music' && <MusicApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -269,6 +294,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'weather' &&
               activeApp !== 'mail' &&
               activeApp !== 'map' &&
+              activeApp !== 'music' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}
@@ -296,7 +322,7 @@ export function PhoneScreen({ nerve }: Props) {
           onToggleFlashlight={() => setFlashlightActive(!flashlightActive)}
           musicPlaying={musicPlaying}
           currentTrack={currentTrack}
-          onToggleMusic={() => setMusicPlaying(!musicPlaying)}
+          onToggleMusic={toggleMusicPlayback}
           onLaunchApp={launch}
         />
 

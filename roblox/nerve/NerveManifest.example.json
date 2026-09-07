@@ -1637,6 +1637,524 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "MusicService": {
+      "GetMusicLibrary": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "artist": {
+                    "kind": "string"
+                  },
+                  "album": {
+                    "kind": "string"
+                  },
+                  "duration": {
+                    "kind": "float64"
+                  },
+                  "coverColor": {
+                    "kind": "string"
+                  },
+                  "station": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "struct",
+              "fields": {
+                "track": {
+                  "kind": "optional",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "title": {
+                        "kind": "string"
+                      },
+                      "artist": {
+                        "kind": "string"
+                      },
+                      "album": {
+                        "kind": "string"
+                      },
+                      "duration": {
+                        "kind": "float64"
+                      },
+                      "coverColor": {
+                        "kind": "string"
+                      },
+                      "station": {
+                        "kind": "optional",
+                        "value": {
+                          "kind": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "isPlaying": {
+                  "kind": "bool"
+                },
+                "position": {
+                  "kind": "float64"
+                },
+                "volume": {
+                  "kind": "float64"
+                },
+                "loop": {
+                  "kind": "bool"
+                },
+                "shuffle": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PlayTrack": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "trackId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "track": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "title": {
+                          "kind": "string"
+                        },
+                        "artist": {
+                          "kind": "string"
+                        },
+                        "album": {
+                          "kind": "string"
+                        },
+                        "duration": {
+                          "kind": "float64"
+                        },
+                        "coverColor": {
+                          "kind": "string"
+                        },
+                        "station": {
+                          "kind": "optional",
+                          "value": {
+                            "kind": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "isPlaying": {
+                    "kind": "bool"
+                  },
+                  "position": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "loop": {
+                    "kind": "bool"
+                  },
+                  "shuffle": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "TogglePlayback": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "track": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "title": {
+                          "kind": "string"
+                        },
+                        "artist": {
+                          "kind": "string"
+                        },
+                        "album": {
+                          "kind": "string"
+                        },
+                        "duration": {
+                          "kind": "float64"
+                        },
+                        "coverColor": {
+                          "kind": "string"
+                        },
+                        "station": {
+                          "kind": "optional",
+                          "value": {
+                            "kind": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "isPlaying": {
+                    "kind": "bool"
+                  },
+                  "position": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "loop": {
+                    "kind": "bool"
+                  },
+                  "shuffle": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "NextTrack": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "track": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "title": {
+                          "kind": "string"
+                        },
+                        "artist": {
+                          "kind": "string"
+                        },
+                        "album": {
+                          "kind": "string"
+                        },
+                        "duration": {
+                          "kind": "float64"
+                        },
+                        "coverColor": {
+                          "kind": "string"
+                        },
+                        "station": {
+                          "kind": "optional",
+                          "value": {
+                            "kind": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "isPlaying": {
+                    "kind": "bool"
+                  },
+                  "position": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "loop": {
+                    "kind": "bool"
+                  },
+                  "shuffle": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "PreviousTrack": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "track": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "title": {
+                          "kind": "string"
+                        },
+                        "artist": {
+                          "kind": "string"
+                        },
+                        "album": {
+                          "kind": "string"
+                        },
+                        "duration": {
+                          "kind": "float64"
+                        },
+                        "coverColor": {
+                          "kind": "string"
+                        },
+                        "station": {
+                          "kind": "optional",
+                          "value": {
+                            "kind": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "isPlaying": {
+                    "kind": "bool"
+                  },
+                  "position": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "loop": {
+                    "kind": "bool"
+                  },
+                  "shuffle": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "SetVolume": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "volume": {
+              "kind": "float64"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "SeekTrack": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "position": {
+              "kind": "float64"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "PlaybackChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "track": {
+                  "kind": "optional",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "title": {
+                        "kind": "string"
+                      },
+                      "artist": {
+                        "kind": "string"
+                      },
+                      "album": {
+                        "kind": "string"
+                      },
+                      "duration": {
+                        "kind": "float64"
+                      },
+                      "coverColor": {
+                        "kind": "string"
+                      },
+                      "station": {
+                        "kind": "optional",
+                        "value": {
+                          "kind": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "isPlaying": {
+                  "kind": "bool"
+                },
+                "position": {
+                  "kind": "float64"
+                },
+                "volume": {
+                  "kind": "float64"
+                },
+                "loop": {
+                  "kind": "bool"
+                },
+                "shuffle": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

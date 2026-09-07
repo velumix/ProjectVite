@@ -339,3 +339,58 @@ test('map app displays interactive map, filters POIs, opens directory drawer, se
   await expect(page.locator('.map-gps-banner')).toBeVisible()
   await expect(page.locator('.map-gps-destination')).toContainText('Pillbox Hill Medical Center')
 })
+
+test('music app plays tracks, switches radio stations, skips songs and synchronizes playback state via Roblox MusicService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Music App from Springboard
+  await page.getByRole('button', { name: 'Open Music' }).click()
+  await expect(page.locator('.music-app-root')).toBeVisible()
+  await expect(page.locator('.music-now-playing-tab')).toBeVisible()
+
+  // Verify default track displayed
+  await expect(page.locator('.music-title')).toContainText('Midnight City')
+  await expect(page.locator('.music-artist')).toContainText('M83')
+
+  // Toggle playback: Play
+  await page.locator('.music-play-btn').click()
+  await expect(page.locator('.music-play-btn')).toHaveAttribute('title', 'Pause')
+  await expect(page.locator('.music-album-art')).toHaveClass(/is-spinning/)
+
+  // Skip to next track
+  await page.locator('.music-ctrl-btn[title="Next Track"]').click()
+  await expect(page.locator('.music-title')).toContainText('Sleepwalking')
+  await expect(page.locator('.music-artist')).toContainText('The Chain Gang of 1974')
+
+  // Switch to Tracks tab
+  await page.getByRole('button', { name: 'Tracks (6)' }).click()
+  await expect(page.locator('.music-tracks-tab')).toBeVisible()
+
+  // Search track
+  await page.getByPlaceholder('Search tracks or artists...').fill('Blinding')
+  const searchCards = page.locator('.music-track-card')
+  await expect(searchCards).toHaveCount(1)
+  await expect(searchCards.first()).toContainText('Blinding Lights')
+
+  // Select track from search
+  await searchCards.first().click()
+  await expect(page.locator('.music-now-playing-tab')).toBeVisible()
+  await expect(page.locator('.music-title')).toContainText('Blinding Lights')
+  await expect(page.locator('.music-artist')).toContainText('The Weeknd')
+
+  // Switch to Radio Stations tab
+  await page.getByRole('button', { name: 'Radio Stations' }).click()
+  await expect(page.locator('.music-radio-tab')).toBeVisible()
+
+  // Select West Coast Classics station
+  const stationCard = page.locator('.music-station-card').filter({ hasText: 'West Coast Classics' })
+  await stationCard.click()
+  await expect(page.locator('.music-title')).toContainText('Still D.R.E.')
+
+  // Return to Springboard via Home Indicator and verify Dynamic Island sync
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+  await expect(page.locator('.phone-island-music-pill')).toBeVisible()
+  await expect(page.locator('.phone-island-music-pill small')).toContainText('Still D.R.E.')
+})

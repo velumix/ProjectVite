@@ -420,6 +420,94 @@ const INITIAL_MAP_POIS: MapPoi[] = [
   },
 ]
 
+
+export type MusicTrack = {
+  id: string
+  title: string
+  artist: string
+  album: string
+  duration: number
+  coverColor: string
+  station?: string
+}
+
+export type PlaybackState = {
+  track?: MusicTrack
+  isPlaying: boolean
+  position: number
+  volume: number
+  loop: boolean
+  shuffle: boolean
+}
+
+export type PreviewMusicService = {
+  GetMusicLibrary: NerveMethod<undefined, [MusicTrack[], PlaybackState]>
+  PlayTrack: NerveMethod<{ trackId: string }, [boolean, PlaybackState?, string?]>
+  TogglePlayback: NerveMethod<undefined, [boolean, PlaybackState?, string?]>
+  NextTrack: NerveMethod<undefined, [boolean, PlaybackState?, string?]>
+  PreviousTrack: NerveMethod<undefined, [boolean, PlaybackState?, string?]>
+  SetVolume: NerveMethod<{ volume: number }, [boolean, string?]>
+  SeekTrack: NerveMethod<{ position: number }, [boolean, string?]>
+  PlaybackChanged: NerveSignal<[PlaybackState]>
+}
+
+const INITIAL_MUSIC_TRACKS: MusicTrack[] = [
+  {
+    id: 'track-1',
+    title: 'Midnight City',
+    artist: 'M83',
+    album: "Hurry Up, We're Dreaming",
+    duration: 244,
+    coverColor: '#38bdf8',
+    station: 'Non-Stop-Pop FM',
+  },
+  {
+    id: 'track-2',
+    title: 'Sleepwalking',
+    artist: 'The Chain Gang of 1974',
+    album: 'Daydream',
+    duration: 218,
+    coverColor: '#a855f7',
+    station: 'Radio Mirror Park',
+  },
+  {
+    id: 'track-3',
+    title: 'Blinding Lights',
+    artist: 'The Weeknd',
+    album: 'After Hours',
+    duration: 200,
+    coverColor: '#ef4444',
+    station: 'Los Santos Underground',
+  },
+  {
+    id: 'track-4',
+    title: 'Lady (Hear Me Tonight)',
+    artist: 'Modjo',
+    album: 'Modjo',
+    duration: 306,
+    coverColor: '#f59e0b',
+    station: 'Non-Stop-Pop FM',
+  },
+  {
+    id: 'track-5',
+    title: 'Still D.R.E.',
+    artist: 'Dr. Dre ft. Snoop Dogg',
+    album: '2001',
+    duration: 270,
+    coverColor: '#10b981',
+    station: 'West Coast Classics',
+  },
+  {
+    id: 'track-6',
+    title: 'Nightcall',
+    artist: 'Kavinsky',
+    album: 'OutRun',
+    duration: 259,
+    coverColor: '#ec4899',
+    station: 'Synthwave Sun City',
+  },
+]
+
 export function createNervePreview(options: NervePreviewOptions = {}) {
   const playerKey = options.playerKey ?? SETTINGS_DATASTORE_KEY
   let cachedSettings = { ...INITIAL_SETTINGS_STATE }
@@ -434,6 +522,17 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   let mailItems: MailItem[] = [...INITIAL_MAIL_ITEMS]
 
   let worldPois: MapPoi[] = [...INITIAL_MAP_POIS]
+
+  const musicTracks: MusicTrack[] = [...INITIAL_MUSIC_TRACKS]
+  let playbackState: PlaybackState = {
+    track: musicTracks[0],
+    isPlaying: false,
+    position: 0,
+    volume: 75,
+    loop: false,
+    shuffle: false,
+  }
+
   let activeWaypoint: MapWaypoint | null = null
   const playerBlips: PlayerBlip[] = [
     { playerId: 1, name: 'You', x: 0, y: -1000, heading: 45 }
@@ -757,6 +856,75 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         adapter.emitSignal('MapService', 'WaypointChanged', undefined)
         return [true, undefined]
       },
+      'MusicService.GetMusicLibrary': () => {
+        return [musicTracks, playbackState]
+      },
+      'MusicService.PlayTrack': (payload) => {
+        if (!isRecord(payload) || typeof payload.trackId !== 'string') {
+          return [false, undefined, 'Invalid track id']
+        }
+        const target = musicTracks.find((t) => t.id === payload.trackId)
+        if (!target) return [false, undefined, 'Track not found']
+        playbackState = {
+          ...playbackState,
+          track: target,
+          isPlaying: true,
+          position: 0,
+        }
+        adapter.emitSignal('MusicService', 'PlaybackChanged', playbackState)
+        return [true, playbackState, undefined]
+      },
+      'MusicService.TogglePlayback': () => {
+        playbackState = {
+          ...playbackState,
+          isPlaying: !playbackState.isPlaying,
+        }
+        adapter.emitSignal('MusicService', 'PlaybackChanged', playbackState)
+        return [true, playbackState, undefined]
+      },
+      'MusicService.NextTrack': () => {
+        const currentIndex = musicTracks.findIndex((t) => t.id === playbackState.track?.id)
+        const nextIndex = (currentIndex + 1) % musicTracks.length
+        playbackState = {
+          ...playbackState,
+          track: musicTracks[nextIndex],
+          isPlaying: true,
+          position: 0,
+        }
+        adapter.emitSignal('MusicService', 'PlaybackChanged', playbackState)
+        return [true, playbackState, undefined]
+      },
+      'MusicService.PreviousTrack': () => {
+        const currentIndex = musicTracks.findIndex((t) => t.id === playbackState.track?.id)
+        const prevIndex = (currentIndex - 1 + musicTracks.length) % musicTracks.length
+        playbackState = {
+          ...playbackState,
+          track: musicTracks[prevIndex],
+          isPlaying: true,
+          position: 0,
+        }
+        adapter.emitSignal('MusicService', 'PlaybackChanged', playbackState)
+        return [true, playbackState, undefined]
+      },
+      'MusicService.SetVolume': (payload) => {
+        if (!isRecord(payload) || typeof payload.volume !== 'number') return [false, 'Invalid volume']
+        playbackState = {
+          ...playbackState,
+          volume: Math.max(0, Math.min(100, payload.volume)),
+        }
+        adapter.emitSignal('MusicService', 'PlaybackChanged', playbackState)
+        return [true, undefined]
+      },
+      'MusicService.SeekTrack': (payload) => {
+        if (!isRecord(payload) || typeof payload.position !== 'number') return [false, 'Invalid position']
+        playbackState = {
+          ...playbackState,
+          position: Math.max(0, payload.position),
+        }
+        adapter.emitSignal('MusicService', 'PlaybackChanged', playbackState)
+        return [true, undefined]
+      },
+
 
 
     },
@@ -780,3 +948,4 @@ export const BankingService = nervePreview.GetService<PreviewBankingService>('Ba
 export const MediaService = nervePreview.GetService<PreviewMediaService>('MediaService')
 export const MailService = nervePreview.GetService<PreviewMailService>('MailService')
 export const MapService = nervePreview.GetService<PreviewMapService>('MapService')
+export const MusicService = nervePreview.GetService<PreviewMusicService>('MusicService')
