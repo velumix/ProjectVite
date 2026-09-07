@@ -1283,3 +1283,39 @@ test('memos app plays voice recordings, visualizes waveforms, records new audio 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('skyride app configures pickup and destination, selects vehicle tiers, dispatches drivers, tracks live rides, and cancels trips via Roblox SkyRideService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch SkyRide
+  await page.getByRole('button', { name: 'Open SkyRide' }).click()
+  await expect(page.locator('.skyride-app-root')).toBeVisible()
+  await expect(page.locator('.skyride-status-tag')).toHaveText('AVAILABLE')
+
+  // Select Executive tier
+  await page.locator('.skyride-tier-card').filter({ hasText: 'Executive' }).click()
+  await expect(page.locator('.skyride-tier-card.selected')).toContainText('Executive')
+
+  // Fill destination
+  await page.locator('input[placeholder*="Where to?"]').fill('Diamond Casino Penthouse')
+  await page.getByRole('button', { name: 'REQUEST SKYRIDE' }).click()
+
+  // Verify toast and active ride screen
+  await expect(page.locator('.skyride-toast')).toContainText('Driver Dmitri Vance dispatched')
+  await expect(page.locator('.skyride-active-container')).toBeVisible()
+  await expect(page.locator('.skyride-driver-info h4')).toHaveText('Dmitri Vance')
+  await expect(page.locator('.skyride-veh-model')).toContainText('Enus Windsor Drop')
+  await expect(page.locator('.skyride-fare-badge')).toHaveText('$75')
+  await expect(page.locator('.skyride-status-tag')).toHaveText('EN ROUTE')
+
+  // Cancel ride
+  await page.getByRole('button', { name: 'CANCEL RIDE' }).click()
+  await expect(page.locator('.skyride-toast')).toContainText('Ride request cancelled')
+  await expect(page.locator('.skyride-hail-container')).toBeVisible()
+  await expect(page.locator('.skyride-status-tag')).toHaveText('AVAILABLE')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

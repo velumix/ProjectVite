@@ -24,6 +24,7 @@ import { PicstagramApp } from './apps/PicstagramApp.tsx'
 import { RadioApp } from './apps/RadioApp.tsx'
 import { CalendarApp } from './apps/CalendarApp.tsx'
 import { MemosApp } from './apps/MemosApp.tsx'
+import { SkyRideApp } from './apps/SkyRideApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -342,6 +343,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'radio' && <RadioApp />}
             {activeApp === 'calendar' && <CalendarApp />}
             {activeApp === 'memos' && <MemosApp />}
+            {activeApp === 'skyride' && <SkyRideApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -374,6 +376,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'radio' &&
               activeApp !== 'calendar' &&
               activeApp !== 'memos' &&
+              activeApp !== 'skyride' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}
