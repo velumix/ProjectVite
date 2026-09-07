@@ -732,6 +732,38 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type EmergencyAlert = {
+  id: string
+  title: string
+  department: string
+  category: 'police' | 'fire' | 'weather' | 'ems' | 'civic'
+  severity: 'critical' | 'warning' | 'advisory'
+  location: string
+  x: number
+  y: number
+  description: string
+  timestamp: number
+  active: boolean
+}
+
+export type PreviewEmergencyService = {
+  GetAlerts: NerveMethod<Record<string, never> | undefined, [EmergencyAlert[]]>
+  PublishAlert: NerveMethod<{
+    title: string
+    department: string
+    category: string
+    severity: string
+    location: string
+    x: number
+    y: number
+    description: string
+  }, [boolean, EmergencyAlert?]>
+  ResolveAlert: NerveMethod<{ alertId: string }, [boolean, string?]>
+  AlertBroadcasted: NerveSignal<[EmergencyAlert]>
+  AlertResolved: NerveSignal<[EmergencyAlert]>
+}
+
 export type InvoiceItem = {
   id: string
   title: string
@@ -996,6 +1028,62 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const emergencyAlerts: EmergencyAlert[] = [
+    {
+      id: 'alert-01',
+      title: 'Severe Weather & High Surf Warning',
+      department: 'Emergency Management Agency',
+      category: 'weather',
+      severity: 'warning',
+      location: 'Del Perro Pier & Coastal Highway',
+      x: -1600,
+      y: -1000,
+      description: 'Gale force gusts up to 55 knots expected along western shoreline. Small craft and swimmers seek shelter.',
+      timestamp: Date.now() - 1800000,
+      active: true,
+    },
+    {
+      id: 'alert-02',
+      title: 'Code 3: Armed Robbery in Progress',
+      department: 'San Andreas State Police',
+      category: 'police',
+      severity: 'critical',
+      location: 'Legion Square / San Andreas Ave',
+      x: 150,
+      y: -1040,
+      description: 'Multiple armed suspects reported on scene. Perimeter established. Civilians avoid area.',
+      timestamp: Date.now() - 900000,
+      active: true,
+    },
+    {
+      id: 'alert-03',
+      title: 'Structure Fire 2nd Alarm',
+      department: 'Los Santos Fire & Rescue',
+      category: 'fire',
+      severity: 'critical',
+      location: 'El Burro Heights Industrial Park',
+      x: 1200,
+      y: -1400,
+      description: 'Commercial warehouse blaze. Engine 4 and Ladder 2 responding on TAC-3.',
+      timestamp: Date.now() - 3600000,
+      active: true,
+    },
+    {
+      id: 'alert-04',
+      title: 'Multi-Vehicle Collision Traffic Delay',
+      department: 'Department of Transportation',
+      category: 'civic',
+      severity: 'advisory',
+      location: 'La Puerta Fwy Northbound',
+      x: -400,
+      y: -1200,
+      description: 'Right two lanes blocked due to overturned flatbed. Expect 20-minute delays.',
+      timestamp: Date.now() - 7200000,
+      active: false,
+    },
+  ]
+
   const initialInvoices: InvoiceItem[] = [
     {
       id: 'inv-101',
@@ -1653,6 +1741,38 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'EmergencyService.GetAlerts': () => {
+        return [emergencyAlerts.map((a) => ({ ...a }))]
+      },
+      'EmergencyService.PublishAlert': (payload) => {
+        if (!isRecord(payload) || typeof payload.title !== 'string') return [false, undefined]
+        const newAlert: EmergencyAlert = {
+          id: 'alert-' + Date.now(),
+          title: String(payload.title),
+          department: String(payload.department || 'Emergency Operations'),
+          category: (payload.category as any) || 'civic',
+          severity: (payload.severity as any) || 'warning',
+          location: String(payload.location || 'Citywide'),
+          x: Number(payload.x || 0),
+          y: Number(payload.y || 0),
+          description: String(payload.description || ''),
+          timestamp: Date.now(),
+          active: true,
+        }
+        emergencyAlerts.unshift(newAlert)
+        adapter.emitSignal('EmergencyService', 'AlertBroadcasted', { ...newAlert })
+        return [true, { ...newAlert }]
+      },
+      'EmergencyService.ResolveAlert': (payload) => {
+        if (!isRecord(payload) || typeof payload.alertId !== 'string') return [false, 'Invalid alert ID']
+        const alert = emergencyAlerts.find((a) => a.id === payload.alertId)
+        if (!alert) return [false, 'Alert not found']
+        alert.active = false
+        adapter.emitSignal('EmergencyService', 'AlertResolved', { ...alert })
+        return [true, undefined]
+      },
+
       'BillingService.GetInvoices': () => {
         return [invoicesList.map((i) => ({ ...i }))]
       },
@@ -1905,3 +2025,4 @@ export const AppStoreService = nervePreview.GetService<PreviewAppStoreService>('
 export const CryptoService = nervePreview.GetService<PreviewCryptoService>('CryptoService')
 export const HouseService = nervePreview.GetService<PreviewHouseService>('HouseService')
 export const BillingService = nervePreview.GetService<PreviewBillingService>('BillingService')
+export const EmergencyService = nervePreview.GetService<PreviewEmergencyService>('EmergencyService')

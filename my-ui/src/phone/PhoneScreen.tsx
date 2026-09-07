@@ -11,6 +11,7 @@ import { AppStoreApp } from './apps/AppStoreApp.tsx'
 import { CryptoApp } from './apps/CryptoApp.tsx'
 import { HouseApp } from './apps/HouseApp.tsx'
 import { BillingApp } from './apps/BillingApp.tsx'
+import { CityWarnApp } from './apps/CityWarnApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -316,6 +317,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'crypto' && <CryptoApp />}
             {activeApp === 'house' && <HouseApp onOpenMap={() => launch('map')} />}
             {activeApp === 'billing' && <BillingApp />}
+            {activeApp === 'citywarn' && <CityWarnApp onOpenMap={() => launch('map')} />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -335,6 +337,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'crypto' &&
               activeApp !== 'house' &&
               activeApp !== 'billing' &&
+              activeApp !== 'citywarn' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

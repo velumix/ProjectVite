@@ -3764,6 +3764,263 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "EmergencyService": {
+      "GetAlerts": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "department": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "severity": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "active": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PublishAlert": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "title": {
+              "kind": "string"
+            },
+            "department": {
+              "kind": "string"
+            },
+            "category": {
+              "kind": "string"
+            },
+            "severity": {
+              "kind": "string"
+            },
+            "location": {
+              "kind": "string"
+            },
+            "x": {
+              "kind": "float64"
+            },
+            "y": {
+              "kind": "float64"
+            },
+            "description": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "department": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "severity": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "active": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ResolveAlert": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "alertId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "AlertBroadcasted": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "title": {
+                  "kind": "string"
+                },
+                "department": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "severity": {
+                  "kind": "string"
+                },
+                "location": {
+                  "kind": "string"
+                },
+                "x": {
+                  "kind": "float64"
+                },
+                "y": {
+                  "kind": "float64"
+                },
+                "description": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "active": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "AlertResolved": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "title": {
+                  "kind": "string"
+                },
+                "department": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "severity": {
+                  "kind": "string"
+                },
+                "location": {
+                  "kind": "string"
+                },
+                "x": {
+                  "kind": "float64"
+                },
+                "y": {
+                  "kind": "float64"
+                },
+                "description": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "active": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

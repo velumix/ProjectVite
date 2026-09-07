@@ -3866,6 +3866,270 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "EmergencyService",
+      "Methods": [
+        {
+          "Name": "GetAlerts",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "department": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "severity": {
+                      "kind": "string"
+                    },
+                    "location": {
+                      "kind": "string"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "description": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "active": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "PublishAlert",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "title": {
+                "kind": "string"
+              },
+              "department": {
+                "kind": "string"
+              },
+              "category": {
+                "kind": "string"
+              },
+              "severity": {
+                "kind": "string"
+              },
+              "location": {
+                "kind": "string"
+              },
+              "x": {
+                "kind": "float64"
+              },
+              "y": {
+                "kind": "float64"
+              },
+              "description": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "department": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "severity": {
+                      "kind": "string"
+                    },
+                    "location": {
+                      "kind": "string"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "description": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "active": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ResolveAlert",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "alertId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "AlertBroadcasted",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "department": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "severity": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "active": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "AlertResolved",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "department": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "severity": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "active": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -4003,6 +4267,16 @@
       "Name": "BillingController",
       "ServiceDependencies": [
         "BillingService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "EmergencyController",
+      "ServiceDependencies": [
+        "EmergencyService"
       ],
       "Lifecycle": {
         "NerveInit": true,

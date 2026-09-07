@@ -682,3 +682,47 @@ test('billing app displays municipal invoices, filters by status, pays citations
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('citywarn app displays emergency broadcasts, filters by category, resolves incidents, and broadcasts citywide alerts via Roblox EmergencyService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch CityWarn
+  await page.getByRole('button', { name: 'Open CityWarn' }).click()
+  await expect(page.locator('.citywarn-app-root')).toBeVisible()
+  await expect(page.locator('.citywarn-branding h3')).toHaveText('CityWarn')
+
+  // Live indicators and alerts list
+  await expect(page.locator('.citywarn-live-indicator')).toContainText('Active Incident')
+  const alertCards = page.locator('.citywarn-alert-card')
+  await expect(alertCards).toHaveCount(4)
+
+  // Filter Police
+  await page.getByRole('button', { name: 'POLICE' }).click()
+  await expect(page.locator('.citywarn-alert-card')).toHaveCount(1)
+  await expect(page.locator('.citywarn-alert-title')).toContainText('Armed Robbery')
+
+  // Broadcast new alert
+  await page.getByRole('button', { name: '+ Broadcast' }).click()
+  await expect(page.locator('.citywarn-modal-backdrop')).toBeVisible()
+
+  await page.locator('input[placeholder*="headline"]').fill('Chemical Hazard Alert')
+  await page.locator('input[placeholder*="Location"]').fill('Elysian Island Refinery')
+  await page.locator('textarea[placeholder*="Incident details"]').fill('Vapor cloud detected. Shelter in place.')
+  await page.getByRole('button', { name: '🚨 ISSUE BROADCAST NOW' }).click()
+
+  // Verify toast and new broadcast
+  await expect(page.locator('.citywarn-toast')).toContainText('broadcasted citywide')
+  await page.getByRole('button', { name: 'ALL' }).click()
+  await expect(page.locator('.citywarn-alert-title').first()).toHaveText('Chemical Hazard Alert')
+
+  // Resolve top active alert
+  const resolveBtn = page.locator('.citywarn-alert-card').first().locator('.citywarn-action-btn.resolve')
+  await resolveBtn.click()
+  await expect(page.locator('.citywarn-toast')).toContainText('Incident marked as resolved')
+  await expect(page.locator('.citywarn-alert-card').first().locator('.citywarn-resolved-tag')).toHaveText('RESOLVED')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
