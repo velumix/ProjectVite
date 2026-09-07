@@ -3654,6 +3654,218 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "BillingService",
+      "Methods": [
+        {
+          "Name": "GetInvoices",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "sender": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "dueDate": {
+                      "kind": "float64"
+                    },
+                    "status": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "issuedAt": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "PayInvoice",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "invoiceId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "sender": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "dueDate": {
+                      "kind": "float64"
+                    },
+                    "status": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "issuedAt": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "PayAll",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "float64"
+              },
+              {
+                "kind": "float64"
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "InvoicePaid",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "dueDate": {
+                    "kind": "float64"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "issuedAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "InvoicesBatchPaid",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "sender": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "dueDate": {
+                      "kind": "float64"
+                    },
+                    "status": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "issuedAt": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -3781,6 +3993,16 @@
       "Name": "HouseController",
       "ServiceDependencies": [
         "HouseService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "BillingController",
+      "ServiceDependencies": [
+        "BillingService"
       ],
       "Lifecycle": {
         "NerveInit": true,

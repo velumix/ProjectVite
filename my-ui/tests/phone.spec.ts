@@ -645,3 +645,40 @@ test('house app displays properties, toggles door locks and security alarms, and
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('billing app displays municipal invoices, filters by status, pays citations, and pays batch balance via Roblox BillingService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Billing
+  await page.getByRole('button', { name: 'Open Billing' }).click()
+  await expect(page.locator('.billing-app-root')).toBeVisible()
+  await expect(page.locator('.billing-branding h3')).toHaveText('Billing & Citations')
+
+  // Total outstanding balance
+  await expect(page.locator('.billing-summary-num')).toContainText('$1,885.00')
+  const cards = page.locator('.billing-invoice-card')
+  await expect(cards).toHaveCount(4)
+
+  // Filter Unpaid
+  await page.locator('.billing-filter-pill').nth(1).click()
+  await expect(page.locator('.billing-invoice-card')).toHaveCount(3)
+
+  // Pay single citation
+  const firstPayBtn = page.locator('.billing-invoice-card').first().locator('.billing-pay-btn')
+  await firstPayBtn.click()
+  await expect(page.locator('.billing-toast')).toContainText('Paid $450')
+
+  // Pay all remaining
+  const payAllBtn = page.getByRole('button', { name: 'PAY ALL' })
+  await payAllBtn.click()
+  await expect(page.locator('.billing-toast')).toContainText('Paid all 2 pending invoices')
+
+  // Switch to Paid tab
+  await page.locator('.billing-filter-pill').nth(2).click()
+  await expect(page.locator('.billing-invoice-card')).toHaveCount(4)
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

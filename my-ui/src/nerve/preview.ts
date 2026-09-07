@@ -731,6 +731,26 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type InvoiceItem = {
+  id: string
+  title: string
+  sender: string
+  amount: number
+  dueDate: number
+  status: 'unpaid' | 'paid' | 'overdue'
+  category: 'citation' | 'utility' | 'service' | 'tax'
+  issuedAt: number
+}
+
+export type PreviewBillingService = {
+  GetInvoices: NerveMethod<Record<string, never> | undefined, [InvoiceItem[]]>
+  PayInvoice: NerveMethod<{ invoiceId: string }, [boolean, string?, InvoiceItem?]>
+  PayAll: NerveMethod<Record<string, never> | undefined, [boolean, number, number]>
+  InvoicePaid: NerveSignal<[InvoiceItem]>
+  InvoicesBatchPaid: NerveSignal<[InvoiceItem[]]>
+}
+
 export type PropertyKey = {
   keyId: string
   holderName: string
@@ -975,6 +995,51 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const initialInvoices: InvoiceItem[] = [
+    {
+      id: 'inv-101',
+      title: 'Excessive Speed (85 in 55 MPH)',
+      sender: 'Los Santos Police Dept',
+      amount: 450,
+      dueDate: Date.now() + 86400000 * 3,
+      status: 'unpaid',
+      category: 'citation',
+      issuedAt: Date.now() - 86400000 * 2,
+    },
+    {
+      id: 'inv-102',
+      title: 'Monthly Utility & Grid Maintenance',
+      sender: 'LS Water & Power',
+      amount: 185,
+      dueDate: Date.now() + 86400000 * 7,
+      status: 'unpaid',
+      category: 'utility',
+      issuedAt: Date.now() - 86400000 * 1,
+    },
+    {
+      id: 'inv-103',
+      title: 'Performance Tuning & Body Repair',
+      sender: 'Los Santos Customs',
+      amount: 1250,
+      dueDate: Date.now() - 86400000 * 1,
+      status: 'overdue',
+      category: 'service',
+      issuedAt: Date.now() - 86400000 * 10,
+    },
+    {
+      id: 'inv-104',
+      title: 'Q3 Municipal Property Tax',
+      sender: 'San Andreas Treasury Dept',
+      amount: 890,
+      dueDate: Date.now() - 86400000 * 20,
+      status: 'paid',
+      category: 'tax',
+      issuedAt: Date.now() - 86400000 * 45,
+    },
+  ]
+  const invoicesList: InvoiceItem[] = initialInvoices.map((i) => ({ ...i }))
+
   const housingProperties: HousingProperty[] = [
     {
       id: 'prop-1',
@@ -1060,7 +1125,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house'
+    'health', 'citywarn', 'crypto', 'house', 'billing'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -1587,6 +1652,34 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       },
       
       
+      
+      'BillingService.GetInvoices': () => {
+        return [invoicesList.map((i) => ({ ...i }))]
+      },
+      'BillingService.PayInvoice': (payload) => {
+        if (!isRecord(payload) || typeof payload.invoiceId !== 'string') return [false, 'Invalid invoice ID', undefined]
+        const inv = invoicesList.find((i) => i.id === payload.invoiceId)
+        if (!inv) return [false, 'Invoice not found', undefined]
+        if (inv.status === 'paid') return [false, 'Invoice is already paid', undefined]
+        inv.status = 'paid'
+        adapter.emitSignal('BillingService', 'InvoicePaid', { ...inv })
+        return [true, undefined, { ...inv }]
+      },
+      'BillingService.PayAll': () => {
+        let count = 0
+        let total = 0
+        for (const inv of invoicesList) {
+          if (inv.status !== 'paid') {
+            inv.status = 'paid'
+            count++
+            total += inv.amount
+          }
+        }
+        const updated = invoicesList.map((i) => ({ ...i }))
+        adapter.emitSignal('BillingService', 'InvoicesBatchPaid', updated)
+        return [true, count, total]
+      },
+
       'HouseService.GetProperties': () => {
         return [housingProperties.map((p) => ({ ...p, keys: [...p.keys] }))]
       },
@@ -1811,3 +1904,4 @@ export const SocialService = nervePreview.GetService<PreviewSocialService>('Soci
 export const AppStoreService = nervePreview.GetService<PreviewAppStoreService>('AppStoreService')
 export const CryptoService = nervePreview.GetService<PreviewCryptoService>('CryptoService')
 export const HouseService = nervePreview.GetService<PreviewHouseService>('HouseService')
+export const BillingService = nervePreview.GetService<PreviewBillingService>('BillingService')

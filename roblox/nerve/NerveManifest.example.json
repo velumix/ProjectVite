@@ -3559,6 +3559,211 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "BillingService": {
+      "GetInvoices": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "dueDate": {
+                    "kind": "float64"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "issuedAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PayInvoice": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "invoiceId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "dueDate": {
+                    "kind": "float64"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "issuedAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PayAll": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "float64"
+            },
+            {
+              "kind": "float64"
+            }
+          ]
+        }
+      },
+      "InvoicePaid": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "title": {
+                  "kind": "string"
+                },
+                "sender": {
+                  "kind": "string"
+                },
+                "amount": {
+                  "kind": "float64"
+                },
+                "dueDate": {
+                  "kind": "float64"
+                },
+                "status": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "issuedAt": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "InvoicesBatchPaid": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "dueDate": {
+                    "kind": "float64"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "issuedAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }
