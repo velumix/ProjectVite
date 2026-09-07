@@ -1180,6 +1180,269 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "MailService": {
+      "GetMailbox": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "folder": {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            "query": {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "senderName": {
+                    "kind": "string"
+                  },
+                  "senderAddress": {
+                    "kind": "string"
+                  },
+                  "recipient": {
+                    "kind": "string"
+                  },
+                  "subject": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "read": {
+                    "kind": "bool"
+                  },
+                  "folder": {
+                    "kind": "string"
+                  },
+                  "starred": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "struct",
+              "fields": {
+                "inboxCount": {
+                  "kind": "float64"
+                },
+                "unreadCount": {
+                  "kind": "float64"
+                },
+                "sentCount": {
+                  "kind": "float64"
+                },
+                "trashCount": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "SendMail": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "to": {
+              "kind": "string"
+            },
+            "subject": {
+              "kind": "string"
+            },
+            "body": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "senderName": {
+                    "kind": "string"
+                  },
+                  "senderAddress": {
+                    "kind": "string"
+                  },
+                  "recipient": {
+                    "kind": "string"
+                  },
+                  "subject": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "read": {
+                    "kind": "bool"
+                  },
+                  "folder": {
+                    "kind": "string"
+                  },
+                  "starred": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "MarkMailRead": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "ids": {
+              "kind": "array",
+              "value": {
+                "kind": "string"
+              }
+            },
+            "read": {
+              "kind": "bool"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleMailStar": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "id": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "DeleteMail": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "ids": {
+              "kind": "array",
+              "value": {
+                "kind": "string"
+              }
+            },
+            "permanent": {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "MailChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "string"
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

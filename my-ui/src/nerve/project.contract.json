@@ -5,115 +5,827 @@
       "Methods": [
         {
           "Name": "BuyItem",
-          "Request": { "kind": "tuple", "items": [{ "kind": "string" }] },
-          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }, { "kind": "optional", "value": { "kind": "float64" } }] },
-          "RateLimit": { "Requests": 12, "Window": 1 }
+          "Request": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              }
+            ]
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              }
+            ]
+          },
+          "RateLimit": {
+            "Requests": 12,
+            "Window": 1
+          }
         },
         {
           "Name": "GetInventory",
-          "Request": { "kind": "tuple", "items": [] },
-          "Response": { "kind": "tuple", "items": [{ "kind": "array", "value": { "kind": "struct", "fields": { "ItemId": { "kind": "string" }, "Quantity": { "kind": "int32" } } } }] }
+          "Request": {
+            "kind": "tuple",
+            "items": []
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "ItemId": {
+                      "kind": "string"
+                    },
+                    "Quantity": {
+                      "kind": "int32"
+                    }
+                  }
+                }
+              }
+            ]
+          }
         }
       ],
       "Signals": [
-        { "Name": "MoneyChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "float64" }] } },
-        { "Name": "InventoryChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "string" }, { "kind": "int32" }] } },
-        { "Name": "EquipItem", "Arguments": { "kind": "tuple", "items": [{ "kind": "string" }] }, "Direction": "client" }
+        {
+          "Name": "MoneyChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "float64"
+              }
+            ]
+          }
+        },
+        {
+          "Name": "InventoryChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              },
+              {
+                "kind": "int32"
+              }
+            ]
+          }
+        },
+        {
+          "Name": "EquipItem",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              }
+            ]
+          },
+          "Direction": "client"
+        }
       ],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     },
     {
       "Name": "SettingsService",
       "Methods": [
         {
           "Name": "GetSettings",
-          "Request": { "kind": "tuple", "items": [] },
-          "Response": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "language": { "kind": "string" }, "uiScale": { "kind": "float64" }, "showTooltips": { "kind": "bool" }, "streamerMode": { "kind": "bool" }, "showQuantities": { "kind": "bool" }, "performancePreset": { "kind": "string" }, "disablePostProcessing": { "kind": "bool" }, "reduceEffects": { "kind": "bool" }, "lowerReflectionDetail": { "kind": "bool" }, "shadowDetail": { "kind": "float64" }, "viewDistance": { "kind": "float64" }, "masterVolume": { "kind": "float64" }, "musicVolume": { "kind": "float64" }, "sfxVolume": { "kind": "float64" }, "radioVolume": { "kind": "float64" }, "voiceChatVolume": { "kind": "float64" }, "lookSensitivity": { "kind": "float64" }, "invertLook": { "kind": "bool" }, "holdToSprint": { "kind": "bool" }, "showMinimap": { "kind": "bool" }, "showCompass": { "kind": "bool" }, "damageNumbers": { "kind": "bool" }, "showNotifications": { "kind": "bool" }, "missionAlerts": { "kind": "bool" }, "chatNotifications": { "kind": "bool" }, "colorblindMode": { "kind": "string" }, "subtitles": { "kind": "bool" }, "highContrast": { "kind": "bool" }, "developerMode": { "kind": "bool" }, "showNetworkStats": { "kind": "bool" }, "motion": { "kind": "bool" }, "panelOpacity": { "kind": "float64" } } }] }
-        },
-        {
-          "Name": "SaveSettings",
-          "Request": { "kind": "struct", "fields": { "language": { "kind": "string" }, "uiScale": { "kind": "float64" }, "showTooltips": { "kind": "bool" }, "streamerMode": { "kind": "bool" }, "showQuantities": { "kind": "bool" }, "performancePreset": { "kind": "string" }, "disablePostProcessing": { "kind": "bool" }, "reduceEffects": { "kind": "bool" }, "lowerReflectionDetail": { "kind": "bool" }, "shadowDetail": { "kind": "float64" }, "viewDistance": { "kind": "float64" }, "masterVolume": { "kind": "float64" }, "musicVolume": { "kind": "float64" }, "sfxVolume": { "kind": "float64" }, "radioVolume": { "kind": "float64" }, "voiceChatVolume": { "kind": "float64" }, "lookSensitivity": { "kind": "float64" }, "invertLook": { "kind": "bool" }, "holdToSprint": { "kind": "bool" }, "showMinimap": { "kind": "bool" }, "showCompass": { "kind": "bool" }, "damageNumbers": { "kind": "bool" }, "showNotifications": { "kind": "bool" }, "missionAlerts": { "kind": "bool" }, "chatNotifications": { "kind": "bool" }, "colorblindMode": { "kind": "string" }, "subtitles": { "kind": "bool" }, "highContrast": { "kind": "bool" }, "developerMode": { "kind": "bool" }, "showNetworkStats": { "kind": "bool" }, "motion": { "kind": "bool" }, "panelOpacity": { "kind": "float64" } } },
-          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }] },
-          "RateLimit": { "Requests": 10, "Window": 1 }
-        }
-      ],
-      "Signals": [
-        { "Name": "SettingsChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "language": { "kind": "string" }, "uiScale": { "kind": "float64" }, "showTooltips": { "kind": "bool" }, "streamerMode": { "kind": "bool" }, "showQuantities": { "kind": "bool" }, "performancePreset": { "kind": "string" }, "disablePostProcessing": { "kind": "bool" }, "reduceEffects": { "kind": "bool" }, "lowerReflectionDetail": { "kind": "bool" }, "shadowDetail": { "kind": "float64" }, "viewDistance": { "kind": "float64" }, "masterVolume": { "kind": "float64" }, "musicVolume": { "kind": "float64" }, "sfxVolume": { "kind": "float64" }, "radioVolume": { "kind": "float64" }, "voiceChatVolume": { "kind": "float64" }, "lookSensitivity": { "kind": "float64" }, "invertLook": { "kind": "bool" }, "holdToSprint": { "kind": "bool" }, "showMinimap": { "kind": "bool" }, "showCompass": { "kind": "bool" }, "damageNumbers": { "kind": "bool" }, "showNotifications": { "kind": "bool" }, "missionAlerts": { "kind": "bool" }, "chatNotifications": { "kind": "bool" }, "colorblindMode": { "kind": "string" }, "subtitles": { "kind": "bool" }, "highContrast": { "kind": "bool" }, "developerMode": { "kind": "bool" }, "showNetworkStats": { "kind": "bool" }, "motion": { "kind": "bool" }, "panelOpacity": { "kind": "float64" } } }] } }
-      ],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
-    },
-    {
-      "Name": "PhoneService",
-      "Methods": [
-        {
-          "Name": "GetPhoneState",
-          "Request": { "kind": "tuple", "items": [] },
-          "Response": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "phoneNumber": { "kind": "string" }, "battery": { "kind": "float64" }, "contacts": { "kind": "array", "value": { "kind": "struct", "fields": { "id": { "kind": "string" }, "name": { "kind": "string" }, "number": { "kind": "string" } } } }, "conversations": { "kind": "array", "value": { "kind": "struct", "fields": { "contactId": { "kind": "string" }, "lastMessage": { "kind": "string" }, "time": { "kind": "string" }, "unread": { "kind": "int32" } } } }, "settings": { "kind": "struct", "fields": { "airplaneMode": { "kind": "bool" }, "wifiEnabled": { "kind": "bool" }, "bluetoothEnabled": { "kind": "bool" }, "darkMode": { "kind": "bool" }, "ringtone": { "kind": "string" } } } } }] }
-        },
-        {
-          "Name": "GetMessages",
-          "Request": { "kind": "tuple", "items": [{ "kind": "string" }] },
-          "Response": { "kind": "tuple", "items": [{ "kind": "array", "value": { "kind": "struct", "fields": { "id": { "kind": "string" }, "body": { "kind": "string" }, "fromPlayer": { "kind": "bool" }, "time": { "kind": "string" } } } }] }
-        },
-        {
-          "Name": "SendMessage",
-          "Request": { "kind": "struct", "fields": { "number": { "kind": "string" }, "body": { "kind": "string" } } },
-          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }] },
-          "RateLimit": { "Requests": 12, "Window": 1 }
-        },
-        {
-          "Name": "StartCall",
-          "Request": { "kind": "tuple", "items": [{ "kind": "string" }] },
-          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }] },
-          "RateLimit": { "Requests": 6, "Window": 1 }
-        },
-        {
-          "Name": "EndCall",
-          "Request": { "kind": "tuple", "items": [] },
-          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }] }
-        },
-        {
-          "Name": "SavePhoneSettings",
-          "Request": { "kind": "struct", "fields": { "airplaneMode": { "kind": "bool" }, "wifiEnabled": { "kind": "bool" }, "bluetoothEnabled": { "kind": "bool" }, "darkMode": { "kind": "bool" }, "ringtone": { "kind": "string" } } },
-          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }] },
-          "RateLimit": { "Requests": 10, "Window": 1 }
-        }
-      ],
-      "Signals": [
-        { "Name": "MessageReceived", "Arguments": { "kind": "tuple", "items": [{ "kind": "string" }, { "kind": "string" }] }, "Direction": "server" },
-        { "Name": "CallStateChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "string" }, { "kind": "string" }] }, "Direction": "server" },
-        { "Name": "PhoneSettingsChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "airplaneMode": { "kind": "bool" }, "wifiEnabled": { "kind": "bool" }, "bluetoothEnabled": { "kind": "bool" }, "darkMode": { "kind": "bool" }, "ringtone": { "kind": "string" } } }] }, "Direction": "server" }
-      ],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
-    },
-    {
-      "Name": "BankingService",
-      "Methods": [
-        {
-          "Name": "GetBankingOverview",
-          "Request": { "kind": "tuple", "items": [] },
+          "Request": {
+            "kind": "tuple",
+            "items": []
+          },
           "Response": {
             "kind": "tuple",
             "items": [
               {
                 "kind": "struct",
                 "fields": {
-                  "bank": { "kind": "float64" },
-                  "cash": { "kind": "float64" },
-                  "currency": { "kind": "string" },
-                  "playerId": { "kind": "int32" },
-                  "playerName": { "kind": "string" },
+                  "language": {
+                    "kind": "string"
+                  },
+                  "uiScale": {
+                    "kind": "float64"
+                  },
+                  "showTooltips": {
+                    "kind": "bool"
+                  },
+                  "streamerMode": {
+                    "kind": "bool"
+                  },
+                  "showQuantities": {
+                    "kind": "bool"
+                  },
+                  "performancePreset": {
+                    "kind": "string"
+                  },
+                  "disablePostProcessing": {
+                    "kind": "bool"
+                  },
+                  "reduceEffects": {
+                    "kind": "bool"
+                  },
+                  "lowerReflectionDetail": {
+                    "kind": "bool"
+                  },
+                  "shadowDetail": {
+                    "kind": "float64"
+                  },
+                  "viewDistance": {
+                    "kind": "float64"
+                  },
+                  "masterVolume": {
+                    "kind": "float64"
+                  },
+                  "musicVolume": {
+                    "kind": "float64"
+                  },
+                  "sfxVolume": {
+                    "kind": "float64"
+                  },
+                  "radioVolume": {
+                    "kind": "float64"
+                  },
+                  "voiceChatVolume": {
+                    "kind": "float64"
+                  },
+                  "lookSensitivity": {
+                    "kind": "float64"
+                  },
+                  "invertLook": {
+                    "kind": "bool"
+                  },
+                  "holdToSprint": {
+                    "kind": "bool"
+                  },
+                  "showMinimap": {
+                    "kind": "bool"
+                  },
+                  "showCompass": {
+                    "kind": "bool"
+                  },
+                  "damageNumbers": {
+                    "kind": "bool"
+                  },
+                  "showNotifications": {
+                    "kind": "bool"
+                  },
+                  "missionAlerts": {
+                    "kind": "bool"
+                  },
+                  "chatNotifications": {
+                    "kind": "bool"
+                  },
+                  "colorblindMode": {
+                    "kind": "string"
+                  },
+                  "subtitles": {
+                    "kind": "bool"
+                  },
+                  "highContrast": {
+                    "kind": "bool"
+                  },
+                  "developerMode": {
+                    "kind": "bool"
+                  },
+                  "showNetworkStats": {
+                    "kind": "bool"
+                  },
+                  "motion": {
+                    "kind": "bool"
+                  },
+                  "panelOpacity": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SaveSettings",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "language": {
+                "kind": "string"
+              },
+              "uiScale": {
+                "kind": "float64"
+              },
+              "showTooltips": {
+                "kind": "bool"
+              },
+              "streamerMode": {
+                "kind": "bool"
+              },
+              "showQuantities": {
+                "kind": "bool"
+              },
+              "performancePreset": {
+                "kind": "string"
+              },
+              "disablePostProcessing": {
+                "kind": "bool"
+              },
+              "reduceEffects": {
+                "kind": "bool"
+              },
+              "lowerReflectionDetail": {
+                "kind": "bool"
+              },
+              "shadowDetail": {
+                "kind": "float64"
+              },
+              "viewDistance": {
+                "kind": "float64"
+              },
+              "masterVolume": {
+                "kind": "float64"
+              },
+              "musicVolume": {
+                "kind": "float64"
+              },
+              "sfxVolume": {
+                "kind": "float64"
+              },
+              "radioVolume": {
+                "kind": "float64"
+              },
+              "voiceChatVolume": {
+                "kind": "float64"
+              },
+              "lookSensitivity": {
+                "kind": "float64"
+              },
+              "invertLook": {
+                "kind": "bool"
+              },
+              "holdToSprint": {
+                "kind": "bool"
+              },
+              "showMinimap": {
+                "kind": "bool"
+              },
+              "showCompass": {
+                "kind": "bool"
+              },
+              "damageNumbers": {
+                "kind": "bool"
+              },
+              "showNotifications": {
+                "kind": "bool"
+              },
+              "missionAlerts": {
+                "kind": "bool"
+              },
+              "chatNotifications": {
+                "kind": "bool"
+              },
+              "colorblindMode": {
+                "kind": "string"
+              },
+              "subtitles": {
+                "kind": "bool"
+              },
+              "highContrast": {
+                "kind": "bool"
+              },
+              "developerMode": {
+                "kind": "bool"
+              },
+              "showNetworkStats": {
+                "kind": "bool"
+              },
+              "motion": {
+                "kind": "bool"
+              },
+              "panelOpacity": {
+                "kind": "float64"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          },
+          "RateLimit": {
+            "Requests": 10,
+            "Window": 1
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "SettingsChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "language": {
+                    "kind": "string"
+                  },
+                  "uiScale": {
+                    "kind": "float64"
+                  },
+                  "showTooltips": {
+                    "kind": "bool"
+                  },
+                  "streamerMode": {
+                    "kind": "bool"
+                  },
+                  "showQuantities": {
+                    "kind": "bool"
+                  },
+                  "performancePreset": {
+                    "kind": "string"
+                  },
+                  "disablePostProcessing": {
+                    "kind": "bool"
+                  },
+                  "reduceEffects": {
+                    "kind": "bool"
+                  },
+                  "lowerReflectionDetail": {
+                    "kind": "bool"
+                  },
+                  "shadowDetail": {
+                    "kind": "float64"
+                  },
+                  "viewDistance": {
+                    "kind": "float64"
+                  },
+                  "masterVolume": {
+                    "kind": "float64"
+                  },
+                  "musicVolume": {
+                    "kind": "float64"
+                  },
+                  "sfxVolume": {
+                    "kind": "float64"
+                  },
+                  "radioVolume": {
+                    "kind": "float64"
+                  },
+                  "voiceChatVolume": {
+                    "kind": "float64"
+                  },
+                  "lookSensitivity": {
+                    "kind": "float64"
+                  },
+                  "invertLook": {
+                    "kind": "bool"
+                  },
+                  "holdToSprint": {
+                    "kind": "bool"
+                  },
+                  "showMinimap": {
+                    "kind": "bool"
+                  },
+                  "showCompass": {
+                    "kind": "bool"
+                  },
+                  "damageNumbers": {
+                    "kind": "bool"
+                  },
+                  "showNotifications": {
+                    "kind": "bool"
+                  },
+                  "missionAlerts": {
+                    "kind": "bool"
+                  },
+                  "chatNotifications": {
+                    "kind": "bool"
+                  },
+                  "colorblindMode": {
+                    "kind": "string"
+                  },
+                  "subtitles": {
+                    "kind": "bool"
+                  },
+                  "highContrast": {
+                    "kind": "bool"
+                  },
+                  "developerMode": {
+                    "kind": "bool"
+                  },
+                  "showNetworkStats": {
+                    "kind": "bool"
+                  },
+                  "motion": {
+                    "kind": "bool"
+                  },
+                  "panelOpacity": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "PhoneService",
+      "Methods": [
+        {
+          "Name": "GetPhoneState",
+          "Request": {
+            "kind": "tuple",
+            "items": []
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "phoneNumber": {
+                    "kind": "string"
+                  },
+                  "battery": {
+                    "kind": "float64"
+                  },
+                  "contacts": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "name": {
+                          "kind": "string"
+                        },
+                        "number": {
+                          "kind": "string"
+                        }
+                      }
+                    }
+                  },
+                  "conversations": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "contactId": {
+                          "kind": "string"
+                        },
+                        "lastMessage": {
+                          "kind": "string"
+                        },
+                        "time": {
+                          "kind": "string"
+                        },
+                        "unread": {
+                          "kind": "int32"
+                        }
+                      }
+                    }
+                  },
+                  "settings": {
+                    "kind": "struct",
+                    "fields": {
+                      "airplaneMode": {
+                        "kind": "bool"
+                      },
+                      "wifiEnabled": {
+                        "kind": "bool"
+                      },
+                      "bluetoothEnabled": {
+                        "kind": "bool"
+                      },
+                      "darkMode": {
+                        "kind": "bool"
+                      },
+                      "ringtone": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "GetMessages",
+          "Request": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              }
+            ]
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "body": {
+                      "kind": "string"
+                    },
+                    "fromPlayer": {
+                      "kind": "bool"
+                    },
+                    "time": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SendMessage",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "number": {
+                "kind": "string"
+              },
+              "body": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          },
+          "RateLimit": {
+            "Requests": 12,
+            "Window": 1
+          }
+        },
+        {
+          "Name": "StartCall",
+          "Request": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              }
+            ]
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          },
+          "RateLimit": {
+            "Requests": 6,
+            "Window": 1
+          }
+        },
+        {
+          "Name": "EndCall",
+          "Request": {
+            "kind": "tuple",
+            "items": []
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SavePhoneSettings",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "airplaneMode": {
+                "kind": "bool"
+              },
+              "wifiEnabled": {
+                "kind": "bool"
+              },
+              "bluetoothEnabled": {
+                "kind": "bool"
+              },
+              "darkMode": {
+                "kind": "bool"
+              },
+              "ringtone": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          },
+          "RateLimit": {
+            "Requests": 10,
+            "Window": 1
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "MessageReceived",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              },
+              {
+                "kind": "string"
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "CallStateChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              },
+              {
+                "kind": "string"
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "PhoneSettingsChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "airplaneMode": {
+                    "kind": "bool"
+                  },
+                  "wifiEnabled": {
+                    "kind": "bool"
+                  },
+                  "bluetoothEnabled": {
+                    "kind": "bool"
+                  },
+                  "darkMode": {
+                    "kind": "bool"
+                  },
+                  "ringtone": {
+                    "kind": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "BankingService",
+      "Methods": [
+        {
+          "Name": "GetBankingOverview",
+          "Request": {
+            "kind": "tuple",
+            "items": []
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "bank": {
+                    "kind": "float64"
+                  },
+                  "cash": {
+                    "kind": "float64"
+                  },
+                  "currency": {
+                    "kind": "string"
+                  },
+                  "playerId": {
+                    "kind": "int32"
+                  },
+                  "playerName": {
+                    "kind": "string"
+                  },
                   "transactions": {
                     "kind": "array",
                     "value": {
                       "kind": "struct",
                       "fields": {
-                        "id": { "kind": "string" },
-                        "kind": { "kind": "string" },
-                        "amount": { "kind": "float64" },
-                        "label": { "kind": "string" },
-                        "reference": { "kind": "string" },
-                        "createdAt": { "kind": "float64" }
+                        "id": {
+                          "kind": "string"
+                        },
+                        "kind": {
+                          "kind": "string"
+                        },
+                        "amount": {
+                          "kind": "float64"
+                        },
+                        "label": {
+                          "kind": "string"
+                        },
+                        "reference": {
+                          "kind": "string"
+                        },
+                        "createdAt": {
+                          "kind": "float64"
+                        }
                       }
                     }
                   }
@@ -127,53 +839,96 @@
           "Request": {
             "kind": "struct",
             "fields": {
-              "amount": { "kind": "float64" },
-              "phoneNumber": { "kind": "string" },
-              "note": { "kind": "optional", "value": { "kind": "string" } }
+              "amount": {
+                "kind": "float64"
+              },
+              "phoneNumber": {
+                "kind": "string"
+              },
+              "note": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             }
           },
           "Response": {
             "kind": "tuple",
             "items": [
-              { "kind": "bool" },
-              { "kind": "optional", "value": { "kind": "string" } }
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             ]
           },
-          "RateLimit": { "Requests": 10, "Window": 1 }
+          "RateLimit": {
+            "Requests": 10,
+            "Window": 1
+          }
         },
         {
           "Name": "DepositMoney",
           "Request": {
             "kind": "struct",
             "fields": {
-              "amount": { "kind": "float64" }
+              "amount": {
+                "kind": "float64"
+              }
             }
           },
           "Response": {
             "kind": "tuple",
             "items": [
-              { "kind": "bool" },
-              { "kind": "optional", "value": { "kind": "string" } }
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             ]
           },
-          "RateLimit": { "Requests": 10, "Window": 1 }
+          "RateLimit": {
+            "Requests": 10,
+            "Window": 1
+          }
         },
         {
           "Name": "WithdrawMoney",
           "Request": {
             "kind": "struct",
             "fields": {
-              "amount": { "kind": "float64" }
+              "amount": {
+                "kind": "float64"
+              }
             }
           },
           "Response": {
             "kind": "tuple",
             "items": [
-              { "kind": "bool" },
-              { "kind": "optional", "value": { "kind": "string" } }
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             ]
           },
-          "RateLimit": { "Requests": 10, "Window": 1 }
+          "RateLimit": {
+            "Requests": 10,
+            "Window": 1
+          }
         }
       ],
       "Signals": [
@@ -185,11 +940,27 @@
               {
                 "kind": "struct",
                 "fields": {
-                  "kind": { "kind": "string" },
-                  "amount": { "kind": "float64" },
-                  "currency": { "kind": "string" },
-                  "sender": { "kind": "optional", "value": { "kind": "string" } },
-                  "label": { "kind": "optional", "value": { "kind": "string" } }
+                  "kind": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "currency": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "label": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
                 }
               }
             ]
@@ -197,7 +968,10 @@
           "Direction": "server"
         }
       ],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     },
     {
       "Name": "MediaService",
@@ -207,8 +981,18 @@
           "Request": {
             "kind": "struct",
             "fields": {
-              "filter": { "kind": "optional", "value": { "kind": "string" } },
-              "favoritesOnly": { "kind": "optional", "value": { "kind": "bool" } }
+              "filter": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              "favoritesOnly": {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              }
             }
           },
           "Response": {
@@ -219,24 +1003,54 @@
                 "value": {
                   "kind": "struct",
                   "fields": {
-                    "id": { "kind": "string" },
-                    "mediaType": { "kind": "string" },
-                    "url": { "kind": "string" },
-                    "thumbnailUrl": { "kind": "optional", "value": { "kind": "string" } },
-                    "favorite": { "kind": "bool" },
-                    "createdAt": { "kind": "float64" },
-                    "title": { "kind": "string" },
-                    "location": { "kind": "optional", "value": { "kind": "string" } }
+                    "id": {
+                      "kind": "string"
+                    },
+                    "mediaType": {
+                      "kind": "string"
+                    },
+                    "url": {
+                      "kind": "string"
+                    },
+                    "thumbnailUrl": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    },
+                    "favorite": {
+                      "kind": "bool"
+                    },
+                    "createdAt": {
+                      "kind": "float64"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "location": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
                   }
                 }
               },
               {
                 "kind": "struct",
                 "fields": {
-                  "all": { "kind": "float64" },
-                  "photos": { "kind": "float64" },
-                  "videos": { "kind": "float64" },
-                  "favorites": { "kind": "float64" }
+                  "all": {
+                    "kind": "float64"
+                  },
+                  "photos": {
+                    "kind": "float64"
+                  },
+                  "videos": {
+                    "kind": "float64"
+                  },
+                  "favorites": {
+                    "kind": "float64"
+                  }
                 }
               }
             ]
@@ -247,33 +1061,76 @@
           "Request": {
             "kind": "struct",
             "fields": {
-              "mediaType": { "kind": "string" },
-              "url": { "kind": "string" },
-              "title": { "kind": "optional", "value": { "kind": "string" } },
-              "location": { "kind": "optional", "value": { "kind": "string" } }
+              "mediaType": {
+                "kind": "string"
+              },
+              "url": {
+                "kind": "string"
+              },
+              "title": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              "location": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             }
           },
           "Response": {
             "kind": "tuple",
             "items": [
-              { "kind": "bool" },
+              {
+                "kind": "bool"
+              },
               {
                 "kind": "optional",
                 "value": {
                   "kind": "struct",
                   "fields": {
-                    "id": { "kind": "string" },
-                    "mediaType": { "kind": "string" },
-                    "url": { "kind": "string" },
-                    "thumbnailUrl": { "kind": "optional", "value": { "kind": "string" } },
-                    "favorite": { "kind": "bool" },
-                    "createdAt": { "kind": "float64" },
-                    "title": { "kind": "string" },
-                    "location": { "kind": "optional", "value": { "kind": "string" } }
+                    "id": {
+                      "kind": "string"
+                    },
+                    "mediaType": {
+                      "kind": "string"
+                    },
+                    "url": {
+                      "kind": "string"
+                    },
+                    "thumbnailUrl": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    },
+                    "favorite": {
+                      "kind": "bool"
+                    },
+                    "createdAt": {
+                      "kind": "float64"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "location": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
                   }
                 }
               },
-              { "kind": "optional", "value": { "kind": "string" } }
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             ]
           }
         },
@@ -282,15 +1139,26 @@
           "Request": {
             "kind": "struct",
             "fields": {
-              "id": { "kind": "string" }
+              "id": {
+                "kind": "string"
+              }
             }
           },
           "Response": {
             "kind": "tuple",
             "items": [
-              { "kind": "bool" },
-              { "kind": "bool" },
-              { "kind": "optional", "value": { "kind": "string" } }
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             ]
           }
         },
@@ -299,14 +1167,26 @@
           "Request": {
             "kind": "struct",
             "fields": {
-              "ids": { "kind": "array", "value": { "kind": "string" } }
+              "ids": {
+                "kind": "array",
+                "value": {
+                  "kind": "string"
+                }
+              }
             }
           },
           "Response": {
             "kind": "tuple",
             "items": [
-              { "kind": "bool" },
-              { "kind": "optional", "value": { "kind": "string" } }
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
             ]
           }
         }
@@ -316,39 +1196,352 @@
           "Name": "MediaChanged",
           "Arguments": {
             "kind": "tuple",
-            "items": [{ "kind": "string" }]
+            "items": [
+              {
+                "kind": "string"
+              }
+            ]
           },
           "Direction": "server"
         }
       ],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "MailService",
+      "Methods": [
+        {
+          "Name": "GetMailbox",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "folder": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              "query": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "sender": {
+                      "kind": "string"
+                    },
+                    "senderName": {
+                      "kind": "string"
+                    },
+                    "senderAddress": {
+                      "kind": "string"
+                    },
+                    "recipient": {
+                      "kind": "string"
+                    },
+                    "subject": {
+                      "kind": "string"
+                    },
+                    "body": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "read": {
+                      "kind": "bool"
+                    },
+                    "folder": {
+                      "kind": "string"
+                    },
+                    "starred": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "struct",
+                "fields": {
+                  "inboxCount": {
+                    "kind": "float64"
+                  },
+                  "unreadCount": {
+                    "kind": "float64"
+                  },
+                  "sentCount": {
+                    "kind": "float64"
+                  },
+                  "trashCount": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SendMail",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "to": {
+                "kind": "string"
+              },
+              "subject": {
+                "kind": "string"
+              },
+              "body": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "sender": {
+                      "kind": "string"
+                    },
+                    "senderName": {
+                      "kind": "string"
+                    },
+                    "senderAddress": {
+                      "kind": "string"
+                    },
+                    "recipient": {
+                      "kind": "string"
+                    },
+                    "subject": {
+                      "kind": "string"
+                    },
+                    "body": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "read": {
+                      "kind": "bool"
+                    },
+                    "folder": {
+                      "kind": "string"
+                    },
+                    "starred": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "MarkMailRead",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "ids": {
+                "kind": "array",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              "read": {
+                "kind": "bool"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleMailStar",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "id": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "DeleteMail",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "ids": {
+                "kind": "array",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              "permanent": {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "MailChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "string"
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
     {
       "Name": "InventoryController",
-      "ServiceDependencies": ["InventoryService"],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "ServiceDependencies": [
+        "InventoryService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     },
     {
       "Name": "SettingsController",
-      "ServiceDependencies": ["SettingsService"],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "ServiceDependencies": [
+        "SettingsService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     },
     {
       "Name": "PhoneController",
-      "ServiceDependencies": ["PhoneService"],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "ServiceDependencies": [
+        "PhoneService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     },
     {
       "Name": "BankingController",
-      "ServiceDependencies": ["BankingService"],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "ServiceDependencies": [
+        "BankingService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     },
     {
       "Name": "MediaController",
-      "ServiceDependencies": ["MediaService"],
-      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+      "ServiceDependencies": [
+        "MediaService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "MailController",
+      "ServiceDependencies": [
+        "MailService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ]
 }

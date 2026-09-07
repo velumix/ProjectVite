@@ -234,3 +234,56 @@ test('camera and photos apps capture media, display gallery grid, toggle favorit
   await expect(page.locator('.photos-toast-pill')).toContainText('1 items deleted')
   await expect(page.locator('.photos-grid-tile')).toHaveCount(4)
 })
+
+test('mail app displays folders, reads messages, toggles stars and sends mail via Roblox MailService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Mail App from Springboard
+  await page.getByRole('button', { name: 'Open Mail' }).click()
+  await expect(page.locator('.mail-app-root')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Mail', exact: true })).toBeVisible()
+
+  // Verify Inbox messages render
+  const mailCards = page.locator('.mail-item-card')
+  await expect(mailCards).toHaveCount(3)
+  await expect(page.locator('.mail-item-sender').first()).toContainText('City Services')
+
+  // Open first email to read
+  await mailCards.first().click()
+  await expect(page.locator('.mail-detail-view')).toBeVisible()
+  await expect(page.locator('.mail-detail-subject')).toContainText('Welcome to Sun City')
+  await expect(page.locator('.mail-detail-body')).toContainText('Welcome to Sun City! Please remember to register')
+
+  // Return back to Inbox
+  await page.getByTitle('Back to List').click()
+  await expect(page.locator('.mail-detail-view')).toBeHidden()
+
+  // Filter to Starred folder
+  await page.getByRole('button', { name: 'Starred', exact: true }).click()
+  await expect(page.locator('.mail-item-card')).toHaveCount(1)
+  await expect(page.locator('.mail-item-sender')).toContainText('City Services')
+
+  // Open Compose Modal
+  await page.getByTitle('Compose New Mail').click()
+  await expect(page.locator('.mail-compose-overlay')).toBeVisible()
+
+  // Use suggested contact chip
+  await page.getByRole('button', { name: 'PDM Autos' }).click()
+  await expect(page.locator('#compose-to')).toHaveValue('sales@pdm-autos.com')
+
+  // Fill in Subject & Body
+  await page.getByPlaceholder('Subject line').fill('Inquiry about Sultan RS')
+  await page.getByPlaceholder('Write your email here...').fill('Hello PDM team, do you have any blue Sultan RS units currently in stock?')
+
+  // Send email
+  await page.getByRole('button', { name: 'Send', exact: true }).click()
+  await expect(page.locator('.mail-toast-pill')).toContainText('Email Sent Successfully')
+  await expect(page.locator('.mail-compose-overlay')).toBeHidden()
+
+  // Switch to Sent folder and verify newly sent mail
+  await page.getByRole('button', { name: 'Sent', exact: true }).click()
+  const sentCards = page.locator('.mail-item-card')
+  await expect(sentCards).toHaveCount(2) // 1 initial + 1 new
+  await expect(sentCards.first()).toContainText('Inquiry about Sultan RS')
+})

@@ -233,6 +233,92 @@ export type NervePreviewOptions = {
   playerKey?: string
 }
 
+
+export type MailItem = {
+  id: string
+  sender: string
+  senderName: string
+  senderAddress: string
+  recipient: string
+  subject: string
+  body: string
+  timestamp: number
+  read: boolean
+  folder: string
+  starred: boolean
+}
+
+export type MailboxStats = {
+  inboxCount: number
+  unreadCount: number
+  sentCount: number
+  trashCount: number
+}
+
+export type PreviewMailService = {
+  GetMailbox: NerveMethod<{ folder?: string; query?: string } | undefined, [MailItem[], MailboxStats]>
+  SendMail: NerveMethod<{ to: string; subject: string; body: string }, [boolean, MailItem?, string?]>
+  MarkMailRead: NerveMethod<{ ids: string[]; read: boolean }, [boolean, string?]>
+  ToggleMailStar: NerveMethod<{ id: string }, [boolean, boolean, string?]>
+  DeleteMail: NerveMethod<{ ids: string[]; permanent?: boolean }, [boolean, string?]>
+  MailChanged: NerveSignal<[string]>
+}
+
+const INITIAL_MAIL_ITEMS: MailItem[] = [
+  {
+    id: 'mail-1',
+    sender: 'City Services <services@suncity.gov>',
+    senderName: 'City Services',
+    senderAddress: 'services@suncity.gov',
+    recipient: 'user@suncity.mail',
+    subject: 'Welcome to Sun City - Resident Handbook',
+    body: 'Welcome to Sun City! Please remember to register your vehicle at the local DMV and review the municipal guidelines. If you need any assistance, contact emergency or non-emergency dispatch at 555-0111.',
+    timestamp: Date.now() - 18000000,
+    read: false,
+    folder: 'inbox',
+    starred: true,
+  },
+  {
+    id: 'mail-2',
+    sender: 'Sun City Bank <notifications@suncitybank.com>',
+    senderName: 'Sun City Bank',
+    senderAddress: 'notifications@suncitybank.com',
+    recipient: 'user@suncity.mail',
+    subject: 'Account Statement Available',
+    body: 'Your monthly electronic account statement is now available to download. Please review your recent deposits and transfers in the Sun City Banking mobile app.',
+    timestamp: Date.now() - 43200000,
+    read: true,
+    folder: 'inbox',
+    starred: false,
+  },
+  {
+    id: 'mail-3',
+    sender: 'Premium Deluxe Motorsport <sales@pdm-autos.com>',
+    senderName: 'PDM Autos',
+    senderAddress: 'sales@pdm-autos.com',
+    recipient: 'user@suncity.mail',
+    subject: 'Special Offers on New Imports This Weekend',
+    body: 'Stop by our showroom on Power Street to check out the newly arrived high-performance tuners and executive sedans. Trade-ins welcomed!',
+    timestamp: Date.now() - 86400000,
+    read: true,
+    folder: 'inbox',
+    starred: false,
+  },
+  {
+    id: 'mail-4',
+    sender: 'user@suncity.mail',
+    senderName: 'You',
+    senderAddress: 'user@suncity.mail',
+    recipient: 'mechanic@bennyscustoms.com',
+    subject: 'Quote for custom turbo install',
+    body: 'Hey Benny, can you let me know how much it will cost to get the stage 3 turbo and suspension tuning done on my Banshee?',
+    timestamp: Date.now() - 129600000,
+    read: true,
+    folder: 'sent',
+    starred: false,
+  },
+]
+
 export function createNervePreview(options: NervePreviewOptions = {}) {
   const playerKey = options.playerKey ?? SETTINGS_DATASTORE_KEY
   let cachedSettings = { ...INITIAL_SETTINGS_STATE }
@@ -244,6 +330,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     transactions: [...INITIAL_BANKING_STATE.transactions],
   }
   let mediaItems: MediaItem[] = [...INITIAL_MEDIA_ITEMS]
+  let mailItems: MailItem[] = [...INITIAL_MAIL_ITEMS]
   let adapter: ReturnType<typeof createNerveBrowserAdapter>
 
   const readSettings = async (): Promise<StreamlinedSettingsState> => {
@@ -454,6 +541,93 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         adapter.emitSignal('MediaService', 'MediaChanged', 'delete')
         return [true, undefined]
       },
+      'MailService.GetMailbox': (options) => {
+        const folder = isRecord(options) && typeof options.folder === 'string' ? options.folder : 'inbox'
+        const query = isRecord(options) && typeof options.query === 'string' ? options.query.toLowerCase() : ''
+        
+        let inboxCount = 0
+        let unreadCount = 0
+        let sentCount = 0
+        let trashCount = 0
+        for (const item of mailItems) {
+          if (item.folder === 'inbox') {
+            inboxCount++
+            if (!item.read) unreadCount++
+          } else if (item.folder === 'sent') {
+            sentCount++
+          } else if (item.folder === 'trash') {
+            trashCount++
+          }
+        }
+        const stats: MailboxStats = { inboxCount, unreadCount, sentCount, trashCount }
+
+        const filtered = mailItems.filter((item) => {
+          if (item.folder !== folder) return false
+          if (!query) return true
+          return item.senderName.toLowerCase().includes(query) ||
+            item.subject.toLowerCase().includes(query) ||
+            item.body.toLowerCase().includes(query)
+        })
+        return [filtered, stats]
+      },
+      'MailService.SendMail': (payload) => {
+        if (!isRecord(payload) || typeof payload.to !== 'string' || typeof payload.subject !== 'string' || typeof payload.body !== 'string') {
+          return [false, undefined, 'Invalid payload']
+        }
+        if (!payload.to.trim()) return [false, undefined, 'Recipient required']
+        if (!payload.subject.trim()) return [false, undefined, 'Subject required']
+        if (!payload.body.trim()) return [false, undefined, 'Body required']
+
+        const newMail: MailItem = {
+          id: `mail-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          sender: 'user@suncity.mail',
+          senderName: 'You',
+          senderAddress: 'user@suncity.mail',
+          recipient: payload.to.trim(),
+          subject: payload.subject.trim(),
+          body: payload.body.trim(),
+          timestamp: Date.now(),
+          read: true,
+          folder: 'sent',
+          starred: false,
+        }
+        mailItems = [newMail, ...mailItems]
+        adapter.emitSignal('MailService', 'MailChanged', 'sent')
+        return [true, newMail, undefined]
+      },
+      'MailService.MarkMailRead': (payload) => {
+        if (!isRecord(payload) || !Array.isArray(payload.ids) || typeof payload.read !== 'boolean') {
+          return [false, 'Invalid payload']
+        }
+        const idSet = new Set(payload.ids)
+        const isRead = payload.read === true
+        mailItems = mailItems.map((item) => (idSet.has(item.id) ? { ...item, read: isRead } : item))
+        adapter.emitSignal('MailService', 'MailChanged', 'read_status')
+        return [true, undefined]
+      },
+      'MailService.ToggleMailStar': (payload) => {
+        if (!isRecord(payload) || typeof payload.id !== 'string') return [false, false, 'Invalid payload']
+        const index = mailItems.findIndex((item) => item.id === payload.id)
+        if (index < 0) return [false, false, 'Mail not found']
+        const updated = { ...mailItems[index], starred: !mailItems[index].starred }
+        mailItems = [...mailItems]
+        mailItems[index] = updated
+        adapter.emitSignal('MailService', 'MailChanged', 'star')
+        return [true, updated.starred, undefined]
+      },
+      'MailService.DeleteMail': (payload) => {
+        if (!isRecord(payload) || !Array.isArray(payload.ids)) return [false, 'Invalid payload']
+        const idSet = new Set(payload.ids)
+        const isPermanent = payload.permanent === true
+        if (isPermanent) {
+          mailItems = mailItems.filter((item) => !idSet.has(item.id))
+        } else {
+          mailItems = mailItems.map((item) => (idSet.has(item.id) ? { ...item, folder: 'trash' } : item))
+        }
+        adapter.emitSignal('MailService', 'MailChanged', 'delete')
+        return [true, undefined]
+      },
+
     },
   })
 
@@ -473,3 +647,4 @@ export const nervePreview = createNervePreview()
 export const InventoryService = nervePreview.GetService<PreviewInventoryService>('InventoryService')
 export const BankingService = nervePreview.GetService<PreviewBankingService>('BankingService')
 export const MediaService = nervePreview.GetService<PreviewMediaService>('MediaService')
+export const MailService = nervePreview.GetService<PreviewMailService>('MailService')

@@ -5,6 +5,7 @@ import { BankingApp } from './apps/BankingApp.tsx'
 import { CalculatorApp } from './apps/CalculatorApp.tsx'
 import { CameraApp } from './apps/CameraApp.tsx'
 import { ClockApp } from './apps/ClockApp.tsx'
+import { MailApp } from './apps/MailApp.tsx'
 import { NotesApp } from './apps/NotesApp.tsx'
 import { PhotosApp } from './apps/PhotosApp.tsx'
 import { WeatherApp } from './apps/WeatherApp.tsx'
@@ -253,6 +254,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'clock' && <ClockApp />}
             {activeApp === 'weather' && <WeatherApp />}
             {activeApp === 'notes' && <NotesApp />}
+            {activeApp === 'mail' && <MailApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -263,6 +265,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'calculator' &&
               activeApp !== 'clock' &&
               activeApp !== 'weather' &&
+              activeApp !== 'mail' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}
