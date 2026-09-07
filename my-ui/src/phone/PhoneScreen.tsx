@@ -27,6 +27,7 @@ import { MemosApp } from './apps/MemosApp.tsx'
 import { SkyRideApp } from './apps/SkyRideApp.tsx'
 import { CityMarktApp } from './apps/CityMarktApp.tsx'
 import { SnakeApp } from './apps/SnakeApp.tsx'
+import { MemoryApp } from './apps/MemoryApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -348,6 +349,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'skyride' && <SkyRideApp />}
             {activeApp === 'citymarkt' && <CityMarktApp />}
             {activeApp === 'snake' && <SnakeApp />}
+            {activeApp === 'memory' && <MemoryApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -383,6 +385,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'skyride' &&
               activeApp !== 'citymarkt' &&
               activeApp !== 'snake' &&
+              activeApp !== 'memory' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

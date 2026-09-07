@@ -11317,6 +11317,230 @@
   border-radius: 8px;
 }
 
+
+/* -------------------------------------------------------------
+   MEMORY PAIR GAME APP
+   ------------------------------------------------------------- */
+.memory-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #181124;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.memory-header {
+  padding: 0.6em 0.8em 0.3em;
+  background: #231934;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.memory-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.memory-title {
+  font-size: 0.88em;
+  font-weight: 900;
+  color: #c084fc;
+  letter-spacing: 0.04em;
+  display: block;
+}
+
+.memory-high {
+  font-size: 0.58em;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.memory-stats-box {
+  display: flex;
+  gap: 12px;
+}
+
+.memory-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.memory-stat label {
+  font-size: 0.5em;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.memory-stat span {
+  font-size: 0.95em;
+  font-weight: 900;
+  color: #fff;
+  font-family: monospace;
+}
+
+.memory-diff-row {
+  display: flex;
+  gap: 4px;
+}
+
+.memory-diff-btn {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  font-size: 0.54em;
+  font-weight: 800;
+  padding: 0.25em;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.memory-diff-btn.active {
+  background: #c084fc;
+  color: #000;
+  border-color: #c084fc;
+}
+
+/* Card Grid */
+.memory-grid-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8em;
+  position: relative;
+}
+
+.memory-card-grid {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  max-width: 290px;
+}
+
+.memory-card-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.memory-card-grid.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.memory-card-tile {
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #2b1f42;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  position: relative;
+  transition: transform 0.2s, background 0.2s, border-color 0.2s;
+  perspective: 600px;
+}
+
+.memory-card-tile .card-front {
+  display: none;
+}
+
+.memory-card-tile .card-back {
+  display: block;
+}
+
+.memory-card-tile.flipped .card-front {
+  display: block;
+}
+
+.memory-card-tile.flipped .card-back {
+  display: none;
+}
+
+.memory-card-tile.flipped {
+  background: #3b285c;
+  border-color: #c084fc;
+  transform: scale(0.96);
+}
+
+.memory-card-tile.matched {
+  background: #14532d;
+  border-color: #22c55e;
+  cursor: default;
+}
+
+.memory-win-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.memory-win-dialog {
+  background: #231934;
+  border: 1px solid #c084fc;
+  border-radius: 12px;
+  padding: 1.2em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.memory-win-dialog h3 {
+  margin: 0;
+  font-size: 1em;
+  color: #c084fc;
+}
+
+.memory-win-dialog p {
+  margin: 0;
+  font-size: 0.75em;
+  color: #cbd5e1;
+}
+
+.memory-replay-btn {
+  border: 0;
+  background: #c084fc;
+  color: #000;
+  font-weight: 800;
+  font-size: 0.75em;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.memory-footer {
+  padding: 0.6em;
+  background: #231934;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: center;
+}
+
+.memory-restart-btn {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #2e2144;
+  color: #fff;
+  font-size: 0.65em;
+  font-weight: 800;
+  padding: 0.4em 1.2em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {

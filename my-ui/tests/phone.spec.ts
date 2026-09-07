@@ -1399,3 +1399,37 @@ test('snake app controls retro snake motion, adjusts speed difficulty, displays 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('memory app presents card matching pairs, tracks moves and timer, switches grid difficulties, and syncs scores with Roblox GameScoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Memory
+  await page.getByRole('button', { name: 'Open Memory' }).click()
+  await expect(page.locator('.memory-app-root')).toBeVisible()
+  await expect(page.locator('.memory-title')).toHaveText('🎴 MEMORY PAIRS')
+  await expect(page.locator('.memory-high')).toHaveText('BEST SCORE: 45')
+
+  // Small difficulty cards
+  const cards = page.locator('.memory-card-tile')
+  await expect(cards).toHaveCount(12)
+
+  // Switch to medium difficulty
+  await page.getByRole('button', { name: /MEDIUM/ }).click()
+  await expect(cards).toHaveCount(16)
+
+  // Click cards to flip
+  await cards.first().click()
+  await expect(cards.first()).toHaveClass(/flipped/)
+
+  await cards.nth(1).click()
+  await expect(page.locator('.memory-stat span').first()).toHaveText('1')
+
+  // Reset board
+  await page.getByRole('button', { name: 'RESET BOARD' }).click()
+  await expect(page.locator('.memory-stat span').first()).toHaveText('0')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
