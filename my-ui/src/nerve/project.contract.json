@@ -5550,6 +5550,252 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "FlareService",
+      "Methods": [
+        {
+          "Name": "GetProfiles",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "age": {
+                      "kind": "float64"
+                    },
+                    "bio": {
+                      "kind": "string"
+                    },
+                    "distanceKm": {
+                      "kind": "float64"
+                    },
+                    "interests": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "string"
+                      }
+                    },
+                    "isMatch": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SwipeProfile",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "profileId": {
+                "kind": "string"
+              },
+              "direction": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "GetMessages",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "matchId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "matchId": {
+                      "kind": "string"
+                    },
+                    "sender": {
+                      "kind": "string"
+                    },
+                    "text": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SendMessage",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "matchId": {
+                "kind": "string"
+              },
+              "text": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "matchId": {
+                      "kind": "string"
+                    },
+                    "sender": {
+                      "kind": "string"
+                    },
+                    "text": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "NewMatch",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "name": {
+                    "kind": "string"
+                  },
+                  "age": {
+                    "kind": "float64"
+                  },
+                  "bio": {
+                    "kind": "string"
+                  },
+                  "distanceKm": {
+                    "kind": "float64"
+                  },
+                  "interests": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "isMatch": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "NewFlareMessage",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "matchId": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -5757,6 +6003,16 @@
       "Name": "NewsController",
       "ServiceDependencies": [
         "NewsService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "FlareController",
+      "ServiceDependencies": [
+        "FlareService"
       ],
       "Lifecycle": {
         "NerveInit": true,

@@ -5400,6 +5400,245 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "FlareService": {
+      "GetProfiles": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "name": {
+                    "kind": "string"
+                  },
+                  "age": {
+                    "kind": "float64"
+                  },
+                  "bio": {
+                    "kind": "string"
+                  },
+                  "distanceKm": {
+                    "kind": "float64"
+                  },
+                  "interests": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "isMatch": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "SwipeProfile": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "profileId": {
+              "kind": "string"
+            },
+            "direction": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            }
+          ]
+        }
+      },
+      "GetMessages": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "matchId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "matchId": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "SendMessage": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "matchId": {
+              "kind": "string"
+            },
+            "text": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "matchId": {
+                    "kind": "string"
+                  },
+                  "sender": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "NewMatch": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "name": {
+                  "kind": "string"
+                },
+                "age": {
+                  "kind": "float64"
+                },
+                "bio": {
+                  "kind": "string"
+                },
+                "distanceKm": {
+                  "kind": "float64"
+                },
+                "interests": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                },
+                "isMatch": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "NewFlareMessage": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "matchId": {
+                  "kind": "string"
+                },
+                "sender": {
+                  "kind": "string"
+                },
+                "text": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

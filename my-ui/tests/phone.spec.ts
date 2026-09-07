@@ -996,3 +996,42 @@ test('weazel-news app displays headlines, breaking tickers, reads articles, and 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('flare app browses discover deck, swipes profiles, celebrates matches, and chats with matches via Roblox FlareService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Flare
+  await page.getByRole('button', { name: 'Open Flare' }).click()
+  await expect(page.locator('.flare-app-root')).toBeVisible()
+  await expect(page.locator('.flare-branding h3')).toHaveText('FLARE')
+  await expect(page.locator('.flare-matches-pill')).toContainText('1 Matches')
+
+  // First profile: Valentina Ross
+  await expect(page.locator('.flare-name-age strong')).toHaveText('Valentina Ross')
+
+  // Pass Valentina
+  await page.getByRole('button', { name: 'Pass' }).click()
+
+  // Second profile: Sierra Quinn
+  await expect(page.locator('.flare-name-age strong')).toHaveText('Sierra Quinn')
+
+  // Like Sierra -> Triggers Match popup
+  await page.getByRole('button', { name: 'Like' }).click()
+  await expect(page.locator('.flare-match-backdrop')).toBeVisible()
+  await expect(page.locator('.flare-match-card h2')).toHaveText("IT'S A MATCH!")
+
+  // Click Send a Message
+  await page.getByRole('button', { name: 'Send a Message' }).click()
+  await expect(page.locator('.flare-chat-view')).toBeVisible()
+  await expect(page.locator('.flare-chat-header strong')).toHaveText('Sierra Quinn')
+
+  // Send message
+  await page.locator('.flare-chat-input-bar input').fill('Down for skydiving this Saturday?')
+  await page.getByRole('button', { name: 'Send' }).click()
+  await expect(page.locator('.flare-bubble.outgoing p')).toHaveText('Down for skydiving this Saturday?')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

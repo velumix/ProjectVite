@@ -8092,6 +8092,515 @@
   font-size: 0.8em;
 }
 
+
+/* -------------------------------------------------------------
+   FLARE APP
+   ------------------------------------------------------------- */
+.flare-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #0d0c11;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.flare-header {
+  padding: 0.6em 0.8em 0.4em;
+  background: #15141c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+
+.flare-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flare-branding {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.flare-flame-icon {
+  font-size: 1.3em;
+}
+
+.flare-branding h3 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #f43f5e;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.flare-matches-pill {
+  font-size: 0.65em;
+  background: rgba(244, 63, 94, 0.15);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 800;
+}
+
+.flare-tab-ribbon {
+  display: flex;
+  gap: 4px;
+  background: #0a090e;
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.flare-tab-btn {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  padding: 0.35em 0;
+  font-size: 0.7em;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.flare-tab-btn.active {
+  background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+  color: #fff;
+}
+
+/* Toast */
+.flare-toast {
+  position: absolute;
+  top: 100px;
+  left: 14px;
+  right: 14px;
+  z-index: 40;
+  background: rgba(21, 20, 28, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #f43f5e;
+  border-radius: 10px;
+  padding: 0.45em 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.3);
+  animation: slideDown 0.2s ease-out;
+}
+
+.flare-toast small {
+  color: #f1f5f9;
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+/* Match celebration modal */
+.flare-match-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5em;
+}
+
+.flare-match-card {
+  background: linear-gradient(180deg, #1c1524 0%, #0e0a14 100%);
+  border: 2px solid #f43f5e;
+  border-radius: 20px;
+  padding: 1.8em 1.2em;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(244, 63, 94, 0.4);
+  width: 100%;
+  animation: zoomIn 0.3s ease-out;
+}
+
+.flare-match-fire {
+  font-size: 2.8em;
+  display: block;
+  margin-bottom: 0.2em;
+}
+
+.flare-match-card h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.4em;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.flare-match-card p {
+  margin: 0.4em 0 1.2em;
+  font-size: 0.8em;
+  color: #fda4af;
+}
+
+.flare-match-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flare-chat-match-btn {
+  border: 0;
+  background: linear-gradient(90deg, #f43f5e 0%, #e11d48 100%);
+  color: #fff;
+  font-size: 0.82em;
+  font-weight: 800;
+  padding: 0.65em;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.flare-dismiss-match-btn {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.75em;
+  font-weight: 700;
+  padding: 0.5em;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Discover view */
+.flare-main-content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.flare-deck-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.8em;
+  gap: 0.8em;
+}
+
+.flare-card-wrapper {
+  flex: 1;
+  background: #171520;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.flare-profile-photo-sim {
+  height: 180px;
+  background: linear-gradient(135deg, #be123c 0%, #6b21a8 100%);
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.8em;
+}
+
+.flare-photo-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(13, 12, 17, 0.9) 100%);
+}
+
+.flare-photo-info {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.flare-name-age {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.flare-name-age strong {
+  font-size: 1.25em;
+  color: #fff;
+}
+
+.flare-name-age span {
+  font-size: 1em;
+  color: #fda4af;
+  font-weight: 700;
+}
+
+.flare-distance {
+  font-size: 0.68em;
+  color: #cbd5e1;
+}
+
+.flare-card-body {
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  flex: 1;
+}
+
+.flare-bio {
+  margin: 0;
+  font-size: 0.78em;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.flare-interests-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.flare-interest-pill {
+  font-size: 0.62em;
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  color: #fda4af;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.flare-swipe-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5em;
+  padding-bottom: 0.4em;
+}
+
+.flare-swipe-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  font-size: 1.25em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.flare-swipe-btn:active {
+  transform: scale(0.9);
+}
+
+.flare-swipe-btn.pass {
+  background: #27272a;
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.flare-swipe-btn.like {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
+}
+
+.flare-empty-deck {
+  text-align: center;
+  padding: 4em 1.5em;
+  color: #94a3b8;
+}
+
+.flare-empty-deck span {
+  font-size: 2.4em;
+  display: block;
+  margin-bottom: 0.3em;
+}
+
+.flare-empty-deck h4 {
+  margin: 0;
+  color: #fff;
+  font-size: 1em;
+}
+
+.flare-empty-deck p {
+  margin: 0.3em 0 0;
+  font-size: 0.75em;
+}
+
+/* Matches & Chat */
+.flare-matches-grid {
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.flare-match-item {
+  background: #171520;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.7em;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  cursor: pointer;
+}
+
+.flare-match-item:hover {
+  background: #201c2c;
+  border-color: rgba(244, 63, 94, 0.3);
+}
+
+.flare-match-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%);
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flare-match-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flare-match-summary strong {
+  font-size: 0.85em;
+  color: #fff;
+}
+
+.flare-match-summary small {
+  font-size: 0.68em;
+  color: #94a3b8;
+}
+
+.flare-chat-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.flare-chat-header {
+  padding: 0.6em 0.8em;
+  background: #171520;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.flare-chat-back {
+  border: 0;
+  background: transparent;
+  color: #f43f5e;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
+.flare-chat-header strong {
+  font-size: 0.9em;
+  color: #fff;
+}
+
+.flare-chat-history {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.flare-bubble {
+  max-width: 80%;
+  padding: 0.5em 0.7em;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flare-bubble.incoming {
+  align-self: flex-start;
+  background: #27272a;
+  color: #e4e4e7;
+  border-bottom-left-radius: 2px;
+}
+
+.flare-bubble.outgoing {
+  align-self: flex-end;
+  background: #f43f5e;
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+
+.flare-bubble p {
+  margin: 0;
+  font-size: 0.76em;
+  line-height: 1.35;
+}
+
+.flare-bubble small {
+  font-size: 0.55em;
+  opacity: 0.7;
+  align-self: flex-end;
+}
+
+.flare-chat-input-bar {
+  padding: 0.5em 0.8em;
+  background: #171520;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  gap: 6px;
+}
+
+.flare-chat-input-bar input {
+  flex: 1;
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 0.4em 0.8em;
+  font-size: 0.75em;
+  color: #fff;
+  outline: none;
+}
+
+.flare-send-msg-btn {
+  border: 0;
+  background: #f43f5e;
+  color: #fff;
+  font-size: 0.72em;
+  font-weight: 800;
+  padding: 0 0.9em;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.flare-empty-matches {
+  text-align: center;
+  padding: 3em 1em;
+  color: #64748b;
+}
+
+.flare-empty-matches span {
+  font-size: 2em;
+  display: block;
+  margin-bottom: 0.2em;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {

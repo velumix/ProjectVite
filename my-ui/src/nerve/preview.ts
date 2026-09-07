@@ -739,6 +739,34 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type FlareProfile = {
+  id: string
+  name: string
+  age: number
+  bio: string
+  distanceKm: number
+  interests: string[]
+  isMatch: boolean
+}
+
+export type FlareMessage = {
+  id: string
+  matchId: string
+  sender: string
+  text: string
+  timestamp: number
+}
+
+export type PreviewFlareService = {
+  GetProfiles: NerveMethod<Record<string, never> | undefined, [FlareProfile[]]>
+  SwipeProfile: NerveMethod<{ profileId: string; direction: string }, [boolean, string?, boolean?]>
+  GetMessages: NerveMethod<{ matchId: string }, [FlareMessage[]]>
+  SendMessage: NerveMethod<{ matchId: string; text: string }, [boolean, string?, FlareMessage?]>
+  NewMatch: NerveSignal<[FlareProfile]>
+  NewFlareMessage: NerveSignal<[FlareMessage]>
+}
+
 export type NewsArticle = {
   id: string
   headline: string
@@ -1233,6 +1261,47 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const flareProfilesData: FlareProfile[] = [
+    {
+      id: 'flare-1',
+      name: 'Valentina Ross',
+      age: 24,
+      bio: 'Architecture student & cafe hopper. Looking for someone to explore Vinewood Hills with.',
+      distanceKm: 2.4,
+      interests: ['Coffee', 'Architecture', 'Sunset Drives'],
+      isMatch: false,
+    },
+    {
+      id: 'flare-2',
+      name: 'Sierra Quinn',
+      age: 26,
+      bio: "Helicopter pilot and skydiving enthusiast. Swipe right if you don't get dizzy easily.",
+      distanceKm: 4.8,
+      interests: ['Aviation', 'Adrenaline', 'Fitness'],
+      isMatch: false,
+    },
+    {
+      id: 'flare-3',
+      name: 'Camila Cruz',
+      age: 23,
+      bio: "DJ & synthwave producer. Playing Del Perro Pier this weekend. Let's catch a set!",
+      distanceKm: 1.2,
+      interests: ['Electronic Music', 'Beach', 'Nightlife'],
+      isMatch: true,
+    },
+  ]
+
+  const flareMessagesData: FlareMessage[] = [
+    {
+      id: 'msg-1',
+      matchId: 'flare-3',
+      sender: 'Camila Cruz',
+      text: 'Hey Alex! Loved your profile. You going to the beach festival tomorrow?',
+      timestamp: Date.now() - 3600000,
+    },
+  ]
+
   const newsArticlesData: NewsArticle[] = [
     {
       id: 'art-1',
@@ -1672,7 +1741,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2207,6 +2276,41 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'FlareService.GetProfiles': () => {
+        return [flareProfilesData.map((p) => ({ ...p }))]
+      },
+      'FlareService.SwipeProfile': (payload) => {
+        if (!isRecord(payload) || typeof payload.profileId !== 'string') return [false, 'Invalid payload', false]
+        const p = flareProfilesData.find((x) => x.id === payload.profileId)
+        if (!p) return [false, 'Profile not found', false]
+        if (payload.direction === 'like') {
+          p.isMatch = true
+          adapter.emitSignal('FlareService', 'NewMatch', { ...p })
+          return [true, undefined, true]
+        }
+        return [true, undefined, false]
+      },
+      'FlareService.GetMessages': (payload) => {
+        if (!isRecord(payload) || typeof payload.matchId !== 'string') return [[]]
+        return [flareMessagesData.filter((m) => m.matchId === payload.matchId).map((m) => ({ ...m }))]
+      },
+      'FlareService.SendMessage': (payload) => {
+        if (!isRecord(payload) || typeof payload.text !== 'string' || typeof payload.matchId !== 'string') {
+          return [false, 'Invalid payload', undefined]
+        }
+        const msg: FlareMessage = {
+          id: 'msg-' + Date.now(),
+          matchId: payload.matchId,
+          sender: 'Alex Mercer',
+          text: payload.text,
+          timestamp: Date.now(),
+        }
+        flareMessagesData.push(msg)
+        adapter.emitSignal('FlareService', 'NewFlareMessage', { ...msg })
+        return [true, undefined, { ...msg }]
+      },
+
       'NewsService.GetArticles': () => {
         return [newsArticlesData.map((a) => ({ ...a }))]
       },
@@ -2711,3 +2815,4 @@ export const CrewService = nervePreview.GetService<PreviewCrewService>('CrewServ
 export const HealthService = nervePreview.GetService<PreviewHealthService>('HealthService')
 export const LocalPagesService = nervePreview.GetService<PreviewLocalPagesService>('LocalPagesService')
 export const NewsService = nervePreview.GetService<PreviewNewsService>('NewsService')
+export const FlareService = nervePreview.GetService<PreviewFlareService>('FlareService')
