@@ -893,7 +893,7 @@ test('health app tracks vitals, biometrics, updates medical id profile, and disp
 
   // Dispatch SOS 911 Beacon
   await page.getByRole('button', { name: '🚨 SOS 911' }).click()
-  await expect(page.locator('.health-toast')).toContainText('EMS SOS BEACON BROADCASTED')
+  await expect(page.locator('.health-toast')).toContainText('Emergency SOS Beacon broadcasted')
 
   // Return to Springboard
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
