@@ -2864,6 +2864,160 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "AppStoreService": {
+      "GetStoreCatalog": {
+        "kind": "method",
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "name": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "developer": {
+                    "kind": "string"
+                  },
+                  "rating": {
+                    "kind": "float64"
+                  },
+                  "reviewsCount": {
+                    "kind": "float64"
+                  },
+                  "sizeMb": {
+                    "kind": "float64"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "version": {
+                    "kind": "string"
+                  },
+                  "isSystem": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        }
+      },
+      "GetInstalledApps": {
+        "kind": "method",
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        },
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        }
+      },
+      "InstallApp": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "appId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "array",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "UninstallApp": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "appId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "array",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "InstalledAppsChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

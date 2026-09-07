@@ -728,6 +728,175 @@ const INITIAL_POSTS: SocialPost[] = [
   },
 ]
 
+
+export type StoreAppItem = {
+  id: string
+  name: string
+  category: string
+  developer: string
+  rating: number
+  reviewsCount: number
+  sizeMb: number
+  description: string
+  version: string
+  isSystem: boolean
+}
+
+export type PreviewAppStoreService = {
+  GetStoreCatalog: NerveMethod<Record<string, never> | undefined, [StoreAppItem[]]>
+  GetInstalledApps: NerveMethod<Record<string, never> | undefined, [string[]]>
+  InstallApp: NerveMethod<{ appId: string }, [boolean, string[]?, string?]>
+  UninstallApp: NerveMethod<{ appId: string }, [boolean, string[]?, string?]>
+  InstalledAppsChanged: NerveSignal<[string[]]>
+}
+
+const STORE_CATALOG_ITEMS: StoreAppItem[] = [
+  {
+    id: 'fliptok',
+    name: 'FlipTok',
+    category: 'social',
+    developer: 'BytePulse Media',
+    rating: 4.8,
+    reviewsCount: 14200,
+    sizeMb: 48,
+    description: 'Watch, create, and share trending short-form videos across Sun City. Join viral dance challenges and comedy clips.',
+    version: '3.2.0',
+    isSystem: false,
+  },
+  {
+    id: 'crypto',
+    name: 'Crypto',
+    category: 'utilities',
+    developer: 'Satoshi Financial',
+    rating: 4.6,
+    reviewsCount: 8900,
+    sizeMb: 22,
+    description: 'Live cryptocurrency ticker, decentralized wallet, and instant coin swap for BTC, ETH, and SunCoin.',
+    version: '2.1.4',
+    isSystem: false,
+  },
+  {
+    id: 'snake',
+    name: 'Snake',
+    category: 'games',
+    developer: 'RetroByte Studios',
+    rating: 4.9,
+    reviewsCount: 31500,
+    sizeMb: 8,
+    description: 'Classic arcade retro snake game with neon themes, high score leaderboards, and speed multipliers.',
+    version: '1.0.8',
+    isSystem: false,
+  },
+  {
+    id: 'darkchat',
+    name: 'DarkChat',
+    category: 'social',
+    developer: 'CipherWorks',
+    rating: 4.7,
+    reviewsCount: 5400,
+    sizeMb: 14,
+    description: 'End-to-end encrypted anonymous messenger with burner channels, self-destructing notes, and VPN masking.',
+    version: '4.0.1',
+    isSystem: false,
+  },
+  {
+    id: 'house',
+    name: 'House',
+    category: 'utilities',
+    developer: 'Dynasty8 Real Estate',
+    rating: 4.5,
+    reviewsCount: 6700,
+    sizeMb: 31,
+    description: 'Manage your owned luxury apartments, villas, and lockups. Remote door locks, stash security, and valet parking.',
+    version: '2.5.0',
+    isSystem: false,
+  },
+  {
+    id: 'skyride',
+    name: 'SkyRide',
+    category: 'utilities',
+    developer: 'SkyRide Mobility',
+    rating: 4.4,
+    reviewsCount: 11200,
+    sizeMb: 18,
+    description: 'On-demand city cab and luxury chauffeur hailer. Track your driver in real-time with automatic Fleeca Bank billing.',
+    version: '1.9.3',
+    isSystem: false,
+  },
+  {
+    id: 'picstagram',
+    name: 'Picstagram',
+    category: 'social',
+    developer: 'PixelMedia Inc.',
+    rating: 4.7,
+    reviewsCount: 18400,
+    sizeMb: 42,
+    description: 'Share stunning photo filters, reels, and stories with friends and followers across San Andreas.',
+    version: '5.1.2',
+    isSystem: false,
+  },
+  {
+    id: 'number-merge',
+    name: 'Number Merge',
+    category: 'games',
+    developer: 'BrainBox Puzzles',
+    rating: 4.8,
+    reviewsCount: 9400,
+    sizeMb: 6,
+    description: 'Addictive swipe-and-merge numbers puzzle. Reach the 2048 tile and challenge global records.',
+    version: '1.2.0',
+    isSystem: false,
+  },
+  {
+    id: 'citymarkt',
+    name: 'CityMarkt',
+    category: 'shopping',
+    developer: 'Sun City Commerce',
+    rating: 4.3,
+    reviewsCount: 7600,
+    sizeMb: 26,
+    description: 'Peer-to-peer classifieds and marketplace. Buy, sell, or trade vehicles, rare weapons, and collector items.',
+    version: '2.0.4',
+    isSystem: false,
+  },
+  {
+    id: 'minesweeper',
+    name: 'Minesweeper',
+    category: 'games',
+    developer: 'RetroByte Studios',
+    rating: 4.6,
+    reviewsCount: 12800,
+    sizeMb: 5,
+    description: 'Classic tactical grid puzzle. Flag dangerous mines and clear the minefield against the clock.',
+    version: '1.1.0',
+    isSystem: false,
+  },
+  {
+    id: 'weazel-news',
+    name: 'Weazel News',
+    category: 'social',
+    developer: 'Weazel Broadcasting',
+    rating: 4.2,
+    reviewsCount: 8200,
+    sizeMb: 19,
+    description: 'Breaking news, high-speed chase alerts, weather warnings, and investigative journalism live.',
+    version: '3.0.1',
+    isSystem: false,
+  },
+  {
+    id: 'tower-stack',
+    name: 'Tower Stack',
+    category: 'games',
+    developer: 'NeonArcade',
+    rating: 4.7,
+    reviewsCount: 15300,
+    sizeMb: 9,
+    description: 'Test your reflexes by stacking skyscraper blocks as high as you can into the Sun City clouds.',
+    version: '1.4.2',
+    isSystem: false,
+  },
+]
+
 export function createNervePreview(options: NervePreviewOptions = {}) {
   const playerKey = options.playerKey ?? SETTINGS_DATASTORE_KEY
   let cachedSettings = { ...INITIAL_SETTINGS_STATE }
@@ -744,6 +913,15 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   let worldPois: MapPoi[] = [...INITIAL_MAP_POIS]
 
   const musicTracks: MusicTrack[] = [...INITIAL_MUSIC_TRACKS]
+
+  
+  const installedAppIds: string[] = [
+    'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
+    'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
+    'settings', 'map', 'music', 'garage', 'feather', 'calendar',
+    'health', 'citywarn'
+  ]
+  const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
   let feedPosts: SocialPost[] = INITIAL_POSTS.map((p) => ({ ...p, author: { ...p.author }, hashtags: [...p.hashtags] }))
 
@@ -1266,6 +1444,34 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         feedPosts.splice(idx, 1)
         return [true, undefined]
       },
+      'AppStoreService.GetStoreCatalog': () => {
+        return [STORE_CATALOG_ITEMS]
+      },
+      'AppStoreService.GetInstalledApps': () => {
+        return [[...installedAppIds]]
+      },
+      'AppStoreService.InstallApp': (payload) => {
+        if (!isRecord(payload) || typeof payload.appId !== 'string') return [false, undefined, 'Invalid app ID']
+        if (!installedAppIds.includes(payload.appId)) {
+          installedAppIds.push(payload.appId)
+          adapter.emitSignal('AppStoreService', 'InstalledAppsChanged', [...installedAppIds])
+        }
+        return [true, [...installedAppIds], undefined]
+      },
+      'AppStoreService.UninstallApp': (payload) => {
+        if (!isRecord(payload) || typeof payload.appId !== 'string') return [false, undefined, 'Invalid app ID']
+        if (systemAppIds.has(payload.appId)) {
+          return [false, undefined, 'System apps cannot be uninstalled']
+        }
+        const idx = installedAppIds.indexOf(payload.appId)
+        if (idx !== -1) {
+          installedAppIds.splice(idx, 1)
+          adapter.emitSignal('AppStoreService', 'InstalledAppsChanged', [...installedAppIds])
+          return [true, [...installedAppIds], undefined]
+        }
+        return [false, undefined, 'App is not installed']
+      },
+
 
       'MusicService.SeekTrack': (payload) => {
         if (!isRecord(payload) || typeof payload.position !== 'number') return [false, 'Invalid position']
@@ -1303,3 +1509,4 @@ export const MapService = nervePreview.GetService<PreviewMapService>('MapService
 export const MusicService = nervePreview.GetService<PreviewMusicService>('MusicService')
 export const GarageService = nervePreview.GetService<PreviewGarageService>('GarageService')
 export const SocialService = nervePreview.GetService<PreviewSocialService>('SocialService')
+export const AppStoreService = nervePreview.GetService<PreviewAppStoreService>('AppStoreService')

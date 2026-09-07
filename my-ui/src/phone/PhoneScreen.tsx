@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { NervePreviewAdapter } from '../nerve/contracts.ts'
-import { MusicService, type PhoneContact, type PhoneMessage, type PhoneSettings, type PhoneState, type PreviewPhoneService } from '../nerve/preview.ts'
+import { MusicService, AppStoreService, type PhoneContact, type PhoneMessage, type PhoneSettings, type PhoneState, type PreviewPhoneService } from '../nerve/preview.ts'
 import { BankingApp } from './apps/BankingApp.tsx'
 import { CalculatorApp } from './apps/CalculatorApp.tsx'
 import { CameraApp } from './apps/CameraApp.tsx'
 import { ClockApp } from './apps/ClockApp.tsx'
 import { MailApp } from './apps/MailApp.tsx'
 import { MapApp } from './apps/MapApp.tsx'
+import { AppStoreApp } from './apps/AppStoreApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
 import { NotesApp } from './apps/NotesApp.tsx'
 import { PhotosApp } from './apps/PhotosApp.tsx'
 import { WeatherApp } from './apps/WeatherApp.tsx'
-import { DOCK_PHONE_APPS, INSTALLED_PHONE_APPS, PHONE_APPS } from './phone-apps.ts'
+import { DOCK_PHONE_APPS, PHONE_APPS } from './phone-apps.ts'
 import { PhoneControlCenter } from './PhoneControlCenter.tsx'
 import { PhoneDynamicIsland } from './PhoneDynamicIsland.tsx'
 import { PhoneHomeIndicator } from './PhoneHomeIndicator.tsx'
@@ -77,6 +78,28 @@ export function PhoneScreen({ nerve }: Props) {
   const [musicPlaying, setMusicPlaying] = useState(false)
   const [currentTrack, setCurrentTrack] = useState({ title: 'Midnight City', artist: 'M83' })
   const [notifications, setNotifications] = useState<PhoneNotificationItem[]>(defaultNotifications)
+
+  const [installedAppIds, setInstalledAppIds] = useState<string[]>(() =>
+    PHONE_APPS.filter((a) => a.installed).map((a) => a.id)
+  )
+
+  useEffect(() => {
+    void AppStoreService.GetInstalledApps.request(undefined).then(([ids]: [string[] | undefined]) => {
+      if (ids) setInstalledAppIds(ids)
+    })
+    const unsub = AppStoreService.InstalledAppsChanged.connect((next: string[]) => {
+      setInstalledAppIds(next)
+    })
+    return () => {
+      unsub()
+    }
+  }, [])
+
+  const dynamicInstalledApps = useMemo(() => {
+    const set = new Set(installedAppIds)
+    return PHONE_APPS.filter((app) => set.has(app.id))
+  }, [installedAppIds])
+
 
   
   useEffect(() => {
@@ -214,7 +237,7 @@ export function PhoneScreen({ nerve }: Props) {
         {activeApp === 'home' ? (
           <PhoneSpringboard
             onLaunch={launch}
-            installedApps={INSTALLED_PHONE_APPS}
+            installedApps={dynamicInstalledApps}
           />
         ) : (
           <>
@@ -286,6 +309,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'music' && <MusicApp />}
             {activeApp === 'garage' && <GarageApp />}
             {activeApp === 'feather' && <FeatherApp />}
+            {activeApp === 'app-store' && <AppStoreApp onLaunchApp={launch} />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -301,6 +325,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'music' &&
               activeApp !== 'garage' &&
               activeApp !== 'feather' &&
+              activeApp !== 'app-store' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

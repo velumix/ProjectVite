@@ -508,3 +508,51 @@ test('feather social app loads timeline, likes and retweets posts, filters tags 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('app store loads catalog, filters categories, installs snake game, and adds it to springboard via Roblox AppStoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch App Store
+  await page.getByRole('button', { name: 'Open App Store' }).click()
+  await expect(page.locator('.store-app-root')).toBeVisible()
+  await expect(page.locator('.store-brand h3')).toHaveText('App Store')
+
+  // Verify categories and initial apps
+  const appCards = page.locator('.store-app-card')
+  await expect(appCards).toHaveCount(12)
+
+  // Switch to Games category
+  await page.getByRole('button', { name: 'Games' }).click()
+  await expect(page.locator('.store-cat-pill.active')).toHaveText('Games')
+
+  // Find Snake card
+  const snakeCard = page.locator('.store-app-card', { hasText: 'Snake' })
+  await expect(snakeCard).toBeVisible()
+  await expect(snakeCard).toContainText('RetroByte Studios')
+  await expect(snakeCard).toContainText('4.9')
+
+  // Click GET to install Snake
+  const getButton = snakeCard.locator('.store-btn-get')
+  await expect(getButton).toHaveText('GET')
+  await getButton.click()
+
+  // Verify toast appears
+  await expect(page.locator('.store-toast')).toContainText('Snake installed to Springboard!')
+
+  // Verify action button transitions to OPEN & UNINSTALL
+  await expect(snakeCard.locator('.store-btn-open')).toBeVisible()
+  await expect(snakeCard.locator('.store-btn-remove')).toBeVisible()
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+
+  // Verify Snake app is now present on the Springboard grid
+  const snakeIconBtn = page.getByRole('button', { name: 'Open Snake' })
+  await expect(snakeIconBtn).toBeVisible()
+
+  // Launch newly installed Snake app
+  await snakeIconBtn.click()
+  await expect(page.locator('.phone-appbar strong')).toHaveText('Snake')
+})
