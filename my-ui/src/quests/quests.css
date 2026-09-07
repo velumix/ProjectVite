@@ -818,10 +818,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2em;
-  height: 2em;
+  width: 2.2em;
+  height: 2.2em;
+  min-width: 2.2em;
+  min-height: 2.2em;
   border-radius: 0.45em;
   flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.quest-reward-card-icon svg {
+  width: 1.15em;
+  height: 1.15em;
 }
 
 .quest-reward-card-icon.is-money {
@@ -834,8 +842,13 @@
   background: rgba(56, 189, 248, 0.15);
   border: 1px solid rgba(56, 189, 248, 0.35);
   color: #38bdf8;
+}
+
+.quest-reward-card-icon.is-xp span {
   font-weight: 800;
-  font-size: 0.7em;
+  font-size: 0.75em;
+  letter-spacing: 0.05em;
+  line-height: 1;
 }
 
 .quest-reward-card-icon.is-rep {

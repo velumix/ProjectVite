@@ -547,7 +547,7 @@ export function QuestsScreen({ onSetGPS, onTrackQuest }: QuestsScreenProps) {
               </div>
             </div>
 
-            <div className="quest-reward-card-icon quest-reward-card">
+            <div className="quest-reward-card">
               <div className="quest-reward-card-icon is-xp">
                 <span>XP</span>
               </div>
