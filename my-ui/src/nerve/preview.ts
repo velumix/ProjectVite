@@ -743,6 +743,34 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type CalendarEvent = {
+  id: string
+  title: string
+  date: string
+  startTime: string
+  endTime: string
+  location: string
+  category: string
+  reminder: boolean
+}
+
+export type PreviewCalendarService = {
+  GetEvents: NerveMethod<Record<string, never> | undefined, [CalendarEvent[]]>
+  AddEvent: NerveMethod<{
+    title: string
+    date: string
+    startTime: string
+    endTime: string
+    location: string
+    category: string
+  }, [boolean, string?, CalendarEvent?]>
+  DeleteEvent: NerveMethod<{ id: string }, [boolean, string?, string?]>
+  ToggleReminder: NerveMethod<{ id: string }, [boolean, string?, boolean?]>
+  CalendarEventAdded: NerveSignal<[CalendarEvent]>
+  CalendarEventDeleted: NerveSignal<[{ id: string }]>
+}
+
 export type RadioPreset = {
   name: string
   freq: number
@@ -1382,6 +1410,40 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const calendarEventsData: CalendarEvent[] = [
+    {
+      id: 'cal-1',
+      title: 'Legion Square Car Meet',
+      date: 'Today',
+      startTime: '19:00',
+      endTime: '21:00',
+      location: 'Legion Square Parking',
+      category: 'Racing',
+      reminder: true,
+    },
+    {
+      id: 'cal-2',
+      title: 'Maze Bank Heist Briefing',
+      date: 'Today',
+      startTime: '22:30',
+      endTime: '23:45',
+      location: 'Darnell Bros Garment Factory',
+      category: 'Heist',
+      reminder: true,
+    },
+    {
+      id: 'cal-3',
+      title: 'Los Santos City Council Hearing',
+      date: 'Tomorrow',
+      startTime: '10:00',
+      endTime: '11:30',
+      location: 'City Hall chambers',
+      category: 'Court',
+      reminder: false,
+    },
+  ]
+
   const radioStateData: RadioState = {
     connected: true,
     frequency: 101.5,
@@ -1968,7 +2030,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2507,6 +2569,44 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'CalendarService.GetEvents': () => {
+        return [calendarEventsData.map((e) => ({ ...e }))]
+      },
+      'CalendarService.AddEvent': (payload) => {
+        if (!isRecord(payload) || typeof payload.title !== 'string' || !payload.title) {
+          return [false, 'Title required', undefined]
+        }
+        const item: CalendarEvent = {
+          id: 'cal-' + Date.now(),
+          title: payload.title,
+          date: typeof payload.date === 'string' && payload.date ? payload.date : 'Today',
+          startTime: typeof payload.startTime === 'string' && payload.startTime ? payload.startTime : '12:00',
+          endTime: typeof payload.endTime === 'string' && payload.endTime ? payload.endTime : '13:00',
+          location: typeof payload.location === 'string' && payload.location ? payload.location : 'Los Santos',
+          category: typeof payload.category === 'string' && payload.category ? payload.category : 'General',
+          reminder: true,
+        }
+        calendarEventsData.push(item)
+        adapter.emitSignal('CalendarService', 'CalendarEventAdded', { ...item })
+        return [true, undefined, { ...item }]
+      },
+      'CalendarService.DeleteEvent': (payload) => {
+        if (!isRecord(payload) || typeof payload.id !== 'string') return [false, 'Invalid payload', undefined]
+        const idx = calendarEventsData.findIndex((e) => e.id === payload.id)
+        if (idx === -1) return [false, 'Event not found', undefined]
+        calendarEventsData.splice(idx, 1)
+        adapter.emitSignal('CalendarService', 'CalendarEventDeleted', { id: payload.id })
+        return [true, undefined, payload.id]
+      },
+      'CalendarService.ToggleReminder': (payload) => {
+        if (!isRecord(payload) || typeof payload.id !== 'string') return [false, 'Invalid payload', undefined]
+        const ev = calendarEventsData.find((e) => e.id === payload.id)
+        if (!ev) return [false, 'Event not found', undefined]
+        ev.reminder = !ev.reminder
+        return [true, undefined, ev.reminder]
+      },
+
       'RadioService.GetRadioState': () => {
         return [{
           ...radioStateData,
@@ -3226,3 +3326,4 @@ export const FlareService = nervePreview.GetService<PreviewFlareService>('FlareS
 export const FlipTokService = nervePreview.GetService<PreviewFlipTokService>('FlipTokService')
 export const PicstagramService = nervePreview.GetService<PreviewPicstagramService>('PicstagramService')
 export const RadioService = nervePreview.GetService<PreviewRadioService>('RadioService')
+export const CalendarService = nervePreview.GetService<PreviewCalendarService>('CalendarService')

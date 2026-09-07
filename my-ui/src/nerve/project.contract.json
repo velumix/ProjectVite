@@ -6883,6 +6883,250 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "CalendarService",
+      "Methods": [
+        {
+          "Name": "GetEvents",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "date": {
+                      "kind": "string"
+                    },
+                    "startTime": {
+                      "kind": "string"
+                    },
+                    "endTime": {
+                      "kind": "string"
+                    },
+                    "location": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "reminder": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "AddEvent",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "title": {
+                "kind": "string"
+              },
+              "date": {
+                "kind": "string"
+              },
+              "startTime": {
+                "kind": "string"
+              },
+              "endTime": {
+                "kind": "string"
+              },
+              "location": {
+                "kind": "string"
+              },
+              "category": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "date": {
+                      "kind": "string"
+                    },
+                    "startTime": {
+                      "kind": "string"
+                    },
+                    "endTime": {
+                      "kind": "string"
+                    },
+                    "location": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "reminder": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "DeleteEvent",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "id": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleReminder",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "id": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "CalendarEventAdded",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "startTime": {
+                    "kind": "string"
+                  },
+                  "endTime": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "reminder": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "CalendarEventDeleted",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -7130,6 +7374,16 @@
       "Name": "RadioController",
       "ServiceDependencies": [
         "RadioService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "CalendarController",
+      "ServiceDependencies": [
+        "CalendarService"
       ],
       "Lifecycle": {
         "NerveInit": true,

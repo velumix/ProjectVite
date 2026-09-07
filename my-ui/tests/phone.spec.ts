@@ -1185,3 +1185,52 @@ test('radio app connects to walkie frequency, switches channel presets, adjusts 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('calendar app views monthly schedule, toggles reminder alarms, schedules new events, and removes agenda items via Roblox CalendarService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Calendar
+  await page.getByRole('button', { name: 'Open Calendar' }).click()
+  await expect(page.locator('.calendar-app-root')).toBeVisible()
+  await expect(page.locator('.calendar-month-title')).toHaveText('SEPTEMBER 2026')
+
+  // Weekday strip
+  await expect(page.locator('.calendar-day-cell')).toHaveCount(7)
+
+  // Scheduled events
+  const events = page.locator('.calendar-event-card')
+  await expect(events).toHaveCount(3)
+  await expect(page.locator('.calendar-event-title').first()).toHaveText('Legion Square Car Meet')
+
+  // Toggle reminder alarm
+  const reminderBtn = page.locator('.calendar-action-btn.reminder').first()
+  await expect(reminderBtn).toHaveText('🔔')
+  await reminderBtn.click()
+  await expect(reminderBtn).toHaveText('🔕')
+  await expect(page.locator('.calendar-toast')).toContainText('Reminder alarm muted')
+
+  // Add event
+  await page.getByRole('button', { name: '+ Event' }).click()
+  await expect(page.locator('.calendar-modal-backdrop')).toBeVisible()
+
+  await page.locator('input[placeholder*="Event title"]').fill('Underground Street Race')
+  await page.locator('.calendar-select').selectOption('Racing')
+  await page.locator('input[placeholder*="Location"]').fill('Sandy Shores Airfield')
+  await page.getByRole('button', { name: 'SAVE EVENT' }).click()
+
+  // Verify toast and new event
+  await expect(page.locator('.calendar-toast')).toContainText('New event scheduled')
+  await expect(events).toHaveCount(4)
+  await expect(page.locator('.calendar-event-title').last()).toHaveText('Underground Street Race')
+
+  // Delete event
+  const deleteBtn = page.locator('.calendar-action-btn.delete').last()
+  await deleteBtn.click()
+  await expect(page.locator('.calendar-toast')).toContainText('Event removed from calendar')
+  await expect(events).toHaveCount(3)
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

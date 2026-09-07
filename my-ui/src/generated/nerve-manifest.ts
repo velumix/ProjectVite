@@ -6707,6 +6707,243 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "CalendarService": {
+      "GetEvents": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "startTime": {
+                    "kind": "string"
+                  },
+                  "endTime": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "reminder": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "AddEvent": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "title": {
+              "kind": "string"
+            },
+            "date": {
+              "kind": "string"
+            },
+            "startTime": {
+              "kind": "string"
+            },
+            "endTime": {
+              "kind": "string"
+            },
+            "location": {
+              "kind": "string"
+            },
+            "category": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "startTime": {
+                    "kind": "string"
+                  },
+                  "endTime": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "reminder": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "DeleteEvent": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "id": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleReminder": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "id": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            }
+          ]
+        }
+      },
+      "CalendarEventAdded": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "title": {
+                  "kind": "string"
+                },
+                "date": {
+                  "kind": "string"
+                },
+                "startTime": {
+                  "kind": "string"
+                },
+                "endTime": {
+                  "kind": "string"
+                },
+                "location": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "reminder": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "CalendarEventDeleted": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest
