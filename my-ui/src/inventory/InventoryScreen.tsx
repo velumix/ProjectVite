@@ -7,6 +7,7 @@ import { QuestsScreen } from '../quests/QuestsScreen.tsx'
 import { StatsScreen } from '../stats/StatsScreen.tsx'
 import { SettingsScreen } from '../settings/SettingsScreen.tsx'
 import type { NervePreviewAdapter } from '../nerve/contracts.ts'
+import { PhoneScreen } from '../phone/PhoneScreen.tsx'
 
 const assetRoot = `${import.meta.env.BASE_URL}assets/inventory/`
 const tabs = ['Inventory', 'Quests', 'Map', 'Phone', 'Stats', 'Settings'] as const
@@ -600,7 +601,7 @@ export function InventoryScreen({ panel, bindings, nerve, onPanelChange, onClose
                 </div>
               </div>
             </div>
-          </> : panel === 'Map' ? <CityMap /> : panel === 'Phone' ? <CityPhone /> : panel === 'Stats' ? <>
+          </> : panel === 'Map' ? <CityMap /> : panel === 'Phone' ? <PhoneScreen nerve={nerve} /> : panel === 'Stats' ? <>
             <h1>PLAYER STATISTICS</h1><p className="city-subtitle">Your life in Sun City.</p>
             <div className="city-stat-grid">{[
               ['Level', Number(bindings.get('Player.Level') ?? 42)], ['Total experience', '142,500'],
@@ -670,15 +671,4 @@ function CityMap() {
     <div className="city-map-caption"><div><strong>{locations[selected].name}</strong><span>{locations[selected].address}</span></div><button type="button" onClick={() => setWaypoint(waypoint === selected ? null : selected)}>{waypoint === selected ? 'Clear waypoint' : 'Set waypoint'}</button></div>
     {waypoint !== null && <div className="city-waypoint" role="status"><Icon name="check" /> Waypoint: {locations[waypoint].name}</div>}
   </div></>
-}
-
-const messages = [
-  { from: 'Alex', time: '12:18', text: 'I left the car at the central garage. Meet you there?', reply: 'Find the central garage on your map.' },
-  { from: 'Sun City Bank', time: '11:52', text: 'Welcome back. Your account is ready to use.', reply: 'Your current balance is shown in the top-right corner.' },
-  { from: 'City Services', time: '09:30', text: 'New in town? Stop by City Hall to learn about local jobs.', reply: 'City Hall is located on Alta Street.' },
-]
-
-function CityPhone() {
-  const [selected, setSelected] = useState(0)
-  return <><h1>PHONE</h1><p className="city-subtitle">Stay connected.</p><div className="city-phone"><div className="city-message-list">{messages.map((message, index) => <button type="button" key={message.from} className={selected === index ? 'is-selected' : ''} onClick={() => setSelected(index)}><span className="city-contact-avatar">{message.from[0]}</span><div><strong>{message.from}</strong><p>{message.text}</p></div><time>{message.time}</time></button>)}</div><div className="city-conversation"><span>MESSAGES</span><h2>{messages[selected].from}</h2><p className="city-message-bubble">{messages[selected].text}</p><time>Today, {messages[selected].time}</time><p className="city-message-note">{messages[selected].reply}</p></div></div></>
 }

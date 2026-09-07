@@ -456,6 +456,309 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "PhoneService": {
+      "GetPhoneState": {
+        "kind": "method",
+        "request": {
+          "kind": "tuple",
+          "items": []
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "phoneNumber": {
+                  "kind": "string"
+                },
+                "battery": {
+                  "kind": "float64"
+                },
+                "contacts": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "name": {
+                        "kind": "string"
+                      },
+                      "number": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                },
+                "conversations": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "contactId": {
+                        "kind": "string"
+                      },
+                      "lastMessage": {
+                        "kind": "string"
+                      },
+                      "time": {
+                        "kind": "string"
+                      },
+                      "unread": {
+                        "kind": "int32"
+                      }
+                    }
+                  }
+                },
+                "settings": {
+                  "kind": "struct",
+                  "fields": {
+                    "airplaneMode": {
+                      "kind": "bool"
+                    },
+                    "wifiEnabled": {
+                      "kind": "bool"
+                    },
+                    "bluetoothEnabled": {
+                      "kind": "bool"
+                    },
+                    "darkMode": {
+                      "kind": "bool"
+                    },
+                    "ringtone": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "GetMessages": {
+        "kind": "method",
+        "request": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "string"
+            }
+          ]
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "fromPlayer": {
+                    "kind": "bool"
+                  },
+                  "time": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "SendMessage": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "number": {
+              "kind": "string"
+            },
+            "body": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        },
+        "rateLimit": {
+          "requests": 12,
+          "window": 1
+        }
+      },
+      "StartCall": {
+        "kind": "method",
+        "request": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "string"
+            }
+          ]
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        },
+        "rateLimit": {
+          "requests": 6,
+          "window": 1
+        }
+      },
+      "EndCall": {
+        "kind": "method",
+        "request": {
+          "kind": "tuple",
+          "items": []
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "SavePhoneSettings": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "airplaneMode": {
+              "kind": "bool"
+            },
+            "wifiEnabled": {
+              "kind": "bool"
+            },
+            "bluetoothEnabled": {
+              "kind": "bool"
+            },
+            "darkMode": {
+              "kind": "bool"
+            },
+            "ringtone": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        },
+        "rateLimit": {
+          "requests": 10,
+          "window": 1
+        }
+      },
+      "MessageReceived": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "string"
+            },
+            {
+              "kind": "string"
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "CallStateChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "string"
+            },
+            {
+              "kind": "string"
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "PhoneSettingsChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "airplaneMode": {
+                  "kind": "bool"
+                },
+                "wifiEnabled": {
+                  "kind": "bool"
+                },
+                "bluetoothEnabled": {
+                  "kind": "bool"
+                },
+                "darkMode": {
+                  "kind": "bool"
+                },
+                "ringtone": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest
