@@ -746,6 +746,32 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type MarketplaceListing = {
+  id: string
+  title: string
+  price: number
+  category: string
+  sellerName: string
+  sellerPhone: string
+  description: string
+  date: string
+  likes: number
+}
+
+export type ListingLikedEvent = {
+  id: string
+  likes: number
+}
+
+export type PreviewCityMarktService = {
+  GetListings: NerveMethod<Record<string, never> | undefined, [MarketplaceListing[]]>
+  PostListing: NerveMethod<{ title: string; price: number; category: string; description: string }, [boolean, string?, MarketplaceListing?]>
+  LikeListing: NerveMethod<{ id: string }, [boolean, string?, number?]>
+  ListingPosted: NerveSignal<[MarketplaceListing]>
+  ListingLiked: NerveSignal<[ListingLikedEvent]>
+}
+
 export type SkyRide = {
   id: string
   driverName: string
@@ -1465,6 +1491,43 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const cityMarktListingsData: MarketplaceListing[] = [
+    {
+      id: 'cm-1',
+      title: 'Custom Declasse Granger 3600LX',
+      price: 145000,
+      category: 'vehicles',
+      sellerName: "Dominic 'Dom' T.",
+      sellerPhone: '555-0199',
+      description: 'Armored plating, Imani tech missile lock-on jammer installed. Clean title.',
+      date: '2 hours ago',
+      likes: 14,
+    },
+    {
+      id: 'cm-2',
+      title: 'Unlocked Cypher OS Drone Rig',
+      price: 12500,
+      category: 'electronics',
+      sellerName: 'ZeroByte',
+      sellerPhone: '555-0842',
+      description: 'FPV thermal optics with long range encrypted transmitter.',
+      date: '5 hours ago',
+      likes: 8,
+    },
+    {
+      id: 'cm-3',
+      title: 'Vespucci Canals 2BR Studio Loft',
+      price: 480000,
+      category: 'properties',
+      sellerName: 'Dynasty 8 Realty',
+      sellerPhone: '555-0310',
+      description: 'Spectacular canal front balcony, rooftop helipad access, modern minimalist interior.',
+      date: 'Yesterday',
+      likes: 29,
+    },
+  ]
+
   let currentSkyRide: SkyRide | null = null
 
   const skyRideHistoryData: SkyRideHistory[] = [
@@ -2110,7 +2173,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar', 'memos', 'skyride'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar', 'memos', 'skyride', 'citymarkt'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2652,6 +2715,38 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'CityMarktService.GetListings': () => {
+        return [cityMarktListingsData.map((l) => ({ ...l }))]
+      },
+      'CityMarktService.PostListing': (payload) => {
+        if (!isRecord(payload) || typeof payload.title !== 'string' || !payload.title) {
+          return [false, 'Title required', undefined]
+        }
+        const item: MarketplaceListing = {
+          id: 'cm-' + Date.now(),
+          title: payload.title,
+          price: typeof payload.price === 'number' ? payload.price : 1000,
+          category: typeof payload.category === 'string' ? payload.category : 'vehicles',
+          sellerName: 'Alex Mercer',
+          sellerPhone: '555-0143',
+          description: typeof payload.description === 'string' ? payload.description : '',
+          date: 'Just now',
+          likes: 0,
+        }
+        cityMarktListingsData.unshift(item)
+        adapter.emitSignal('CityMarktService', 'ListingPosted', { ...item })
+        return [true, undefined, { ...item }]
+      },
+      'CityMarktService.LikeListing': (payload) => {
+        if (!isRecord(payload) || typeof payload.id !== 'string') return [false, 'Invalid payload', undefined]
+        const l = cityMarktListingsData.find((x) => x.id === payload.id)
+        if (!l) return [false, 'Listing not found', undefined]
+        l.likes += 1
+        adapter.emitSignal('CityMarktService', 'ListingLiked', { id: payload.id, likes: l.likes })
+        return [true, undefined, l.likes]
+      },
+
       'SkyRideService.GetRideStatus': () => {
         return [{
           activeRide: currentSkyRide ? { ...currentSkyRide } : undefined,
@@ -3482,3 +3577,4 @@ export const RadioService = nervePreview.GetService<PreviewRadioService>('RadioS
 export const CalendarService = nervePreview.GetService<PreviewCalendarService>('CalendarService')
 export const MemosService = nervePreview.GetService<PreviewMemosService>('MemosService')
 export const SkyRideService = nervePreview.GetService<PreviewSkyRideService>('SkyRideService')
+export const CityMarktService = nervePreview.GetService<PreviewCityMarktService>('CityMarktService')

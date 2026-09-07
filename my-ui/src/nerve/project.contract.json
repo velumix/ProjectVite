@@ -7568,6 +7568,225 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "CityMarktService",
+      "Methods": [
+        {
+          "Name": "GetListings",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "price": {
+                      "kind": "float64"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "sellerName": {
+                      "kind": "string"
+                    },
+                    "sellerPhone": {
+                      "kind": "string"
+                    },
+                    "description": {
+                      "kind": "string"
+                    },
+                    "date": {
+                      "kind": "string"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "PostListing",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "title": {
+                "kind": "string"
+              },
+              "price": {
+                "kind": "float64"
+              },
+              "category": {
+                "kind": "string"
+              },
+              "description": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "price": {
+                      "kind": "float64"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "sellerName": {
+                      "kind": "string"
+                    },
+                    "sellerPhone": {
+                      "kind": "string"
+                    },
+                    "description": {
+                      "kind": "string"
+                    },
+                    "date": {
+                      "kind": "string"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "LikeListing",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "id": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "ListingPosted",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "price": {
+                    "kind": "float64"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "sellerName": {
+                    "kind": "string"
+                  },
+                  "sellerPhone": {
+                    "kind": "string"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "ListingLiked",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -7845,6 +8064,16 @@
       "Name": "SkyRideController",
       "ServiceDependencies": [
         "SkyRideService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "CityMarktController",
+      "ServiceDependencies": [
+        "CityMarktService"
       ],
       "Lifecycle": {
         "NerveInit": true,

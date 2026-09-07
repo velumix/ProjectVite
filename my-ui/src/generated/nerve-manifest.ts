@@ -7371,6 +7371,218 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "CityMarktService": {
+      "GetListings": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "price": {
+                    "kind": "float64"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "sellerName": {
+                    "kind": "string"
+                  },
+                  "sellerPhone": {
+                    "kind": "string"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PostListing": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "title": {
+              "kind": "string"
+            },
+            "price": {
+              "kind": "float64"
+            },
+            "category": {
+              "kind": "string"
+            },
+            "description": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "price": {
+                    "kind": "float64"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "sellerName": {
+                    "kind": "string"
+                  },
+                  "sellerPhone": {
+                    "kind": "string"
+                  },
+                  "description": {
+                    "kind": "string"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "LikeListing": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "id": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "ListingPosted": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "title": {
+                  "kind": "string"
+                },
+                "price": {
+                  "kind": "float64"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "sellerName": {
+                  "kind": "string"
+                },
+                "sellerPhone": {
+                  "kind": "string"
+                },
+                "description": {
+                  "kind": "string"
+                },
+                "date": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "ListingLiked": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

@@ -1319,3 +1319,51 @@ test('skyride app configures pickup and destination, selects vehicle tiers, disp
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('citymarkt app browses classified listings, filters by categories, likes items, and publishes new offers via Roblox CityMarktService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch CityMarkt
+  await page.getByRole('button', { name: 'Open CityMarkt' }).click()
+  await expect(page.locator('.citymarkt-app-root')).toBeVisible()
+  await expect(page.locator('.citymarkt-brand h3')).toHaveText('CityMarkt')
+
+  // Listings count
+  const cards = page.locator('.citymarkt-card')
+  await expect(cards).toHaveCount(3)
+
+  // Like first listing
+  const likeBtn = page.locator('.citymarkt-like-btn').first()
+  await expect(likeBtn).toContainText('14')
+  await likeBtn.click()
+  await expect(likeBtn).toContainText('15')
+
+  // Filter by properties
+  await page.getByRole('button', { name: 'PROPERTIES' }).click()
+  await expect(cards).toHaveCount(1)
+  await expect(page.locator('.citymarkt-item-title').first()).toHaveText('Vespucci Canals 2BR Studio Loft')
+
+  // Reset to all
+  await page.getByRole('button', { name: 'ALL' }).click()
+  await expect(cards).toHaveCount(3)
+
+  // Post new listing
+  await page.getByRole('button', { name: '+ Post' }).click()
+  await expect(page.locator('.citymarkt-modal-backdrop')).toBeVisible()
+
+  await page.locator('input[placeholder*="Listing title"]').fill('Progen T20 Supercar')
+  await page.locator('input[placeholder*="Price"]').fill('1200000')
+  await page.locator('.citymarkt-select').selectOption('vehicles')
+  await page.locator('textarea[placeholder*="Item description"]').fill('Twin turbo V8, active aero spoiler')
+  await page.getByRole('button', { name: 'PUBLISH LISTING' }).click()
+
+  // Verify toast and new card
+  await expect(page.locator('.citymarkt-toast')).toContainText('Listing published to CityMarkt')
+  await expect(cards).toHaveCount(4)
+  await expect(page.locator('.citymarkt-item-title').first()).toHaveText('Progen T20 Supercar')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
