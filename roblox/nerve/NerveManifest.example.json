@@ -7580,6 +7580,109 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "GameScoreService": {
+      "GetGameScores": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "map",
+              "key": {
+                "kind": "string"
+              },
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "SubmitScore": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "gameId": {
+              "kind": "string"
+            },
+            "score": {
+              "kind": "float64"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "ResetScore": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "gameId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ScoreUpdated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "gameId": {
+                  "kind": "string"
+                },
+                "highScore": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

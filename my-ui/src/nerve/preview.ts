@@ -747,6 +747,19 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type ScoreUpdatedEvent = {
+  gameId: string
+  highScore: number
+}
+
+export type PreviewGameScoreService = {
+  GetGameScores: NerveMethod<Record<string, never> | undefined, [Record<string, number>]>
+  SubmitScore: NerveMethod<{ gameId: string; score: number }, [boolean, string?, number?]>
+  ResetScore: NerveMethod<{ gameId: string }, [boolean, string?]>
+  ScoreUpdated: NerveSignal<[ScoreUpdatedEvent]>
+}
+
 export type MarketplaceListing = {
   id: string
   title: string
@@ -1492,6 +1505,17 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const gameScoresData: Record<string, number> = {
+    snake: 120,
+    memory: 45,
+    'number-merge': 2048,
+    minesweeper: 180,
+    'tower-stack': 34,
+    'sky-flappy': 28,
+    'neon-drop': 520,
+  }
+
   const cityMarktListingsData: MarketplaceListing[] = [
     {
       id: 'cm-1',
@@ -2173,7 +2197,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar', 'memos', 'skyride', 'citymarkt'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar', 'memos', 'skyride', 'citymarkt', 'snake', 'memory', 'number-merge', 'minesweeper', 'tower-stack', 'sky-flappy', 'neon-drop'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2716,6 +2740,29 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'GameScoreService.GetGameScores': () => {
+        return [{ ...gameScoresData }]
+      },
+      'GameScoreService.SubmitScore': (payload) => {
+        if (!isRecord(payload) || typeof payload.gameId !== 'string' || typeof payload.score !== 'number') {
+          return [false, 'Invalid payload', undefined]
+        }
+        const currentHigh = gameScoresData[payload.gameId] || 0
+        if (payload.score > currentHigh) {
+          gameScoresData[payload.gameId] = payload.score
+          adapter.emitSignal('GameScoreService', 'ScoreUpdated', { gameId: payload.gameId, highScore: payload.score })
+          return [true, undefined, payload.score]
+        }
+        return [true, undefined, currentHigh]
+      },
+      'GameScoreService.ResetScore': (payload) => {
+        if (!isRecord(payload) || typeof payload.gameId !== 'string') return [false, 'Invalid payload']
+        gameScoresData[payload.gameId] = 0
+        adapter.emitSignal('GameScoreService', 'ScoreUpdated', { gameId: payload.gameId, highScore: 0 })
+        return [true, undefined]
+      },
+
       'CityMarktService.GetListings': () => {
         return [cityMarktListingsData.map((l) => ({ ...l }))]
       },
@@ -3578,3 +3625,4 @@ export const CalendarService = nervePreview.GetService<PreviewCalendarService>('
 export const MemosService = nervePreview.GetService<PreviewMemosService>('MemosService')
 export const SkyRideService = nervePreview.GetService<PreviewSkyRideService>('SkyRideService')
 export const CityMarktService = nervePreview.GetService<PreviewCityMarktService>('CityMarktService')
+export const GameScoreService = nervePreview.GetService<PreviewGameScoreService>('GameScoreService')

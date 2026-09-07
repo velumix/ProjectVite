@@ -1367,3 +1367,35 @@ test('citymarkt app browses classified listings, filters by categories, likes it
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('snake app controls retro snake motion, adjusts speed difficulty, displays high scores, and communicates with Roblox GameScoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Snake
+  await page.getByRole('button', { name: 'Open Snake' }).click()
+  await expect(page.locator('.snake-app-root')).toBeVisible()
+  await expect(page.locator('.snake-title')).toHaveText('🐍 SNAKE RETRO')
+  await expect(page.locator('.snake-high')).toHaveText('BEST: 120')
+
+  // Start game
+  const toggleBtn = page.locator('.snake-toggle-btn').first()
+  await expect(toggleBtn).toHaveText('START')
+  await toggleBtn.click()
+  await expect(toggleBtn).toHaveText('PAUSE')
+
+  // Change direction using D-pad
+  await page.locator('.dpad-btn.right').click()
+
+  // Change speed to fast
+  await page.getByRole('button', { name: 'FAST' }).click()
+  await expect(page.locator('.snake-speed-btn.active')).toHaveText('FAST')
+
+  // Restart
+  await page.getByRole('button', { name: 'RESTART' }).click()
+  await expect(page.locator('.snake-score-box span')).toHaveText('0')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
