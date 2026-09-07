@@ -736,6 +736,42 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type MedicalId = {
+  bloodType: string
+  allergies: string
+  emergencyContactName: string
+  emergencyContactPhone: string
+  organDonor: boolean
+}
+
+export type HealthStats = {
+  heartRate: number
+  steps: number
+  calories: number
+  activeMinutes: number
+  bloodOxygen: number
+  stamina: number
+  hunger: number
+  hydration: number
+  medicalId: MedicalId
+}
+
+export type SosEvent = {
+  playerName: string
+  bloodType: string
+  heartRate: number
+  timestamp: number
+}
+
+export type PreviewHealthService = {
+  GetStats: NerveMethod<Record<string, never> | undefined, [HealthStats]>
+  UpdateMedicalId: NerveMethod<MedicalId, [boolean, string?, HealthStats?]>
+  SendSosBeacon: NerveMethod<Record<string, never> | undefined, [boolean, string?]>
+  HealthStatsUpdated: NerveSignal<[HealthStats]>
+  SosBeaconTriggered: NerveSignal<[SosEvent]>
+}
+
 export type CrewMember = {
   id: string
   name: string
@@ -1145,6 +1181,25 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const healthStatsData: HealthStats = {
+    heartRate: 72,
+    steps: 8420,
+    calories: 540,
+    activeMinutes: 48,
+    bloodOxygen: 99,
+    stamina: 95,
+    hunger: 80,
+    hydration: 85,
+    medicalId: {
+      bloodType: 'O+',
+      allergies: 'Penicillin, Latex',
+      emergencyContactName: 'Sarah Mercer',
+      emergencyContactPhone: '555-0199',
+      organDonor: true,
+    },
+  }
+
   const crewData: CrewInfo = {
     crewId: 'crew-syndicate',
     name: 'Midnight Syndicate',
@@ -1488,7 +1543,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2020,6 +2075,40 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'HealthService.GetStats': () => {
+        return [{
+          ...healthStatsData,
+          medicalId: { ...healthStatsData.medicalId }
+        }]
+      },
+      'HealthService.UpdateMedicalId': (payload) => {
+        if (!isRecord(payload) || typeof payload.bloodType !== 'string') {
+          return [false, 'Invalid payload', undefined]
+        }
+        healthStatsData.medicalId = {
+          bloodType: String(payload.bloodType),
+          allergies: String(payload.allergies || ''),
+          emergencyContactName: String(payload.emergencyContactName || ''),
+          emergencyContactPhone: String(payload.emergencyContactPhone || ''),
+          organDonor: Boolean(payload.organDonor),
+        }
+        adapter.emitSignal('HealthService', 'HealthStatsUpdated', {
+          ...healthStatsData,
+          medicalId: { ...healthStatsData.medicalId }
+        })
+        return [true, undefined, { ...healthStatsData, medicalId: { ...healthStatsData.medicalId } }]
+      },
+      'HealthService.SendSosBeacon': () => {
+        adapter.emitSignal('HealthService', 'SosBeaconTriggered', {
+          playerName: 'Alex Mercer',
+          bloodType: healthStatsData.medicalId.bloodType,
+          heartRate: healthStatsData.heartRate,
+          timestamp: Date.now(),
+        })
+        return [true, undefined]
+      },
+
       'CrewService.GetCrew': () => {
         return [{
           ...crewData,
@@ -2415,3 +2504,4 @@ export const EmergencyService = nervePreview.GetService<PreviewEmergencyService>
 export const DarkChatService = nervePreview.GetService<PreviewDarkChatService>('DarkChatService')
 export const CompanyService = nervePreview.GetService<PreviewCompanyService>('CompanyService')
 export const CrewService = nervePreview.GetService<PreviewCrewService>('CrewService')
+export const HealthService = nervePreview.GetService<PreviewHealthService>('HealthService')

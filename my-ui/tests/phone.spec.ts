@@ -865,3 +865,37 @@ test('crewlink app displays syndicate roster, deposits crew vault funds, monitor
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('health app tracks vitals, biometrics, updates medical id profile, and dispatches 911 EMS SOS beacons via Roblox HealthService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Health
+  await page.getByRole('button', { name: 'Open Health' }).click()
+  await expect(page.locator('.health-app-root')).toBeVisible()
+  await expect(page.locator('.health-branding h3')).toHaveText('Health')
+
+  // Vitals check
+  await expect(page.locator('.hr-card .health-card-val-row strong')).toHaveText('72')
+  await expect(page.locator('.spo2-card .health-card-val-row strong')).toHaveText('99%')
+  await expect(page.locator('.health-metric-item strong').first()).toHaveText('8,420')
+
+  // Switch to Medical ID tab
+  await page.getByRole('button', { name: 'Medical ID' }).click()
+  await expect(page.locator('.health-medical-id-view')).toBeVisible()
+  await expect(page.locator('.health-select')).toHaveValue('O+')
+
+  // Update allergies
+  const allergiesInput = page.locator('input[placeholder*="Penicillin"]')
+  await allergiesInput.fill('Penicillin, Peanuts')
+  await page.getByRole('button', { name: 'SAVE MEDICAL ID' }).click()
+  await expect(page.locator('.health-toast')).toContainText('Medical ID profile updated')
+
+  // Dispatch SOS 911 Beacon
+  await page.getByRole('button', { name: '🚨 SOS 911' }).click()
+  await expect(page.locator('.health-toast')).toContainText('EMS SOS BEACON BROADCASTED')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

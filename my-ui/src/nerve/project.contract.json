@@ -4842,6 +4842,272 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "HealthService",
+      "Methods": [
+        {
+          "Name": "GetStats",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "heartRate": {
+                    "kind": "float64"
+                  },
+                  "steps": {
+                    "kind": "float64"
+                  },
+                  "calories": {
+                    "kind": "float64"
+                  },
+                  "activeMinutes": {
+                    "kind": "float64"
+                  },
+                  "bloodOxygen": {
+                    "kind": "float64"
+                  },
+                  "stamina": {
+                    "kind": "float64"
+                  },
+                  "hunger": {
+                    "kind": "float64"
+                  },
+                  "hydration": {
+                    "kind": "float64"
+                  },
+                  "medicalId": {
+                    "kind": "struct",
+                    "fields": {
+                      "bloodType": {
+                        "kind": "string"
+                      },
+                      "allergies": {
+                        "kind": "string"
+                      },
+                      "emergencyContactName": {
+                        "kind": "string"
+                      },
+                      "emergencyContactPhone": {
+                        "kind": "string"
+                      },
+                      "organDonor": {
+                        "kind": "bool"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "UpdateMedicalId",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "bloodType": {
+                "kind": "string"
+              },
+              "allergies": {
+                "kind": "string"
+              },
+              "emergencyContactName": {
+                "kind": "string"
+              },
+              "emergencyContactPhone": {
+                "kind": "string"
+              },
+              "organDonor": {
+                "kind": "bool"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "heartRate": {
+                      "kind": "float64"
+                    },
+                    "steps": {
+                      "kind": "float64"
+                    },
+                    "calories": {
+                      "kind": "float64"
+                    },
+                    "activeMinutes": {
+                      "kind": "float64"
+                    },
+                    "bloodOxygen": {
+                      "kind": "float64"
+                    },
+                    "stamina": {
+                      "kind": "float64"
+                    },
+                    "hunger": {
+                      "kind": "float64"
+                    },
+                    "hydration": {
+                      "kind": "float64"
+                    },
+                    "medicalId": {
+                      "kind": "struct",
+                      "fields": {
+                        "bloodType": {
+                          "kind": "string"
+                        },
+                        "allergies": {
+                          "kind": "string"
+                        },
+                        "emergencyContactName": {
+                          "kind": "string"
+                        },
+                        "emergencyContactPhone": {
+                          "kind": "string"
+                        },
+                        "organDonor": {
+                          "kind": "bool"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SendSosBeacon",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "HealthStatsUpdated",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "heartRate": {
+                    "kind": "float64"
+                  },
+                  "steps": {
+                    "kind": "float64"
+                  },
+                  "calories": {
+                    "kind": "float64"
+                  },
+                  "activeMinutes": {
+                    "kind": "float64"
+                  },
+                  "bloodOxygen": {
+                    "kind": "float64"
+                  },
+                  "stamina": {
+                    "kind": "float64"
+                  },
+                  "hunger": {
+                    "kind": "float64"
+                  },
+                  "hydration": {
+                    "kind": "float64"
+                  },
+                  "medicalId": {
+                    "kind": "struct",
+                    "fields": {
+                      "bloodType": {
+                        "kind": "string"
+                      },
+                      "allergies": {
+                        "kind": "string"
+                      },
+                      "emergencyContactName": {
+                        "kind": "string"
+                      },
+                      "emergencyContactPhone": {
+                        "kind": "string"
+                      },
+                      "organDonor": {
+                        "kind": "bool"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "SosBeaconTriggered",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "playerName": {
+                    "kind": "string"
+                  },
+                  "bloodType": {
+                    "kind": "string"
+                  },
+                  "heartRate": {
+                    "kind": "float64"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -5019,6 +5285,16 @@
       "Name": "CrewController",
       "ServiceDependencies": [
         "CrewService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "HealthController",
+      "ServiceDependencies": [
+        "HealthService"
       ],
       "Lifecycle": {
         "NerveInit": true,
