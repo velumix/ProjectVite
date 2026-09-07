@@ -742,6 +742,40 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type RadioPreset = {
+  name: string
+  freq: number
+}
+
+export type RadioState = {
+  connected: boolean
+  frequency: number
+  volume: number
+  micMuted: boolean
+  isTalking: boolean
+  channelMembers: string[]
+  activeSpeakers: string[]
+  presets: RadioPreset[]
+}
+
+export type SpeakerTalkingEvent = {
+  speaker: string
+  isTalking: boolean
+  activeSpeakers: string[]
+}
+
+export type PreviewRadioService = {
+  GetRadioState: NerveMethod<Record<string, never> | undefined, [RadioState]>
+  ConnectFrequency: NerveMethod<{ frequency: number }, [boolean, string?, RadioState?]>
+  DisconnectRadio: NerveMethod<Record<string, never> | undefined, [boolean, string?, RadioState?]>
+  SetVolume: NerveMethod<{ volume: number }, [boolean, string?, number?]>
+  ToggleMute: NerveMethod<Record<string, never> | undefined, [boolean, string?, boolean?]>
+  PushToTalk: NerveMethod<{ isTalking: boolean }, [boolean, string?, boolean?]>
+  RadioStateChanged: NerveSignal<[RadioState]>
+  SpeakerTalkingChanged: NerveSignal<[SpeakerTalkingEvent]>
+}
+
 export type PicStory = {
   id: string
   username: string
@@ -1347,6 +1381,24 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const radioStateData: RadioState = {
+    connected: true,
+    frequency: 101.5,
+    volume: 75,
+    micMuted: false,
+    isTalking: false,
+    channelMembers: ['Alex Mercer', 'Marcus Vance', 'Officer Davis'],
+    activeSpeakers: ['Officer Davis'],
+    presets: [
+      { name: 'Dispatch 1', freq: 1.0 },
+      { name: 'Tactical TAC-2', freq: 2.5 },
+      { name: 'EMS / Fire', freq: 9.0 },
+      { name: 'Los Santos FM', freq: 101.5 },
+      { name: 'Radio Mirror Park', freq: 88.3 },
+    ],
+  }
+
   const picStoriesData: PicStory[] = [
     { id: 'story-1', username: 'Your Story', hasUnread: false },
     { id: 'story-2', username: 'samantha.ls', hasUnread: true },
@@ -1916,7 +1968,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2454,6 +2506,56 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'RadioService.GetRadioState': () => {
+        return [{
+          ...radioStateData,
+          channelMembers: [...radioStateData.channelMembers],
+          activeSpeakers: [...radioStateData.activeSpeakers],
+          presets: [...radioStateData.presets],
+        }]
+      },
+      'RadioService.ConnectFrequency': (payload) => {
+        if (!isRecord(payload) || typeof payload.frequency !== 'number') return [false, 'Invalid frequency', undefined]
+        radioStateData.connected = true
+        radioStateData.frequency = payload.frequency
+        adapter.emitSignal('RadioService', 'RadioStateChanged', { ...radioStateData })
+        return [true, undefined, { ...radioStateData }]
+      },
+      'RadioService.DisconnectRadio': () => {
+        radioStateData.connected = false
+        radioStateData.isTalking = false
+        radioStateData.activeSpeakers = []
+        adapter.emitSignal('RadioService', 'RadioStateChanged', { ...radioStateData })
+        return [true, undefined, { ...radioStateData }]
+      },
+      'RadioService.SetVolume': (payload) => {
+        if (!isRecord(payload) || typeof payload.volume !== 'number') return [false, 'Invalid volume', undefined]
+        radioStateData.volume = Math.max(0, Math.min(100, payload.volume))
+        return [true, undefined, radioStateData.volume]
+      },
+      'RadioService.ToggleMute': () => {
+        radioStateData.micMuted = !radioStateData.micMuted
+        return [true, undefined, radioStateData.micMuted]
+      },
+      'RadioService.PushToTalk': (payload) => {
+        if (!isRecord(payload) || typeof payload.isTalking !== 'boolean') return [false, 'Invalid payload', undefined]
+        radioStateData.isTalking = payload.isTalking
+        if (payload.isTalking) {
+          if (!radioStateData.activeSpeakers.includes('Alex Mercer')) {
+            radioStateData.activeSpeakers.push('Alex Mercer')
+          }
+        } else {
+          radioStateData.activeSpeakers = radioStateData.activeSpeakers.filter((s) => s !== 'Alex Mercer')
+        }
+        adapter.emitSignal('RadioService', 'SpeakerTalkingChanged', {
+          speaker: 'Alex Mercer',
+          isTalking: payload.isTalking,
+          activeSpeakers: [...radioStateData.activeSpeakers],
+        })
+        return [true, undefined, payload.isTalking]
+      },
+
       'PicstagramService.GetFeed': () => {
         return [{
           stories: picStoriesData.map((s) => ({ ...s })),
@@ -3123,3 +3225,4 @@ export const NewsService = nervePreview.GetService<PreviewNewsService>('NewsServ
 export const FlareService = nervePreview.GetService<PreviewFlareService>('FlareService')
 export const FlipTokService = nervePreview.GetService<PreviewFlipTokService>('FlipTokService')
 export const PicstagramService = nervePreview.GetService<PreviewPicstagramService>('PicstagramService')
+export const RadioService = nervePreview.GetService<PreviewRadioService>('RadioService')

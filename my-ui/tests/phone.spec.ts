@@ -1141,3 +1141,47 @@ test('picstagram app browses photo feed, views stories tray, likes photos, adds 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('radio app connects to walkie frequency, switches channel presets, adjusts audio volume, mutes mic, and pushes to talk via Roblox RadioService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Radio
+  await page.getByRole('button', { name: 'Open Radio' }).click()
+  await expect(page.locator('.radio-app-root')).toBeVisible()
+  await expect(page.locator('.radio-freq-num')).toHaveText('101.5')
+  await expect(page.locator('.radio-lcd-indicator')).toHaveText('● TX/RX LIVE')
+  await expect(page.locator('.radio-speaker-active')).toContainText('Officer Davis')
+
+  // Switch preset to Dispatch 1
+  await page.locator('.radio-preset-chip').filter({ hasText: 'Dispatch 1' }).click()
+  await expect(page.locator('.radio-freq-num')).toHaveText('1.0')
+  await expect(page.locator('.radio-toast')).toContainText('Tuned to 1.0 MHz')
+
+  // Toggle Mute
+  const muteBtn = page.locator('.radio-mute-btn')
+  await expect(muteBtn).toHaveText('🎤 MIC LIVE')
+  await muteBtn.click()
+  await expect(muteBtn).toHaveText('🔇 MIC MUTED')
+  await muteBtn.click()
+  await expect(muteBtn).toHaveText('🎤 MIC LIVE')
+
+  // Push To Talk
+  const pttBtn = page.locator('.radio-ptt-button')
+  await expect(pttBtn).toContainText('HOLD TO TALK')
+  await pttBtn.dispatchEvent('mousedown')
+  await expect(pttBtn).toContainText('TRANSMITTING')
+  await pttBtn.dispatchEvent('mouseup')
+  await expect(pttBtn).toContainText('HOLD TO TALK')
+
+  // Toggle Power
+  const pwrBtn = page.locator('.radio-power-btn')
+  await expect(pwrBtn).toHaveText('PWR ON')
+  await pwrBtn.click()
+  await expect(pwrBtn).toHaveText('PWR OFF')
+  await expect(page.locator('.radio-freq-num')).toHaveText('---.-')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

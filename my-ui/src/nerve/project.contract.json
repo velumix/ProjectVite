@@ -6500,6 +6500,389 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "RadioService",
+      "Methods": [
+        {
+          "Name": "GetRadioState",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "connected": {
+                    "kind": "bool"
+                  },
+                  "frequency": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "micMuted": {
+                    "kind": "bool"
+                  },
+                  "isTalking": {
+                    "kind": "bool"
+                  },
+                  "channelMembers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "activeSpeakers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "presets": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "name": {
+                          "kind": "string"
+                        },
+                        "freq": {
+                          "kind": "float64"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ConnectFrequency",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "frequency": {
+                "kind": "float64"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "connected": {
+                      "kind": "bool"
+                    },
+                    "frequency": {
+                      "kind": "float64"
+                    },
+                    "volume": {
+                      "kind": "float64"
+                    },
+                    "micMuted": {
+                      "kind": "bool"
+                    },
+                    "isTalking": {
+                      "kind": "bool"
+                    },
+                    "channelMembers": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "string"
+                      }
+                    },
+                    "activeSpeakers": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "string"
+                      }
+                    },
+                    "presets": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "struct",
+                        "fields": {
+                          "name": {
+                            "kind": "string"
+                          },
+                          "freq": {
+                            "kind": "float64"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "DisconnectRadio",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "connected": {
+                      "kind": "bool"
+                    },
+                    "frequency": {
+                      "kind": "float64"
+                    },
+                    "volume": {
+                      "kind": "float64"
+                    },
+                    "micMuted": {
+                      "kind": "bool"
+                    },
+                    "isTalking": {
+                      "kind": "bool"
+                    },
+                    "channelMembers": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "string"
+                      }
+                    },
+                    "activeSpeakers": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "string"
+                      }
+                    },
+                    "presets": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "struct",
+                        "fields": {
+                          "name": {
+                            "kind": "string"
+                          },
+                          "freq": {
+                            "kind": "float64"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SetVolume",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "volume": {
+                "kind": "float64"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleMute",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "PushToTalk",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "isTalking": {
+                "kind": "bool"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "RadioStateChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "connected": {
+                    "kind": "bool"
+                  },
+                  "frequency": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "micMuted": {
+                    "kind": "bool"
+                  },
+                  "isTalking": {
+                    "kind": "bool"
+                  },
+                  "channelMembers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "activeSpeakers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "presets": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "name": {
+                          "kind": "string"
+                        },
+                        "freq": {
+                          "kind": "float64"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "SpeakerTalkingChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "speaker": {
+                    "kind": "string"
+                  },
+                  "isTalking": {
+                    "kind": "bool"
+                  },
+                  "activeSpeakers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -6737,6 +7120,16 @@
       "Name": "PicstagramController",
       "ServiceDependencies": [
         "PicstagramService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "RadioController",
+      "ServiceDependencies": [
+        "RadioService"
       ],
       "Lifecycle": {
         "NerveInit": true,

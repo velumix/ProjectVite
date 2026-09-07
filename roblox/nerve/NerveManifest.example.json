@@ -6328,6 +6328,382 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "RadioService": {
+      "GetRadioState": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "connected": {
+                  "kind": "bool"
+                },
+                "frequency": {
+                  "kind": "float64"
+                },
+                "volume": {
+                  "kind": "float64"
+                },
+                "micMuted": {
+                  "kind": "bool"
+                },
+                "isTalking": {
+                  "kind": "bool"
+                },
+                "channelMembers": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                },
+                "activeSpeakers": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                },
+                "presets": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "name": {
+                        "kind": "string"
+                      },
+                      "freq": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ConnectFrequency": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "frequency": {
+              "kind": "float64"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "connected": {
+                    "kind": "bool"
+                  },
+                  "frequency": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "micMuted": {
+                    "kind": "bool"
+                  },
+                  "isTalking": {
+                    "kind": "bool"
+                  },
+                  "channelMembers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "activeSpeakers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "presets": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "name": {
+                          "kind": "string"
+                        },
+                        "freq": {
+                          "kind": "float64"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "DisconnectRadio": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "connected": {
+                    "kind": "bool"
+                  },
+                  "frequency": {
+                    "kind": "float64"
+                  },
+                  "volume": {
+                    "kind": "float64"
+                  },
+                  "micMuted": {
+                    "kind": "bool"
+                  },
+                  "isTalking": {
+                    "kind": "bool"
+                  },
+                  "channelMembers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "activeSpeakers": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "presets": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "name": {
+                          "kind": "string"
+                        },
+                        "freq": {
+                          "kind": "float64"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "SetVolume": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "volume": {
+              "kind": "float64"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleMute": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            }
+          ]
+        }
+      },
+      "PushToTalk": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "isTalking": {
+              "kind": "bool"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            }
+          ]
+        }
+      },
+      "RadioStateChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "connected": {
+                  "kind": "bool"
+                },
+                "frequency": {
+                  "kind": "float64"
+                },
+                "volume": {
+                  "kind": "float64"
+                },
+                "micMuted": {
+                  "kind": "bool"
+                },
+                "isTalking": {
+                  "kind": "bool"
+                },
+                "channelMembers": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                },
+                "activeSpeakers": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                },
+                "presets": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "name": {
+                        "kind": "string"
+                      },
+                      "freq": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "SpeakerTalkingChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "speaker": {
+                  "kind": "string"
+                },
+                "isTalking": {
+                  "kind": "bool"
+                },
+                "activeSpeakers": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }
