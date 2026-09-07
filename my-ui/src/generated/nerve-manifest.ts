@@ -4464,6 +4464,256 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "CrewService": {
+      "GetCrew": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "crewId": {
+                  "kind": "string"
+                },
+                "name": {
+                  "kind": "string"
+                },
+                "tag": {
+                  "kind": "string"
+                },
+                "reputation": {
+                  "kind": "float64"
+                },
+                "bankBalance": {
+                  "kind": "float64"
+                },
+                "members": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "name": {
+                        "kind": "string"
+                      },
+                      "rank": {
+                        "kind": "string"
+                      },
+                      "online": {
+                        "kind": "bool"
+                      },
+                      "lastActive": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                },
+                "turfs": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "name": {
+                        "kind": "string"
+                      },
+                      "controlPct": {
+                        "kind": "float64"
+                      },
+                      "status": {
+                        "kind": "string"
+                      },
+                      "incomePerHour": {
+                        "kind": "float64"
+                      },
+                      "x": {
+                        "kind": "float64"
+                      },
+                      "y": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                },
+                "broadcasts": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "author": {
+                        "kind": "string"
+                      },
+                      "message": {
+                        "kind": "string"
+                      },
+                      "timestamp": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "DepositBank": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "amount": {
+              "kind": "float64"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "PromoteMember": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "memberId": {
+              "kind": "string"
+            },
+            "newRank": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "BroadcastAlert": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "message": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "message": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CrewBankUpdated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "float64"
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "CrewBroadcastSent": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "string"
+                },
+                "message": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

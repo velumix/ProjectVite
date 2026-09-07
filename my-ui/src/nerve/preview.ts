@@ -735,6 +735,52 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type CrewMember = {
+  id: string
+  name: string
+  rank: 'leader' | 'officer' | 'enforcer' | 'recruit'
+  online: boolean
+  lastActive: number
+}
+
+export type TurfZone = {
+  id: string
+  name: string
+  controlPct: number
+  status: 'secure' | 'contested'
+  incomePerHour: number
+  x: number
+  y: number
+}
+
+export type CrewBroadcast = {
+  id: string
+  author: string
+  message: string
+  timestamp: number
+}
+
+export type CrewInfo = {
+  crewId: string
+  name: string
+  tag: string
+  reputation: number
+  bankBalance: number
+  members: CrewMember[]
+  turfs: TurfZone[]
+  broadcasts: CrewBroadcast[]
+}
+
+export type PreviewCrewService = {
+  GetCrew: NerveMethod<Record<string, never> | undefined, [CrewInfo]>
+  DepositBank: NerveMethod<{ amount: number }, [boolean, string?, number?]>
+  PromoteMember: NerveMethod<{ memberId: string; newRank: string }, [boolean, string?]>
+  BroadcastAlert: NerveMethod<{ message: string }, [boolean, string?, CrewBroadcast?]>
+  CrewBankUpdated: NerveSignal<[number]>
+  CrewBroadcastSent: NerveSignal<[CrewBroadcast]>
+}
+
 export type CompanyListing = {
   id: string
   name: string
@@ -1098,6 +1144,29 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const crewData: CrewInfo = {
+    crewId: 'crew-syndicate',
+    name: 'Midnight Syndicate',
+    tag: '[SYND]',
+    reputation: 4850,
+    bankBalance: 145200,
+    members: [
+      { id: 'mem-1', name: 'Alex Mercer', rank: 'leader', online: true, lastActive: Date.now() },
+      { id: 'mem-2', name: 'Dante Vance', rank: 'officer', online: true, lastActive: Date.now() - 300000 },
+      { id: 'mem-3', name: 'Elena Rostova', rank: 'enforcer', online: true, lastActive: Date.now() - 900000 },
+      { id: 'mem-4', name: 'Marcus Kane', rank: 'recruit', online: false, lastActive: Date.now() - 86400000 },
+    ],
+    turfs: [
+      { id: 'turf-1', name: 'Cypress Flats Industrial', controlPct: 85, status: 'secure', incomePerHour: 2400, x: 850, y: -1900 },
+      { id: 'turf-2', name: 'Rancho Rail Yards', controlPct: 62, status: 'contested', incomePerHour: 1800, x: 420, y: -1550 },
+      { id: 'turf-3', name: 'Strawberry Hub', controlPct: 94, status: 'secure', incomePerHour: 3100, x: 120, y: -1200 },
+    ],
+    broadcasts: [
+      { id: 'bc-1', author: 'Dante Vance', message: 'Convoy arriving at Cypress Flats at 22:00. Need 2 escorts.', timestamp: Date.now() - 1800000 },
+    ],
+  }
+
   const initialCompanies: CompanyListing[] = [
     {
       id: 'comp-1',
@@ -1419,7 +1488,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -1950,6 +2019,45 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'CrewService.GetCrew': () => {
+        return [{
+          ...crewData,
+          members: crewData.members.map((m) => ({ ...m })),
+          turfs: crewData.turfs.map((t) => ({ ...t })),
+          broadcasts: crewData.broadcasts.map((b) => ({ ...b })),
+        }]
+      },
+      'CrewService.DepositBank': (payload) => {
+        if (!isRecord(payload) || typeof payload.amount !== 'number' || payload.amount <= 0) {
+          return [false, 'Invalid amount', undefined]
+        }
+        crewData.bankBalance += payload.amount
+        adapter.emitSignal('CrewService', 'CrewBankUpdated', crewData.bankBalance)
+        return [true, undefined, crewData.bankBalance]
+      },
+      'CrewService.PromoteMember': (payload) => {
+        if (!isRecord(payload) || typeof payload.memberId !== 'string' || typeof payload.newRank !== 'string') {
+          return [false, 'Invalid payload']
+        }
+        const mem = crewData.members.find((m) => m.id === payload.memberId)
+        if (!mem) return [false, 'Member not found']
+        mem.rank = payload.newRank as any
+        return [true, undefined]
+      },
+      'CrewService.BroadcastAlert': (payload) => {
+        if (!isRecord(payload) || typeof payload.message !== 'string') return [false, 'Invalid message', undefined]
+        const bc: CrewBroadcast = {
+          id: 'bc-' + Date.now(),
+          author: 'Alex Mercer',
+          message: String(payload.message),
+          timestamp: Date.now(),
+        }
+        crewData.broadcasts.unshift(bc)
+        adapter.emitSignal('CrewService', 'CrewBroadcastSent', { ...bc })
+        return [true, undefined, { ...bc }]
+      },
+
       'CompanyService.GetCompanies': () => {
         return [initialCompanies.map((c) => ({ ...c }))]
       },
@@ -2306,3 +2414,4 @@ export const BillingService = nervePreview.GetService<PreviewBillingService>('Bi
 export const EmergencyService = nervePreview.GetService<PreviewEmergencyService>('EmergencyService')
 export const DarkChatService = nervePreview.GetService<PreviewDarkChatService>('DarkChatService')
 export const CompanyService = nervePreview.GetService<PreviewCompanyService>('CompanyService')
+export const CrewService = nervePreview.GetService<PreviewCrewService>('CrewService')

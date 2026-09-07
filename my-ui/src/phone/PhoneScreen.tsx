@@ -14,6 +14,7 @@ import { BillingApp } from './apps/BillingApp.tsx'
 import { CityWarnApp } from './apps/CityWarnApp.tsx'
 import { DarkChatApp } from './apps/DarkChatApp.tsx'
 import { CompaniesApp } from './apps/CompaniesApp.tsx'
+import { CrewLinkApp } from './apps/CrewLinkApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -322,6 +323,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'citywarn' && <CityWarnApp onOpenMap={() => launch('map')} />}
             {activeApp === 'darkchat' && <DarkChatApp />}
             {activeApp === 'companies' && <CompaniesApp onOpenMap={() => launch('map')} onCall={() => launch('phone')} />}
+            {activeApp === 'crewlink' && <CrewLinkApp onOpenMap={() => launch('map')} />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -344,6 +346,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'citywarn' &&
               activeApp !== 'darkchat' &&
               activeApp !== 'companies' &&
+              activeApp !== 'crewlink' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

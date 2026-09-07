@@ -6612,6 +6612,423 @@
   font-size: 0.8em;
 }
 
+
+/* -------------------------------------------------------------
+   CREWLINK APP
+   ------------------------------------------------------------- */
+.crew-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #080c14;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.crew-loading {
+  padding: 3em;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.crew-header {
+  padding: 0.6em 0.8em 0.4em;
+  background: #0d1522;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+
+.crew-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crew-branding {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.crew-tag-pill {
+  background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+  color: #fff;
+  font-size: 0.72em;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.crew-branding h3 {
+  margin: 0;
+  font-size: 1em;
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+.crew-branding small {
+  font-size: 0.62em;
+  color: #c084fc;
+}
+
+.crew-online-badge {
+  font-size: 0.62em;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.crew-bank-banner {
+  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 10px;
+  padding: 0.6em 0.8em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crew-bank-label {
+  font-size: 0.56em;
+  color: #c084fc;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.crew-bank-balance {
+  display: block;
+  font-size: 1.15em;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  margin: 1px 0;
+}
+
+.crew-bank-info small {
+  font-size: 0.6em;
+  color: #34d399;
+}
+
+.crew-deposit-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.crew-deposit-btn {
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  background: rgba(168, 85, 247, 0.15);
+  color: #e9d5ff;
+  font-size: 0.65em;
+  font-weight: 800;
+  padding: 0.35em 0.6em;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.crew-deposit-btn:hover {
+  background: #a855f7;
+  color: #fff;
+}
+
+.crew-tab-ribbon {
+  display: flex;
+  gap: 4px;
+  background: #090e17;
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.crew-tab-btn {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  padding: 0.32em 0;
+  font-size: 0.68em;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.crew-tab-btn.active {
+  background: #a855f7;
+  color: #fff;
+}
+
+/* Toast */
+.crew-toast {
+  position: absolute;
+  top: 130px;
+  left: 14px;
+  right: 14px;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #a855f7;
+  border-radius: 10px;
+  padding: 0.45em 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+  animation: slideDown 0.2s ease-out;
+}
+
+.crew-toast small {
+  color: #f1f5f9;
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+/* Main scroll */
+.crew-main-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8em;
+}
+
+.crew-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65em;
+}
+
+/* Turf Card */
+.crew-turf-card {
+  background: #111a28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+}
+
+.crew-turf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.crew-turf-status {
+  font-size: 0.54em;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.crew-turf-status.secure {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.crew-turf-status.contested {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.crew-turf-name {
+  margin: 0.1em 0 0;
+  font-size: 0.86em;
+  color: #fff;
+}
+
+.crew-turf-income {
+  font-size: 0.78em;
+  color: #34d399;
+}
+
+.crew-control-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.crew-control-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.64em;
+  color: #94a3b8;
+}
+
+.crew-control-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.crew-control-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
+  border-radius: 3px;
+}
+
+.crew-turf-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.4em;
+}
+
+.crew-turf-gps-btn {
+  width: 100%;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: #162234;
+  color: #38bdf8;
+  font-size: 0.68em;
+  font-weight: 700;
+  padding: 0.4em 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.crew-turf-gps-btn:hover {
+  background: #0284c7;
+  color: #fff;
+}
+
+/* Roster Member Card */
+.crew-member-card {
+  background: #111a28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.6em 0.8em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crew-member-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.crew-avatar-circle {
+  font-size: 0.85em;
+}
+
+.crew-member-name {
+  margin: 0;
+  font-size: 0.82em;
+  color: #fff;
+}
+
+.crew-rank-tag {
+  font-size: 0.55em;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.crew-rank-tag.leader {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.crew-rank-tag.officer {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+}
+
+.crew-rank-tag.enforcer {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.crew-rank-tag.recruit {
+  background: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+}
+
+.crew-rank-select {
+  background: #162234;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  font-size: 0.68em;
+  padding: 0.25em 0.4em;
+  border-radius: 6px;
+  outline: none;
+}
+
+/* Comms */
+.crew-comms-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+}
+
+.crew-broadcast-input-box {
+  display: flex;
+  gap: 6px;
+}
+
+.crew-broadcast-input-box input {
+  flex: 1;
+  background: #162234;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.4em 0.6em;
+  font-size: 0.74em;
+  outline: none;
+}
+
+.crew-send-bc-btn {
+  border: 0;
+  background: #a855f7;
+  color: #fff;
+  font-size: 0.7em;
+  font-weight: 800;
+  padding: 0.4em 0.8em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.crew-broadcast-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.crew-bc-card {
+  background: #111a28;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 10px;
+  padding: 0.6em 0.8em;
+}
+
+.crew-bc-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.crew-bc-author {
+  font-size: 0.72em;
+  color: #c084fc;
+}
+
+.crew-bc-time {
+  font-size: 0.6em;
+  color: #64748b;
+}
+
+.crew-bc-msg {
+  margin: 0;
+  font-size: 0.76em;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {

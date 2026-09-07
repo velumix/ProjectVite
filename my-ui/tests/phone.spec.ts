@@ -821,3 +821,47 @@ test('companies app displays city business directory, applies to hiring job role
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('crewlink app displays syndicate roster, deposits crew vault funds, monitors turf control, and broadcasts comms via Roblox CrewService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch CrewLink
+  await page.getByRole('button', { name: 'Open CrewLink' }).click()
+  await expect(page.locator('.crew-app-root')).toBeVisible()
+  await expect(page.locator('.crew-branding h3')).toHaveText('Midnight Syndicate')
+
+  // Initial vault balance check
+  await expect(page.locator('.crew-bank-balance')).toContainText('$145,200.00')
+
+  // Deposit funds
+  await page.getByRole('button', { name: '+$5k' }).click()
+  await expect(page.locator('.crew-toast')).toContainText('Deposited $5,000 into Crew Vault')
+  await expect(page.locator('.crew-bank-balance')).toContainText('$150,200.00')
+
+  // Turf tab
+  const turfs = page.locator('.crew-turf-card')
+  await expect(turfs).toHaveCount(3)
+  await expect(page.locator('.crew-turf-name').first()).toHaveText('Cypress Flats Industrial')
+
+  // Roster tab
+  await page.getByRole('button', { name: 'Roster (4)' }).click()
+  const members = page.locator('.crew-member-card')
+  await expect(members).toHaveCount(4)
+
+  // Promote recruit
+  const recruitSelect = page.locator('.crew-rank-select').last()
+  await recruitSelect.selectOption('enforcer')
+  await expect(page.locator('.crew-toast')).toContainText('promoted to ENFORCER')
+
+  // Comms tab
+  await page.getByRole('button', { name: 'Comms (1)' }).click()
+  await page.locator('.crew-broadcast-input-box input').fill('Meeting at warehouse in 10')
+  await page.getByRole('button', { name: 'BROADCAST' }).click()
+  await expect(page.locator('.crew-toast')).toContainText('Tactical broadcast transmitted')
+  await expect(page.locator('.crew-bc-msg').first()).toHaveText('Meeting at warehouse in 10')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
