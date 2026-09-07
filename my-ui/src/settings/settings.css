@@ -291,6 +291,14 @@
   height: 100%;
 }
 
+.settings-v2-row-mark {
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.55);
+}
+
 .settings-v2-row-info {
   display: flex;
   flex-direction: column;
@@ -509,6 +517,16 @@
   border-top: 1px solid rgba(51, 65, 85, 0.3);
 }
 
+.settings-v2-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+}
+
+.settings-v2-save-state {
+  color: #64748b;
+}
+
 .settings-v2-motto {
   font-size: 0.62em;
   font-weight: 700;
@@ -523,6 +541,42 @@
   letter-spacing: 0.18em;
   color: #475569;
   text-transform: uppercase;
+}
+
+.settings-v2-autosave.is-saved {
+  color: #38bdf8;
+}
+
+.settings-v2-autosave.is-saving,
+.settings-v2-autosave.is-loading {
+  color: #fbbf24;
+}
+
+.settings-v2-autosave.is-error {
+  color: #fb7185;
+}
+
+.settings-v2-reset-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.35em;
+}
+
+.settings-v2-reset-button {
+  border: 1px solid rgba(251, 113, 133, 0.45);
+  border-radius: 0.4em;
+  background: rgba(127, 29, 29, 0.22);
+  color: #fda4af;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72em;
+  padding: 0.45em 0.8em;
+}
+
+.settings-v2-reset-button:hover,
+.settings-v2-reset-button:focus-visible {
+  border-color: #fb7185;
+  color: #fff1f2;
 }
 
 /* -------------------------------------------------------------------------

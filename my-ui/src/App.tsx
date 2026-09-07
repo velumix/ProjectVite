@@ -4,13 +4,14 @@ import { previewEventAdapter } from './renderer/preview-handlers.ts'
 import { previewNetworkAdapter } from './renderer/preview-network.ts'
 import { createScenarioRunner } from './scenarios/scenario-runner.ts'
 import type { PlaybackSpeed, ScenarioPlaybackState } from './scenarios/scenario-runner.ts'
-import { nervePreview } from './nerve/preview.ts'
+import { createNervePreview } from './nerve/preview.ts'
 import { applyEffectPatches, createEffectPlayer } from './effects/roblox-effects.ts'
 import { applyBindings, createReactiveBindingStore } from './bindings/reactive-bindings.ts'
 import { createPreviewActions, createPreviewHandlers } from './actions/preview-actions.ts'
 import { compileRobloxProject } from './features/project-compiler.ts'
 import { PreviewFeature } from './features/preview-feature.ts'
 import { ShopFeature } from './features/shop-feature.ts'
+import { SettingsFeature } from './features/settings-feature.ts'
 import { createRobloxRuntimeContext } from './runtime/roblox-runtime.ts'
 import { createRobloxPersistence } from './persistence/roblox-persistence.ts'
 import { createRobloxRealm } from './realm/roblox-realm.ts'
@@ -25,7 +26,8 @@ function App() {
   const runtime = useMemo(() => createRobloxRuntimeContext(), [])
   const persistence = useMemo(() => createRobloxPersistence(), [])
   const realm = useMemo(() => createRobloxRealm(persistence), [persistence])
-  const featureProject = useMemo(() => compileRobloxProject([PreviewFeature, ShopFeature]), [])
+  const nerve = useMemo(() => createNervePreview({ persistence }), [persistence])
+  const featureProject = useMemo(() => compileRobloxProject([PreviewFeature, ShopFeature, SettingsFeature]), [])
   const compiledTree = featureProject.Tree
   const effectPlayer = useMemo(
     () => createEffectPlayer(compiledTree, featureProject.Effects),
@@ -39,7 +41,7 @@ function App() {
   const scenarioRunner = useMemo(
     () =>
       createScenarioRunner({
-        nerve: nervePreview,
+        nerve,
         network: previewNetworkAdapter,
         effects: effectPlayer,
         bindings: bindingStore,
@@ -47,7 +49,7 @@ function App() {
         persistence,
         realm,
       }),
-    [bindingStore, effectPlayer, persistence, realm, runtime],
+    [bindingStore, effectPlayer, nerve, persistence, realm, runtime],
   )
 
   const actions = useMemo(
@@ -56,7 +58,7 @@ function App() {
         {
           bindings: bindingStore,
           effects: effectPlayer,
-          nerve: nervePreview,
+          nerve,
           network: previewNetworkAdapter,
           persistence,
           getTimeMs: () => scenarioRunner.getState().timeMs,
@@ -64,7 +66,7 @@ function App() {
         },
         featureProject.Actions,
       ),
-    [bindingStore, effectPlayer, featureProject.Actions, persistence, scenarioRunner],
+    [bindingStore, effectPlayer, featureProject.Actions, nerve, persistence, scenarioRunner],
   )
 
   const previewHandlers = useMemo(
@@ -143,7 +145,7 @@ function App() {
       actions.cancel()
       scenarioRunner.stop()
     }
-  }, [actions, activeScenario, bindingStore, effectPlayer, featureProject, scenarioId, scenarioRunner])
+  }, [actions, activeScenario, bindingStore, effectPlayer, featureProject, nerve, scenarioId, scenarioRunner])
 
   const handleScenarioChange = (nextId: string) => {
     setScenarioId(nextId)
@@ -283,7 +285,7 @@ function App() {
               Handlers={previewHandlers}
               eventAdapter={previewEventAdapter}
             />
-            <InventoryScreen key={`${scenarioId}-${menuRevision}`} panel={String(bindingStore.get('UI.ActivePanel') ?? 'None')} bindings={bindingStore}
+            <InventoryScreen key={`${scenarioId}-${menuRevision}`} panel={String(bindingStore.get('UI.ActivePanel') ?? 'None')} bindings={bindingStore} nerve={nerve}
               onPanelChange={panel => bindingStore.set('UI.ActivePanel', panel)}
               onClose={() => { void actions.run('ClosePanel', {}).promise }} />
           </RobloxViewportPreview>

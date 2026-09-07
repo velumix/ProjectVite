@@ -21,12 +21,37 @@
         { "Name": "EquipItem", "Arguments": { "kind": "tuple", "items": [{ "kind": "string" }] }, "Direction": "client" }
       ],
       "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    },
+    {
+      "Name": "SettingsService",
+      "Methods": [
+        {
+          "Name": "GetSettings",
+          "Request": { "kind": "tuple", "items": [] },
+          "Response": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "language": { "kind": "string" }, "uiScale": { "kind": "float64" }, "showTooltips": { "kind": "bool" }, "streamerMode": { "kind": "bool" }, "showQuantities": { "kind": "bool" }, "performancePreset": { "kind": "string" }, "disablePostProcessing": { "kind": "bool" }, "reduceEffects": { "kind": "bool" }, "lowerReflectionDetail": { "kind": "bool" }, "shadowDetail": { "kind": "float64" }, "viewDistance": { "kind": "float64" }, "masterVolume": { "kind": "float64" }, "musicVolume": { "kind": "float64" }, "sfxVolume": { "kind": "float64" }, "radioVolume": { "kind": "float64" }, "voiceChatVolume": { "kind": "float64" }, "lookSensitivity": { "kind": "float64" }, "invertLook": { "kind": "bool" }, "holdToSprint": { "kind": "bool" }, "showMinimap": { "kind": "bool" }, "showCompass": { "kind": "bool" }, "damageNumbers": { "kind": "bool" }, "showNotifications": { "kind": "bool" }, "missionAlerts": { "kind": "bool" }, "chatNotifications": { "kind": "bool" }, "colorblindMode": { "kind": "string" }, "subtitles": { "kind": "bool" }, "highContrast": { "kind": "bool" }, "developerMode": { "kind": "bool" }, "showNetworkStats": { "kind": "bool" }, "motion": { "kind": "bool" }, "panelOpacity": { "kind": "float64" } } }] }
+        },
+        {
+          "Name": "SaveSettings",
+          "Request": { "kind": "struct", "fields": { "language": { "kind": "string" }, "uiScale": { "kind": "float64" }, "showTooltips": { "kind": "bool" }, "streamerMode": { "kind": "bool" }, "showQuantities": { "kind": "bool" }, "performancePreset": { "kind": "string" }, "disablePostProcessing": { "kind": "bool" }, "reduceEffects": { "kind": "bool" }, "lowerReflectionDetail": { "kind": "bool" }, "shadowDetail": { "kind": "float64" }, "viewDistance": { "kind": "float64" }, "masterVolume": { "kind": "float64" }, "musicVolume": { "kind": "float64" }, "sfxVolume": { "kind": "float64" }, "radioVolume": { "kind": "float64" }, "voiceChatVolume": { "kind": "float64" }, "lookSensitivity": { "kind": "float64" }, "invertLook": { "kind": "bool" }, "holdToSprint": { "kind": "bool" }, "showMinimap": { "kind": "bool" }, "showCompass": { "kind": "bool" }, "damageNumbers": { "kind": "bool" }, "showNotifications": { "kind": "bool" }, "missionAlerts": { "kind": "bool" }, "chatNotifications": { "kind": "bool" }, "colorblindMode": { "kind": "string" }, "subtitles": { "kind": "bool" }, "highContrast": { "kind": "bool" }, "developerMode": { "kind": "bool" }, "showNetworkStats": { "kind": "bool" }, "motion": { "kind": "bool" }, "panelOpacity": { "kind": "float64" } } },
+          "Response": { "kind": "tuple", "items": [{ "kind": "bool" }, { "kind": "optional", "value": { "kind": "string" } }] },
+          "RateLimit": { "Requests": 10, "Window": 1 }
+        }
+      ],
+      "Signals": [
+        { "Name": "SettingsChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "language": { "kind": "string" }, "uiScale": { "kind": "float64" }, "showTooltips": { "kind": "bool" }, "streamerMode": { "kind": "bool" }, "showQuantities": { "kind": "bool" }, "performancePreset": { "kind": "string" }, "disablePostProcessing": { "kind": "bool" }, "reduceEffects": { "kind": "bool" }, "lowerReflectionDetail": { "kind": "bool" }, "shadowDetail": { "kind": "float64" }, "viewDistance": { "kind": "float64" }, "masterVolume": { "kind": "float64" }, "musicVolume": { "kind": "float64" }, "sfxVolume": { "kind": "float64" }, "radioVolume": { "kind": "float64" }, "voiceChatVolume": { "kind": "float64" }, "lookSensitivity": { "kind": "float64" }, "invertLook": { "kind": "bool" }, "holdToSprint": { "kind": "bool" }, "showMinimap": { "kind": "bool" }, "showCompass": { "kind": "bool" }, "damageNumbers": { "kind": "bool" }, "showNotifications": { "kind": "bool" }, "missionAlerts": { "kind": "bool" }, "chatNotifications": { "kind": "bool" }, "colorblindMode": { "kind": "string" }, "subtitles": { "kind": "bool" }, "highContrast": { "kind": "bool" }, "developerMode": { "kind": "bool" }, "showNetworkStats": { "kind": "bool" }, "motion": { "kind": "bool" }, "panelOpacity": { "kind": "float64" } } }] } }
+      ],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
     }
   ],
   "Controllers": [
     {
       "Name": "InventoryController",
       "ServiceDependencies": ["InventoryService"],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    },
+    {
+      "Name": "SettingsController",
+      "ServiceDependencies": ["SettingsService"],
       "Lifecycle": { "NerveInit": true, "NerveStart": true }
     }
   ]

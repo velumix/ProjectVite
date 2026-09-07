@@ -6,6 +6,7 @@ import { uiAudio } from '../audio/ui-audio.ts'
 import { QuestsScreen } from '../quests/QuestsScreen.tsx'
 import { StatsScreen } from '../stats/StatsScreen.tsx'
 import { SettingsScreen } from '../settings/SettingsScreen.tsx'
+import type { NervePreviewAdapter } from '../nerve/contracts.ts'
 
 const assetRoot = `${import.meta.env.BASE_URL}assets/inventory/`
 const tabs = ['Inventory', 'Quests', 'Map', 'Phone', 'Stats', 'Settings'] as const
@@ -15,6 +16,7 @@ const menuPanelNames = new Set<string>(tabs)
 type Props = {
   panel: string
   bindings: ReactiveBindingStore
+  nerve: NervePreviewAdapter
   onPanelChange: (panel: MenuPanel) => void
   onClose: () => void
 }
@@ -56,7 +58,7 @@ type DragPayload = {
   itemId?: string
 }
 
-export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Props) {
+export function InventoryScreen({ panel, bindings, nerve, onPanelChange, onClose }: Props) {
   const [inventory, dispatch] = useReducer(inventoryReducer, undefined, createInventoryState)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [selectedEquipment, setSelectedEquipment] = useState<string | null>(null)
@@ -252,6 +254,7 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
             setMotion={setMotion}
             panelOpacity={panelOpacity}
             setPanelOpacity={setPanelOpacity}
+            nerve={nerve}
             onBack={() => onPanelChange('Inventory')}
           />
         ) : (

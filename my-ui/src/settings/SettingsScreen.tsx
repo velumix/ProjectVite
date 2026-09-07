@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import {
   SETTINGS_CATEGORIES,
   INITIAL_SETTINGS_STATE,
+  normalizeSettings,
   type StreamlinedSettingsState,
 } from './settings-data.ts'
 import { uiAudio } from '../audio/ui-audio.ts'
+import { nervePreview, type PreviewSettingsService } from '../nerve/preview.ts'
+import type { NervePreviewAdapter } from '../nerve/contracts.ts'
 import './settings.css'
 
 interface SettingsScreenProps {
@@ -14,6 +17,7 @@ interface SettingsScreenProps {
   setMotion?: (val: boolean) => void
   panelOpacity?: number
   setPanelOpacity?: (val: number) => void
+  nerve?: NervePreviewAdapter
   onBack?: () => void
   onClose?: () => void
 }
@@ -25,8 +29,13 @@ export function SettingsScreen({
   setMotion,
   panelOpacity = 100,
   setPanelOpacity,
+  nerve,
 }: SettingsScreenProps) {
   const [activeCategory, setActiveCategory] = useState('general')
+  const [saveState, setSaveState] = useState<'loading' | 'saved' | 'saving' | 'error'>('loading')
+  const contentRef = useRef<HTMLDivElement>(null)
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({})
+  const lastSavedSettings = useRef<string | null>(null)
   const [settings, setSettings] = useState<StreamlinedSettingsState>({
     ...INITIAL_SETTINGS_STATE,
     showQuantities,
@@ -34,11 +43,68 @@ export function SettingsScreen({
     panelOpacity,
   })
 
+  const settingsService = (nerve ?? nervePreview).GetService<PreviewSettingsService>('SettingsService')
+
+  const applyLoadedSettings = useCallback((next: StreamlinedSettingsState) => {
+    setSettings(next)
+    setShowQuantities?.(next.showQuantities)
+    setMotion?.(next.motion)
+    setPanelOpacity?.(next.panelOpacity)
+  }, [setMotion, setPanelOpacity, setShowQuantities])
+
+  useEffect(() => {
+    let mounted = true
+    const connection = settingsService.SettingsChanged.connect((next) => {
+      if (!mounted) return
+      const normalized = normalizeSettings(next)
+      lastSavedSettings.current = JSON.stringify(normalized)
+      applyLoadedSettings(normalized)
+      setSaveState('saved')
+    })
+
+    void settingsService.GetSettings.request(undefined)
+      .then(([stored]) => {
+        if (!mounted) return
+        const normalized = normalizeSettings(stored)
+        lastSavedSettings.current = JSON.stringify(normalized)
+        applyLoadedSettings(normalized)
+        setSaveState('saved')
+      })
+      .catch(() => {
+        if (mounted) setSaveState('error')
+      })
+
+    return () => {
+      mounted = false
+      connection()
+    }
+  }, [applyLoadedSettings, settingsService])
+
+  useEffect(() => {
+    const serialized = JSON.stringify(settings)
+    if (saveState === 'loading' || serialized === lastSavedSettings.current) return
+    setSaveState('saving')
+    const timeout = window.setTimeout(() => {
+      void settingsService.SaveSettings.request(settings)
+        .then(([success]) => {
+          if (success) {
+            lastSavedSettings.current = serialized
+            setSaveState('saved')
+          } else {
+            setSaveState('error')
+          }
+        })
+        .catch(() => setSaveState('error'))
+    }, 180)
+    return () => window.clearTimeout(timeout)
+  }, [settings, saveState, settingsService])
+
   const updateSetting = <K extends keyof StreamlinedSettingsState>(
     key: K,
     val: StreamlinedSettingsState[K]
   ) => {
     setSettings(prev => ({ ...prev, [key]: val }))
+    setSaveState('saving')
     if (key === 'showQuantities' && setShowQuantities) {
       setShowQuantities(val as boolean)
     }
@@ -53,7 +119,28 @@ export function SettingsScreen({
   const handleCategoryClick = (catId: string) => {
     uiAudio.playTick()
     setActiveCategory(catId)
+    const target = sectionRefs.current[catId]
+    const content = contentRef.current
+    if (target && content) {
+      const top = target.getBoundingClientRect().top - content.getBoundingClientRect().top + content.scrollTop - 8
+      content.scrollTo({ top, behavior: 'smooth' })
+    }
   }
+
+  const resetSettings = () => {
+    uiAudio.playClick()
+    applyLoadedSettings({ ...INITIAL_SETTINGS_STATE })
+    setSaveState('saving')
+  }
+
+  const settingsStatus = {
+    loading: 'LOADING SETTINGS…',
+    saved: 'SETTINGS SAVED.',
+    saving: 'SAVING SETTINGS…',
+    error: 'SETTINGS SAVE FAILED.',
+  }[saveState]
+
+  const colorblindModes = ['Off', 'Deuteranopia', 'Protanopia', 'Tritanopia'] as const
 
   return (
     <div className="settings-v2-container">
@@ -70,6 +157,7 @@ export function SettingsScreen({
                 className={`settings-v2-nav-item${isActive ? ' is-active' : ''}`}
                 onClick={() => handleCategoryClick(cat.id)}
                 aria-pressed={isActive}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <div className="settings-v2-nav-icon">
                   <CategoryIcon name={cat.icon} />
@@ -84,9 +172,9 @@ export function SettingsScreen({
         </nav>
 
         {/* Right Scrollable Content Area */}
-        <div className="settings-v2-content">
+        <div ref={contentRef} className="settings-v2-content">
           {/* ================= SECTION 1: GENERAL ================= */}
-          <section className="settings-v2-card" aria-label="General Settings">
+          <section ref={node => { sectionRefs.current.general = node }} data-settings-category="general" className="settings-v2-card" aria-label="General Settings">
             <div className="settings-v2-card-header">
               <h2 className="settings-v2-card-title">GENERAL</h2>
               <p className="settings-v2-card-sub">Basic preferences for your experience.</p>
@@ -237,7 +325,7 @@ export function SettingsScreen({
           </section>
 
           {/* ================= SECTION 2: GRAPHICS ================= */}
-          <section className="settings-v2-card" aria-label="Graphics Settings">
+          <section ref={node => { sectionRefs.current.graphics = node }} data-settings-category="graphics" className="settings-v2-card" aria-label="Graphics Settings">
             <div className="settings-v2-card-header">
               <h2 className="settings-v2-card-title">GRAPHICS</h2>
               <p className="settings-v2-card-sub">Adjust visual quality and performance settings.</p>
@@ -420,7 +508,7 @@ export function SettingsScreen({
           </section>
 
           {/* ================= SECTION 3: AUDIO ================= */}
-          <section className="settings-v2-card" aria-label="Audio Settings">
+          <section ref={node => { sectionRefs.current.audio = node }} data-settings-category="audio" className="settings-v2-card" aria-label="Audio Settings">
             <div className="settings-v2-card-header">
               <h2 className="settings-v2-card-title">AUDIO</h2>
               <p className="settings-v2-card-sub">Control in-game audio levels.</p>
@@ -557,6 +645,91 @@ export function SettingsScreen({
               </div>
             </div>
           </section>
+
+          <SettingsCategoryCard
+            category="controls"
+            title="CONTROLS"
+            description="Tune movement and camera input."
+            sectionRef={node => { sectionRefs.current.controls = node }}
+          >
+            <SettingsOption title="Look Sensitivity" description="Adjust camera movement speed.">
+              <SliderControl label="Look Sensitivity" min={0.1} max={1} step={0.05} value={settings.lookSensitivity} onChange={v => updateSetting('lookSensitivity', v)} />
+            </SettingsOption>
+            <SettingsOption title="Invert Look" description="Invert the vertical camera axis.">
+              <ToggleSwitch label="Invert Look" checked={settings.invertLook} onChange={v => updateSetting('invertLook', v)} />
+            </SettingsOption>
+            <SettingsOption title="Hold to Sprint" description="Keep sprint active while the sprint key is held.">
+              <ToggleSwitch label="Hold to Sprint" checked={settings.holdToSprint} onChange={v => updateSetting('holdToSprint', v)} />
+            </SettingsOption>
+          </SettingsCategoryCard>
+
+          <SettingsCategoryCard
+            category="hud"
+            title="HUD"
+            description="Choose which information stays visible in play."
+            sectionRef={node => { sectionRefs.current.hud = node }}
+          >
+            <SettingsOption title="Show Minimap" description="Display the city minimap.">
+              <ToggleSwitch label="Show Minimap" checked={settings.showMinimap} onChange={v => updateSetting('showMinimap', v)} />
+            </SettingsOption>
+            <SettingsOption title="Show Compass" description="Display navigation headings.">
+              <ToggleSwitch label="Show Compass" checked={settings.showCompass} onChange={v => updateSetting('showCompass', v)} />
+            </SettingsOption>
+            <SettingsOption title="Damage Numbers" description="Show damage values over affected targets.">
+              <ToggleSwitch label="Damage Numbers" checked={settings.damageNumbers} onChange={v => updateSetting('damageNumbers', v)} />
+            </SettingsOption>
+          </SettingsCategoryCard>
+
+          <SettingsCategoryCard
+            category="notifications"
+            title="NOTIFICATIONS"
+            description="Control alerts and message indicators."
+            sectionRef={node => { sectionRefs.current.notifications = node }}
+          >
+            <SettingsOption title="Show Notifications" description="Display in-game notifications.">
+              <ToggleSwitch label="Show Notifications" checked={settings.showNotifications} onChange={v => updateSetting('showNotifications', v)} />
+            </SettingsOption>
+            <SettingsOption title="Mission Alerts" description="Show updates for active missions.">
+              <ToggleSwitch label="Mission Alerts" checked={settings.missionAlerts} onChange={v => updateSetting('missionAlerts', v)} />
+            </SettingsOption>
+            <SettingsOption title="Chat Notifications" description="Show new chat message alerts.">
+              <ToggleSwitch label="Chat Notifications" checked={settings.chatNotifications} onChange={v => updateSetting('chatNotifications', v)} />
+            </SettingsOption>
+          </SettingsCategoryCard>
+
+          <SettingsCategoryCard
+            category="accessibility"
+            title="ACCESSIBILITY"
+            description="Make the interface easier to read and use."
+            sectionRef={node => { sectionRefs.current.accessibility = node }}
+          >
+            <SettingsOption title="Colorblind Mode" description="Apply a color filter for common color vision differences.">
+              <SelectControl label="Colorblind Mode" value={settings.colorblindMode} options={colorblindModes} onChange={v => updateSetting('colorblindMode', v as StreamlinedSettingsState['colorblindMode'])} />
+            </SettingsOption>
+            <SettingsOption title="Subtitles" description="Show captions for spoken audio.">
+              <ToggleSwitch label="Subtitles" checked={settings.subtitles} onChange={v => updateSetting('subtitles', v)} />
+            </SettingsOption>
+            <SettingsOption title="High Contrast" description="Increase contrast around interface elements.">
+              <ToggleSwitch label="High Contrast" checked={settings.highContrast} onChange={v => updateSetting('highContrast', v)} />
+            </SettingsOption>
+          </SettingsCategoryCard>
+
+          <SettingsCategoryCard
+            category="advanced"
+            title="ADVANCED"
+            description="Developer and diagnostic options for this experience."
+            sectionRef={node => { sectionRefs.current.advanced = node }}
+          >
+            <SettingsOption title="Developer Mode" description="Enable extra development controls.">
+              <ToggleSwitch label="Developer Mode" checked={settings.developerMode} onChange={v => updateSetting('developerMode', v)} />
+            </SettingsOption>
+            <SettingsOption title="Network Stats" description="Show network timing and transport status.">
+              <ToggleSwitch label="Network Stats" checked={settings.showNetworkStats} onChange={v => updateSetting('showNetworkStats', v)} />
+            </SettingsOption>
+            <div className="settings-v2-reset-row">
+              <button type="button" className="settings-v2-reset-button" onClick={resetSettings}>Reset all settings</button>
+            </div>
+          </SettingsCategoryCard>
         </div>
       </div>
 
@@ -567,6 +740,7 @@ export function SettingsScreen({
         </div>
         <div className="settings-v2-footer-right">
           <span className="settings-v2-autosave">SETTINGS SAVE AUTOMATICALLY.</span>
+          <span className={`settings-v2-autosave settings-v2-save-state is-${saveState}`} aria-live="polite">{settingsStatus}</span>
         </div>
       </footer>
     </div>
@@ -574,6 +748,58 @@ export function SettingsScreen({
 }
 
 /* ---------------- Subcomponents ---------------- */
+
+function SettingsCategoryCard({
+  category,
+  title,
+  description,
+  sectionRef,
+  children,
+}: {
+  category: string
+  title: string
+  description: string
+  sectionRef: (node: HTMLElement | null) => void
+  children: ReactNode
+}) {
+  return (
+    <section ref={sectionRef} data-settings-category={category} className="settings-v2-card" aria-label={`${title} Settings`}>
+      <div className="settings-v2-card-header">
+        <h2 className="settings-v2-card-title">{title}</h2>
+        <p className="settings-v2-card-sub">{description}</p>
+      </div>
+      <div className="settings-v2-rows">{children}</div>
+    </section>
+  )
+}
+
+function SettingsOption({ title, description, children }: { title: string; description: string; children: ReactNode }) {
+  return (
+    <div className="settings-v2-row">
+      <div className="settings-v2-row-left">
+        <div className="settings-v2-row-icon" aria-hidden="true"><span className="settings-v2-row-mark" /></div>
+        <div className="settings-v2-row-info">
+          <span className="settings-v2-row-title">{title}</span>
+          <span className="settings-v2-row-desc">{description}</span>
+        </div>
+      </div>
+      <div className="settings-v2-row-right">{children}</div>
+    </div>
+  )
+}
+
+function SelectControl<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: readonly T[]; onChange: (value: string) => void }) {
+  return (
+    <div className="settings-v2-select-wrapper">
+      <select aria-label={label} value={value} onChange={event => { uiAudio.playClick(); onChange(event.target.value) }} className="settings-v2-select">
+        {options.map(option => <option key={option} value={option}>{option}</option>)}
+      </select>
+      <div className="settings-v2-select-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9" /></svg>
+      </div>
+    </div>
+  )
+}
 
 function SliderControl({
   label,

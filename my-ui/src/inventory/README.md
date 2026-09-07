@@ -2,7 +2,7 @@
 
 Open **Items** on the HUD or press **I**. **Escape** closes the menu and returns focus to the HUD. The Inventory, Map, Phone, Stats, and Settings tabs share the full-screen menu shell.
 
-The inventory starts with a deterministic sample matching the design reference. Selecting, searching, consuming, equipping, splitting, dropping/undoing, and assigning quick slots work locally. Closing and reopening preserves changes; resetting or changing the scenario restores the sample. Consumables update the existing player health binding. Account balance and player identity come from the existing scenario bindings. Map locations and phone messages are local sample content. Settings control panel opacity, stack quantity visibility, and interface animations.
+The inventory starts with a deterministic sample matching the design reference. Selecting, searching, consuming, equipping, splitting, dropping/undoing, and assigning quick slots work locally. Closing and reopening preserves changes; resetting or changing the scenario restores the sample. Consumables update the existing player health binding. Account balance and player identity come from the existing scenario bindings. Map locations and phone messages are local sample content. Settings are loaded and saved through `SettingsService`, with `SettingsChanged` updates and DataStore-backed persistence in the Roblox build.
 
 `inventory-state.ts` owns the sample item catalog and inventory transitions. `InventoryScreen.tsx` renders the menu, with viewport-relative styles in `inventory.css`. The screen sits inside the existing scaled preview canvas. Pointer, focus, keyboard, and state-changing interactions are covered by `npm run test:preview`.
 

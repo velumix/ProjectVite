@@ -1,9 +1,10 @@
-import { mkdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { compileRobloxProject } from '../my-ui/src/features/project-compiler.ts'
 import { PreviewFeature } from '../my-ui/src/features/preview-feature.ts'
 import { ShopFeature } from '../my-ui/src/features/shop-feature.ts'
+import { SettingsFeature } from '../my-ui/src/features/settings-feature.ts'
 import { exportCompiledProjectToRbxmx } from '../my-ui/src/sync/rbxmx.ts'
 
 const workspace = new URL('../', import.meta.url)
@@ -14,11 +15,11 @@ export async function buildRobloxProject({ clean = true } = {}) {
   let project
   const generated = new Map()
   try {
-    project = compileRobloxProject([PreviewFeature, ShopFeature])
+    project = compileRobloxProject([PreviewFeature, ShopFeature, SettingsFeature])
     validateProject(project)
     generated.set('UI/CompiledProject.rbxmx', exportCompiledProjectToRbxmx(project))
-    for (const service of [...project.Nerve.Services].sort()) generated.set(`Services/${service}.luau`, generateService(service, project.Network[service] ?? {}))
-    for (const controller of [...project.Nerve.Controllers].sort()) generated.set(`Controllers/${controller}.luau`, generateController(controller, project))
+    for (const service of [...project.Nerve.Services].sort()) generated.set(`Services/${service}.luau`, await readCanonicalOrGenerate(`../roblox/nerve/${service}.luau`, generateService(service, project.Network[service] ?? {})))
+    for (const controller of [...project.Nerve.Controllers].sort()) generated.set(`Controllers/${controller}.luau`, await readCanonicalOrGenerate(`../roblox/nerve/${controller}.luau`, generateController(controller, project)))
     for (const [path, source] of Object.entries(project.SharedModules).sort(([left], [right]) => left.localeCompare(right))) generated.set(`Shared/${normalizeRelativePath(path)}`, source.endsWith('\n') ? source : `${source}\n`)
     generated.set('Network/manifest.json', stableJson({ version: 1, services: project.Network }))
     generated.set('project.json', stableJson(serializableProject(project)))
@@ -34,6 +35,15 @@ export async function buildRobloxProject({ clean = true } = {}) {
   await writeFile(new URL('build-report.json', outputRoot), stableJson(report))
   if (report.status === 'failed') throw new Error(report.errors.join('\n'))
   return report
+}
+
+async function readCanonicalOrGenerate(relativePath, fallback) {
+  try {
+    return await readFile(new URL(relativePath, import.meta.url), 'utf8')
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error
+    return fallback
+  }
 }
 
 function validateProject(project) {
