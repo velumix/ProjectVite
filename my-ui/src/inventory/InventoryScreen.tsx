@@ -211,11 +211,32 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
       style={{ '--city-scene': `url("${assetRoot}city-backdrop.jpg")`, '--city-panel-opacity': panelOpacity / 100 } as CSSProperties} onKeyDown={handleKeyDown}>
       <div className="city-menu-backdrop" />
       <header className="city-menu-header">
-        <div className="city-brand"><strong>SUN CITY</strong><span>A BRIGHTER TOMORROW</span></div>
+        <div className="city-brand">
+          <strong>SUN CITY</strong>
+          <span>{panel === 'Settings' ? 'SETTINGS' : 'A BRIGHTER TOMORROW'}</span>
+        </div>
         <nav className="city-tabs" aria-label="Game menu">
           {tabs.map(tab => <button type="button" key={tab} aria-current={panel === tab ? 'page' : undefined} onClick={() => onPanelChange(tab)}>{tab.toUpperCase()}</button>)}
         </nav>
-        <div className="city-account"><span className="city-balance">$ {Number(bindings.get('Player.Money') ?? 500).toLocaleString()}</span><div><time>12:24</time><span>Sep 6, 2026</span></div></div>
+        {panel === 'Settings' ? (
+          <div className="city-settings-top-right">
+            <span className="city-quote-tagline">SAME CITY, DIFFERENT STORY.</span>
+            <button
+              type="button"
+              className="city-settings-x-btn"
+              data-roblox-name="CloseSettingsButton"
+              onClick={onClose}
+              aria-label="Close settings"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <div className="city-account"><span className="city-balance">$ {Number(bindings.get('Player.Money') ?? 500).toLocaleString()}</span><div><time>12:24</time><span>Sep 6, 2026</span></div></div>
+        )}
       </header>
 
       <div className={`city-menu-body${panel === 'Quests' ? ' is-quests-body' : ''}${panel === 'Stats' ? ' is-stats-body' : ''}${panel === 'Settings' ? ' is-settings-body' : ''}`}>

@@ -1,1079 +1,709 @@
 import { useState } from 'react'
 import {
   SETTINGS_CATEGORIES,
-  DEFAULT_SETTINGS,
-  type SettingsState,
+  INITIAL_SETTINGS_STATE,
+  type StreamlinedSettingsState,
 } from './settings-data.ts'
 import { uiAudio } from '../audio/ui-audio.ts'
 import './settings.css'
 
 interface SettingsScreenProps {
-  showQuantities: boolean
-  setShowQuantities: (val: boolean) => void
-  motion: boolean
-  setMotion: (val: boolean) => void
-  panelOpacity: number
-  setPanelOpacity: (val: number) => void
+  showQuantities?: boolean
+  setShowQuantities?: (val: boolean) => void
+  motion?: boolean
+  setMotion?: (val: boolean) => void
+  panelOpacity?: number
+  setPanelOpacity?: (val: number) => void
   onBack?: () => void
+  onClose?: () => void
 }
 
-function SettingsIcon({ name, className = '' }: { name: string; className?: string }) {
+export function SettingsScreen({
+  showQuantities = true,
+  setShowQuantities,
+  motion = true,
+  setMotion,
+  panelOpacity = 100,
+  setPanelOpacity,
+}: SettingsScreenProps) {
+  const [activeCategory, setActiveCategory] = useState('general')
+  const [settings, setSettings] = useState<StreamlinedSettingsState>({
+    ...INITIAL_SETTINGS_STATE,
+    showQuantities,
+    motion,
+    panelOpacity,
+  })
+
+  const updateSetting = <K extends keyof StreamlinedSettingsState>(
+    key: K,
+    val: StreamlinedSettingsState[K]
+  ) => {
+    setSettings(prev => ({ ...prev, [key]: val }))
+    if (key === 'showQuantities' && setShowQuantities) {
+      setShowQuantities(val as boolean)
+    }
+    if (key === 'motion' && setMotion) {
+      setMotion(val as boolean)
+    }
+    if (key === 'panelOpacity' && setPanelOpacity) {
+      setPanelOpacity(val as number)
+    }
+  }
+
+  const handleCategoryClick = (catId: string) => {
+    uiAudio.playTick()
+    setActiveCategory(catId)
+  }
+
+  return (
+    <div className="settings-v2-container">
+      {/* Main Two-Column Layout */}
+      <div className="settings-v2-main">
+        {/* Left Navigation Sidebar */}
+        <nav className="settings-v2-sidebar" aria-label="Settings Categories">
+          {SETTINGS_CATEGORIES.map(cat => {
+            const isActive = activeCategory === cat.id
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                className={`settings-v2-nav-item${isActive ? ' is-active' : ''}`}
+                onClick={() => handleCategoryClick(cat.id)}
+                aria-pressed={isActive}
+              >
+                <div className="settings-v2-nav-icon">
+                  <CategoryIcon name={cat.icon} />
+                </div>
+                <div className="settings-v2-nav-text">
+                  <span className="settings-v2-nav-label">{cat.name}</span>
+                  <span className="settings-v2-nav-sub">{cat.subtitle}</span>
+                </div>
+              </button>
+            )
+          })}
+        </nav>
+
+        {/* Right Scrollable Content Area */}
+        <div className="settings-v2-content">
+          {/* ================= SECTION 1: GENERAL ================= */}
+          <section className="settings-v2-card" aria-label="General Settings">
+            <div className="settings-v2-card-header">
+              <h2 className="settings-v2-card-title">GENERAL</h2>
+              <p className="settings-v2-card-sub">Basic preferences for your experience.</p>
+            </div>
+
+            <div className="settings-v2-rows">
+              {/* Language */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Language</span>
+                    <span className="settings-v2-row-desc">Select your preferred language.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <div className="settings-v2-select-wrapper">
+                    <select
+                      aria-label="Language"
+                      value={settings.language}
+                      onChange={e => {
+                        uiAudio.playClick()
+                        updateSetting('language', e.target.value)
+                      }}
+                      className="settings-v2-select"
+                    >
+                      <option value="English">English</option>
+                      <option value="Español">Español</option>
+                      <option value="Français">Français</option>
+                      <option value="Deutsch">Deutsch</option>
+                      <option value="Português">Português</option>
+                    </select>
+                    <div className="settings-v2-select-arrow" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* UI Scale */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" />
+                      <line x1="8" y1="21" x2="16" y2="21" />
+                      <line x1="12" y1="17" x2="12" y2="21" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">UI Scale</span>
+                    <span className="settings-v2-row-desc">Adjust the size of in-game UI elements.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="UI Scale"
+                    min={0.75}
+                    max={1.25}
+                    step={0.05}
+                    value={settings.uiScale}
+                    onChange={v => updateSetting('uiScale', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Show Tooltips */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Show Tooltips</span>
+                    <span className="settings-v2-row-desc">Display helpful tips around the game.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <ToggleSwitch
+                    label="Show Tooltips"
+                    checked={settings.showTooltips}
+                    onChange={v => updateSetting('showTooltips', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Streamer Mode */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M2 10s3-3 5-3 5 3 5 3 3-3 5-3 5 3 5 3-3 7-10 7-10-7-10-7z" />
+                      <circle cx="8" cy="10" r="1" />
+                      <circle cx="16" cy="10" r="1" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Streamer Mode</span>
+                    <span className="settings-v2-row-desc">Hides your username and sensitive information.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <ToggleSwitch
+                    label="Streamer Mode"
+                    checked={settings.streamerMode}
+                    onChange={v => updateSetting('streamerMode', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Item quantities */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Item quantities</span>
+                    <span className="settings-v2-row-desc">Show stack counts in your inventory.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <ToggleSwitch
+                    label="Item quantities"
+                    checked={settings.showQuantities}
+                    onChange={v => updateSetting('showQuantities', v)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ================= SECTION 2: GRAPHICS ================= */}
+          <section className="settings-v2-card" aria-label="Graphics Settings">
+            <div className="settings-v2-card-header">
+              <h2 className="settings-v2-card-title">GRAPHICS</h2>
+              <p className="settings-v2-card-sub">Adjust visual quality and performance settings.</p>
+            </div>
+
+            <div className="settings-v2-rows">
+              {/* Performance Preset */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" />
+                      <line x1="8" y1="21" x2="16" y2="21" />
+                      <line x1="12" y1="17" x2="12" y2="21" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Performance Preset</span>
+                    <span className="settings-v2-row-desc">Choose the overall visual quality.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <div className="settings-v2-preset-group" role="radiogroup" aria-label="Performance Preset">
+                    {(['Quality', 'Balanced', 'Performance'] as const).map(preset => {
+                      const isSel = settings.performancePreset === preset
+                      return (
+                        <button
+                          key={preset}
+                          type="button"
+                          role="radio"
+                          aria-checked={isSel}
+                          className={`settings-v2-preset-pill${isSel ? ' is-active' : ''}`}
+                          onClick={() => {
+                            uiAudio.playClick()
+                            updateSetting('performancePreset', preset)
+                          }}
+                        >
+                          {preset}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Disable Post Processing */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Disable Post Processing</span>
+                    <span className="settings-v2-row-desc">Disables depth of field, motion blur, and extra effects.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <ToggleSwitch
+                    label="Disable Post Processing"
+                    checked={settings.disablePostProcessing}
+                    onChange={v => updateSetting('disablePostProcessing', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Reduce Effects */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="4" y1="21" x2="4" y2="14" />
+                      <line x1="4" y1="10" x2="4" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12" y2="3" />
+                      <line x1="20" y1="21" x2="20" y2="16" />
+                      <line x1="20" y1="12" x2="20" y2="3" />
+                      <line x1="1" y1="14" x2="7" y2="14" />
+                      <line x1="9" y1="8" x2="15" y2="8" />
+                      <line x1="17" y1="16" x2="23" y2="16" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Reduce Effects</span>
+                    <span className="settings-v2-row-desc">Reduces particles, weather effects, and ambient details.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <ToggleSwitch
+                    label="Reduce Effects"
+                    checked={settings.reduceEffects}
+                    onChange={v => updateSetting('reduceEffects', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Lower Reflection Detail */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                      <line x1="12" y1="22.08" x2="12" y2="12" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Lower Reflection Detail</span>
+                    <span className="settings-v2-row-desc">Improves performance by reducing reflection quality.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <ToggleSwitch
+                    label="Lower Reflection Detail"
+                    checked={settings.lowerReflectionDetail}
+                    onChange={v => updateSetting('lowerReflectionDetail', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Shadow Detail */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Shadow Detail</span>
+                    <span className="settings-v2-row-desc">Adjust the quality of shadows.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="Shadow Detail"
+                    min={0.1}
+                    max={1.0}
+                    step={0.05}
+                    value={settings.shadowDetail}
+                    onChange={v => updateSetting('shadowDetail', v)}
+                  />
+                </div>
+              </div>
+
+              {/* View Distance */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">View Distance</span>
+                    <span className="settings-v2-row-desc">Adjust how far you can see world objects.</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="View Distance"
+                    min={0.1}
+                    max={1.0}
+                    step={0.05}
+                    value={settings.viewDistance}
+                    onChange={v => updateSetting('viewDistance', v)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ================= SECTION 3: AUDIO ================= */}
+          <section className="settings-v2-card" aria-label="Audio Settings">
+            <div className="settings-v2-card-header">
+              <h2 className="settings-v2-card-title">AUDIO</h2>
+              <p className="settings-v2-card-sub">Control in-game audio levels.</p>
+            </div>
+
+            <div className="settings-v2-rows">
+              {/* Master Volume */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Master Volume</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="Master Volume"
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    value={settings.masterVolume}
+                    onChange={v => updateSetting('masterVolume', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Music Volume */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 18V5l12-2v13" />
+                      <circle cx="6" cy="18" r="3" />
+                      <circle cx="18" cy="16" r="3" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Music Volume</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="Music Volume"
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    value={settings.musicVolume}
+                    onChange={v => updateSetting('musicVolume', v)}
+                  />
+                </div>
+              </div>
+
+              {/* SFX Volume */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">SFX Volume</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="SFX Volume"
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    value={settings.sfxVolume}
+                    onChange={v => updateSetting('sfxVolume', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Radio Volume */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="7" width="20" height="14" rx="2" />
+                      <circle cx="8" cy="14" r="3" />
+                      <circle cx="16" cy="14" r="3" />
+                      <line x1="4" y1="4" x2="10" y2="7" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Radio Volume</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="Radio Volume"
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    value={settings.radioVolume}
+                    onChange={v => updateSetting('radioVolume', v)}
+                  />
+                </div>
+              </div>
+
+              {/* Voice Chat Volume */}
+              <div className="settings-v2-row">
+                <div className="settings-v2-row-left">
+                  <div className="settings-v2-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                      <line x1="12" y1="19" x2="12" y2="23" />
+                      <line x1="8" y1="23" x2="16" y2="23" />
+                    </svg>
+                  </div>
+                  <div className="settings-v2-row-info">
+                    <span className="settings-v2-row-title">Voice Chat Volume</span>
+                  </div>
+                </div>
+                <div className="settings-v2-row-right">
+                  <SliderControl
+                    label="Voice Chat Volume"
+                    min={0.0}
+                    max={1.0}
+                    step={0.05}
+                    value={settings.voiceChatVolume}
+                    onChange={v => updateSetting('voiceChatVolume', v)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Bottom Footer Bar */}
+      <footer className="settings-v2-footer">
+        <div className="settings-v2-footer-left">
+          <span className="settings-v2-motto">SUN CITY STATE OF MIND</span>
+        </div>
+        <div className="settings-v2-footer-right">
+          <span className="settings-v2-autosave">SETTINGS SAVE AUTOMATICALLY.</span>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+/* ---------------- Subcomponents ---------------- */
+
+function SliderControl({
+  label,
+  min,
+  max,
+  step,
+  value,
+  onChange,
+}: {
+  label: string
+  min: number
+  max: number
+  step: number
+  value: number
+  onChange: (val: number) => void
+}) {
+  const percentage = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100))
+
+  return (
+    <div className="settings-v2-slider-box">
+      <input
+        type="range"
+        className="settings-v2-range-slider"
+        aria-label={label}
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        style={{
+          background: `linear-gradient(to right, #38bdf8 0%, #38bdf8 ${percentage}%, rgba(30, 41, 59, 0.9) ${percentage}%, rgba(30, 41, 59, 0.9) 100%)`,
+        }}
+        onChange={e => onChange(parseFloat(e.target.value))}
+      />
+      <span className="settings-v2-slider-val">{value.toFixed(2)}</span>
+    </div>
+  )
+}
+
+function ToggleSwitch({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string
+  checked: boolean
+  onChange: (val: boolean) => void
+}) {
+  return (
+    <label className="settings-v2-switch-label">
+      <input
+        type="checkbox"
+        role="switch"
+        aria-label={label}
+        checked={checked}
+        onChange={e => {
+          uiAudio.playCheck()
+          onChange(e.target.checked)
+        }}
+        className="settings-v2-switch-input"
+      />
+    </label>
+  )
+}
+
+function CategoryIcon({ name }: { name: string }) {
   switch (name) {
     case 'gear':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
       )
     case 'monitor':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <rect width="20" height="14" x="2" y="3" rx="2" />
-          <line x1="8" x2="16" y1="21" y2="21" />
-          <line x1="12" x2="12" y1="17" y2="21" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
         </svg>
       )
     case 'speaker':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
         </svg>
       )
     case 'gamepad':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="6" x2="10" y1="12" y2="12" />
-          <line x1="8" x2="8" y1="10" y2="14" />
-          <line x1="15" x2="15.01" y1="13" y2="13" />
-          <line x1="18" x2="18.01" y1="11" y2="11" />
-          <rect width="20" height="12" x="2" y="6" rx="2" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="6" y1="12" x2="10" y2="12" />
+          <line x1="8" y1="10" x2="8" y2="14" />
+          <line x1="15" y1="13" x2="15.01" y2="13" />
+          <line x1="18" y1="11" x2="18.01" y2="11" />
+          <rect x="2" y="6" width="20" height="12" rx="2" />
         </svg>
       )
     case 'layout':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <rect width="18" height="18" x="3" y="3" rx="2" />
-          <path d="M3 9h18M9 21V9" />
-        </svg>
-      )
-    case 'accessibility':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="16" cy="4" r="1" />
-          <path d="m18 19 1-7-6 1" />
-          <path d="m5 8 3-3 5.5 3-2.36 3.5" />
-          <path d="M4.24 14.5a5 5 0 0 0 6.88 6" />
-          <path d="M13.76 17.5a5 5 0 0 0-1.76-6.5" />
-        </svg>
-      )
-    case 'keyboard':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <rect width="20" height="16" x="2" y="4" rx="2" />
-          <path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M6 12h.001M10 12h.001M14 12h.001M18 12h.001M7 16h10" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="9" y1="21" x2="9" y2="9" />
         </svg>
       )
     case 'bell':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
       )
-    case 'refresh':
+    case 'accessibility':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-          <path d="M21 3v5h-5" />
-          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-          <path d="M8 16H3v5" />
-        </svg>
-      )
-    case 'speedometer':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="m12 14 4-4" />
-          <path d="M3.34 19a10 10 0 1 1 17.32 0" />
-        </svg>
-      )
-    case 'star':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      )
-    case 'sun':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-        </svg>
-      )
-    case 'layers':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <polygon points="12 2 2 7 12 12 22 7 12 2" />
-          <polyline points="2 17 12 22 22 17" />
-          <polyline points="2 12 12 17 22 12" />
-        </svg>
-      )
-    case 'wand':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z" />
-          <path d="m5 2 5 5" />
-          <path d="M2 5l5 5" />
-        </svg>
-      )
-    case 'circle2':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="8" cy="12" r="6" />
-          <circle cx="16" cy="12" r="6" />
-        </svg>
-      )
-    case 'circleHalf':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="4" r="2" />
+          <path d="m4 9 8 2 8-2" />
+          <path d="M6.5 13l2 8" />
+          <path d="M17.5 13l-2 8" />
           <circle cx="12" cy="12" r="10" />
-          <path d="M12 2a10 10 0 0 0 0 20Z" fill="currentColor" />
         </svg>
       )
-    case 'perspective':
+    case 'wrench':
       return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="m2 4 10 16L22 4" />
-          <path d="M6 10h12" />
-        </svg>
-      )
-    case 'music':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M9 18V5l12-2v13" />
-          <circle cx="6" cy="18" r="3" />
-          <circle cx="18" cy="16" r="3" />
-        </svg>
-      )
-    case 'wave':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4" />
-        </svg>
-      )
-    case 'mic':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-          <line x1="12" x2="12" y1="19" y2="22" />
-        </svg>
-      )
-    case 'screenExpand':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <rect width="18" height="12" x="3" y="6" rx="2" />
-          <path d="m9 10-2 2 2 2M15 10l2 2-2 2" />
-        </svg>
-      )
-    case 'map':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
-          <line x1="9" x2="9" y1="3" y2="18" />
-          <line x1="15" x2="15" y1="6" y2="21" />
-        </svg>
-      )
-    case 'crosshair':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="22" x2="18" y1="12" y2="12" />
-          <line x1="6" x2="2" y1="12" y2="12" />
-          <line x1="12" x2="12" y1="6" y2="2" />
-          <line x1="12" x2="12" y1="22" y2="18" />
-        </svg>
-      )
-    case 'palette':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-          <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-          <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
-          <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2Z" />
-        </svg>
-      )
-    case 'hand':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
-          <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
-          <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
-          <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-        </svg>
-      )
-    case 'runner':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="17" cy="4" r="2" />
-          <path d="m15 8-4.5 2.5-3-2.5-3.5 3" />
-          <path d="M10.5 10.5 13 15l-3 4-4-1" />
-          <path d="m13 15 4-1.5 3 3.5" />
-        </svg>
-      )
-    case 'globe':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-          <path d="M2 12h20" />
-        </svg>
-      )
-    case 'bulb':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
-          <path d="M9 18h6" />
-          <path d="M10 22h4" />
-        </svg>
-      )
-    case 'check':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2.5">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      )
-    case 'arrowLeft':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="m12 19-7-7 7-7" />
-          <path d="M19 12H5" />
-        </svg>
-      )
-    case 'chevronRight':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      )
-    case 'wifi':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M5 12.55a11 11 0 0 1 14.08 0" />
-          <path d="M1.42 9a16 16 0 0 1 21.16 0" />
-          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-          <line x1="12" x2="12.01" y1="20" y2="20" />
-        </svg>
-      )
-    case 'chip':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <rect width="14" height="14" x="5" y="5" rx="2" />
-          <rect width="6" height="6" x="9" y="9" rx="1" />
-          <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
-        </svg>
-      )
-    case 'cpu':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <rect width="16" height="16" x="4" y="4" rx="2" />
-          <rect width="8" height="8" x="8" y="8" rx="1" />
-        </svg>
-      )
-    case 'ram':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M2 15h20M2 9h20M6 15v3M10 15v3M14 15v3M18 15v3M6 6v3M10 6v3M14 6v3M18 6v3" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
         </svg>
       )
     default:
       return null
   }
-}
-
-export function SettingsScreen({
-  showQuantities,
-  setShowQuantities,
-  motion,
-  setMotion,
-  panelOpacity,
-  setPanelOpacity,
-  onBack,
-}: SettingsScreenProps) {
-  const [activeCat, setActiveCat] = useState('graphics')
-  const [settings, setSettings] = useState<SettingsState>(DEFAULT_SETTINGS)
-  const [appliedToast, setAppliedToast] = useState(false)
-
-  const handleToggle = (key: keyof SettingsState) => {
-    uiAudio.playCheck()
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }))
-  }
-
-  const handleSelectChange = (key: keyof SettingsState, val: string) => {
-    uiAudio.playClick()
-    setSettings((prev) => ({
-      ...prev,
-      [key]: val,
-    }))
-  }
-
-  const handleSliderChange = (key: keyof SettingsState, val: number) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: val,
-    }))
-  }
-
-  const handleResetDefaults = () => {
-    uiAudio.playTick()
-    setSettings(DEFAULT_SETTINGS)
-    setShowQuantities(true)
-    setMotion(true)
-    setPanelOpacity(100)
-    setAppliedToast(true)
-    setTimeout(() => setAppliedToast(false), 2400)
-  }
-
-  const handleApply = () => {
-    uiAudio.playReward()
-    setAppliedToast(true)
-    setTimeout(() => setAppliedToast(false), 2400)
-  }
-
-  const qualityLabels = ['Low', 'Medium', 'High', 'Ultra']
-
-  return (
-    <div className="settings-screen" role="region" aria-label="Game Settings">
-      {/* =========================================================================
-          LEFT SIDEBAR: Categories & Lore Slogan Card
-          ========================================================================= */}
-      <aside className="settings-sidebar" aria-label="Settings categories">
-        <div className="settings-cat-list">
-          {SETTINGS_CATEGORIES.map((cat) => {
-            const isActive = activeCat === cat.id
-            return (
-              <button
-                type="button"
-                key={cat.id}
-                className={`settings-cat-btn ${isActive ? 'is-active' : ''}`}
-                onClick={() => {
-                  uiAudio.playClick()
-                  setActiveCat(cat.id)
-                }}
-                onMouseEnter={() => uiAudio.playHover()}
-              >
-                <div className="settings-cat-icon">
-                  <SettingsIcon name={cat.icon} />
-                </div>
-                <div className="settings-cat-text">
-                  <strong className="settings-cat-title">{cat.name}</strong>
-                  <span className="settings-cat-sub">{cat.subtitle}</span>
-                </div>
-                <div className="settings-cat-chevron">
-                  <SettingsIcon name="chevronRight" />
-                </div>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Bottom Slogan Card with Skyline Icon (No Los Santos) */}
-        <div className="settings-slogan-card">
-          <div className="settings-skyline-icon">
-            <svg viewBox="0 0 100 40" fill="currentColor">
-              <rect x="10" y="18" width="8" height="22" rx="1" />
-              <rect x="22" y="12" width="10" height="28" rx="1" />
-              <rect x="36" y="4" width="12" height="36" rx="1" />
-              <rect x="52" y="8" width="10" height="32" rx="1" />
-              <rect x="66" y="16" width="14" height="24" rx="1" />
-              <rect x="84" y="22" width="8" height="18" rx="1" />
-            </svg>
-          </div>
-          <strong className="settings-brand-title">SUN CITY</strong>
-          <span className="settings-brand-sub">EXPLORE. WORK. BUILD.</span>
-          <div className="settings-slogan-divider" />
-          <p className="settings-slogan-motto">
-            PLAY TOGETHER<br />
-            A BRIGHTER TOMORROW<br />
-            IN SUN CITY.
-          </p>
-        </div>
-      </aside>
-
-      {/* =========================================================================
-          MAIN CONTENT AREA (Columns 1, 2, 3 + Bottom Action Bar)
-          ========================================================================= */}
-      <div className="settings-main-container">
-        <div className="settings-grid-layout">
-          {/* ---------------- Column 1: Display & Graphics Quality ---------------- */}
-          <div className="settings-col">
-            {/* Card 1: Display */}
-            <section className="settings-card" aria-label="Display Settings">
-              <div className="settings-card-header">
-                <h2 className="settings-card-title">DISPLAY</h2>
-                <span className="settings-card-sub">Configure your display settings for the best experience.</span>
-              </div>
-
-              <div className="settings-rows-list">
-                {/* Display Mode */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="monitor" className="settings-row-icon" />
-                    <span>Display Mode</span>
-                  </div>
-                  <select
-                    className="settings-select"
-                    value={settings.displayMode}
-                    onChange={(e) => handleSelectChange('displayMode', e.target.value)}
-                    aria-label="Display Mode"
-                  >
-                    <option value="Fullscreen">Fullscreen</option>
-                    <option value="Borderless">Borderless Windowed</option>
-                    <option value="Windowed">Windowed</option>
-                  </select>
-                </div>
-
-                {/* Resolution */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="screenExpand" className="settings-row-icon" />
-                    <span>Resolution</span>
-                  </div>
-                  <select
-                    className="settings-select"
-                    value={settings.resolution}
-                    onChange={(e) => handleSelectChange('resolution', e.target.value)}
-                    aria-label="Screen Resolution"
-                  >
-                    <option value="1920 x 1080 (16:9)">1920 x 1080 (16:9)</option>
-                    <option value="2560 x 1440 (16:9)">2560 x 1440 (16:9)</option>
-                    <option value="3840 x 2160 (16:9)">3840 x 2160 (16:9)</option>
-                    <option value="1280 x 720 (16:9)">1280 x 720 (16:9)</option>
-                  </select>
-                </div>
-
-                {/* VSync */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="refresh" className="settings-row-icon" />
-                    <span>VSync</span>
-                  </div>
-                  <div className="settings-switch-wrap">
-                    <span className="settings-switch-text">{settings.vsync ? 'On' : 'Off'}</span>
-                    <label className="settings-toggle-switch">
-                      <input
-                        type="checkbox"
-                        role="switch"
-                        aria-label="VSync"
-                        checked={settings.vsync}
-                        onChange={() => handleToggle('vsync')}
-                      />
-                      
-                    </label>
-                  </div>
-                </div>
-
-                {/* FPS Limit */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="speedometer" className="settings-row-icon" />
-                    <span>FPS Limit</span>
-                  </div>
-                  <select
-                    className="settings-select"
-                    value={settings.fpsLimit}
-                    onChange={(e) => handleSelectChange('fpsLimit', e.target.value)}
-                    aria-label="FPS Limit"
-                  >
-                    <option value="60">60</option>
-                    <option value="120">120</option>
-                    <option value="144">144</option>
-                    <option value="240">240</option>
-                    <option value="Unlimited">Unlimited</option>
-                  </select>
-                </div>
-              </div>
-            </section>
-
-            {/* Card 2: Graphics Quality */}
-            <section className="settings-card" aria-label="Graphics Quality Settings">
-              <div className="settings-card-header">
-                <h2 className="settings-card-title">GRAPHICS QUALITY</h2>
-                <span className="settings-card-sub">Adjust visual quality and performance.</span>
-              </div>
-
-              <div className="settings-rows-list">
-                {/* Graphics Quality Slider */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="star" className="settings-row-icon" />
-                    <span>Graphics Quality</span>
-                  </div>
-                  <div className="settings-slider-row">
-                    <input
-                      type="range"
-                      min={0}
-                      max={3}
-                      step={1}
-                      value={settings.graphicsQuality}
-                      onChange={(e) => handleSliderChange('graphicsQuality', Number(e.target.value))}
-                      aria-label="Graphics Quality Preset"
-                      className="settings-range"
-                    />
-                    <span className="settings-slider-val-tag">
-                      {qualityLabels[settings.graphicsQuality] ?? 'High'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Shadow Quality */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="sun" className="settings-row-icon" />
-                    <span>Shadow Quality</span>
-                  </div>
-                  <select
-                    className="settings-select"
-                    value={settings.shadowQuality}
-                    onChange={(e) => handleSelectChange('shadowQuality', e.target.value)}
-                    aria-label="Shadow Quality"
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Ultra">Ultra</option>
-                  </select>
-                </div>
-
-                {/* Texture Quality */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="layers" className="settings-row-icon" />
-                    <span>Texture Quality</span>
-                  </div>
-                  <select
-                    className="settings-select"
-                    value={settings.textureQuality}
-                    onChange={(e) => handleSelectChange('textureQuality', e.target.value)}
-                    aria-label="Texture Quality"
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Ultra">Ultra</option>
-                  </select>
-                </div>
-
-                {/* Post Processing */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="wand" className="settings-row-icon" />
-                    <span>Post Processing</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Post Processing"
-                      checked={settings.postProcessing}
-                      onChange={() => handleToggle('postProcessing')}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* Motion Blur */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="circle2" className="settings-row-icon" />
-                    <span>Motion Blur</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Motion Blur"
-                      checked={settings.motionBlur}
-                      onChange={() => handleToggle('motionBlur')}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* Ambient Occlusion */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="circleHalf" className="settings-row-icon" />
-                    <span>Ambient Occlusion</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Ambient Occlusion"
-                      checked={settings.ambientOcclusion}
-                      onChange={() => handleToggle('ambientOcclusion')}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* FOV */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="perspective" className="settings-row-icon" />
-                    <span>Field of View (FOV)</span>
-                  </div>
-                  <div className="settings-slider-row">
-                    <input
-                      type="range"
-                      min={60}
-                      max={110}
-                      value={settings.fov}
-                      onChange={(e) => handleSliderChange('fov', Number(e.target.value))}
-                      aria-label="Field of View"
-                      className="settings-range"
-                    />
-                    <span className="settings-slider-val-tag">{settings.fov}</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          {/* ---------------- Column 2: Audio & Gameplay & Interface ---------------- */}
-          <div className="settings-col">
-            {/* Card 1: Audio */}
-            <section className="settings-card" aria-label="Audio Settings">
-              <div className="settings-card-header">
-                <h2 className="settings-card-title">AUDIO</h2>
-                <span className="settings-card-sub">Adjust volume levels and audio preferences.</span>
-              </div>
-
-              <div className="settings-rows-list">
-                {/* Master Volume */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="speaker" className="settings-row-icon" />
-                    <span>Master Volume</span>
-                  </div>
-                  <div className="settings-slider-row">
-                    <input
-                      type="range"
-                      min={0}
-                      max={100}
-                      value={settings.masterVolume}
-                      onChange={(e) => handleSliderChange('masterVolume', Number(e.target.value))}
-                      aria-label="Master Volume"
-                      className="settings-range"
-                    />
-                    <span className="settings-slider-val-tag">{settings.masterVolume}%</span>
-                  </div>
-                </div>
-
-                {/* Music Volume */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="music" className="settings-row-icon" />
-                    <span>Music Volume</span>
-                  </div>
-                  <div className="settings-slider-row">
-                    <input
-                      type="range"
-                      min={0}
-                      max={100}
-                      value={settings.musicVolume}
-                      onChange={(e) => handleSliderChange('musicVolume', Number(e.target.value))}
-                      aria-label="Music Volume"
-                      className="settings-range"
-                    />
-                    <span className="settings-slider-val-tag">{settings.musicVolume}%</span>
-                  </div>
-                </div>
-
-                {/* SFX Volume */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="wave" className="settings-row-icon" />
-                    <span>SFX Volume</span>
-                  </div>
-                  <div className="settings-slider-row">
-                    <input
-                      type="range"
-                      min={0}
-                      max={100}
-                      value={settings.sfxVolume}
-                      onChange={(e) => handleSliderChange('sfxVolume', Number(e.target.value))}
-                      aria-label="SFX Volume"
-                      className="settings-range"
-                    />
-                    <span className="settings-slider-val-tag">{settings.sfxVolume}%</span>
-                  </div>
-                </div>
-
-                {/* Voice Chat */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="mic" className="settings-row-icon" />
-                    <span>Voice Chat</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Voice Chat"
-                      checked={settings.voiceChat}
-                      onChange={() => handleToggle('voiceChat')}
-                    />
-                    
-                  </label>
-                </div>
-              </div>
-            </section>
-
-            {/* Card 2: Gameplay & Interface */}
-            <section className="settings-card" aria-label="Gameplay & Interface Settings">
-              <div className="settings-card-header">
-                <h2 className="settings-card-title">GAMEPLAY &amp; INTERFACE</h2>
-                <span className="settings-card-sub">Customize your gameplay experience.</span>
-              </div>
-
-              <div className="settings-rows-list">
-                {/* UI Scale */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="screenExpand" className="settings-row-icon" />
-                    <span>UI Scale</span>
-                  </div>
-                  <div className="settings-slider-row">
-                    <input
-                      type="range"
-                      min={75}
-                      max={125}
-                      value={settings.uiScale}
-                      onChange={(e) => handleSliderChange('uiScale', Number(e.target.value))}
-                      aria-label="UI Scale"
-                      className="settings-range"
-                    />
-                    <span className="settings-slider-val-tag">{settings.uiScale}%</span>
-                  </div>
-                </div>
-
-                {/* Show Minimap */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="map" className="settings-row-icon" />
-                    <span>Show Minimap</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Show Minimap"
-                      checked={settings.showMinimap}
-                      onChange={() => handleToggle('showMinimap')}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* Show Damage Numbers */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="crosshair" className="settings-row-icon" />
-                    <span>Show Damage Numbers</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Show Damage Numbers"
-                      checked={settings.showDamageNumbers}
-                      onChange={() => handleToggle('showDamageNumbers')}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* Colorblind Mode */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="palette" className="settings-row-icon" />
-                    <span>Colorblind Mode</span>
-                  </div>
-                  <select
-                    className="settings-select"
-                    value={settings.colorblindMode}
-                    onChange={(e) => handleSelectChange('colorblindMode', e.target.value)}
-                    aria-label="Colorblind Mode"
-                  >
-                    <option value="Off">Off</option>
-                    <option value="Protanopia">Protanopia</option>
-                    <option value="Deuteranopia">Deuteranopia</option>
-                    <option value="Tritanopia">Tritanopia</option>
-                  </select>
-                </div>
-
-                {/* Interaction Prompts */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="hand" className="settings-row-icon" />
-                    <span>Interaction Prompts</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Interaction Prompts"
-                      checked={settings.interactionPrompts}
-                      onChange={() => handleToggle('interactionPrompts')}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* Sprint Mode */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="runner" className="settings-row-icon" />
-                    <span>Sprint Mode</span>
-                  </div>
-                  <div className="settings-pill-segmented" role="radiogroup" aria-label="Sprint Mode">
-                    <button
-                      type="button"
-                      className={`settings-pill-btn ${settings.sprintMode === 'Hold' ? 'is-active' : ''}`}
-                      onClick={() => {
-                        uiAudio.playClick()
-                        setSettings((p) => ({ ...p, sprintMode: 'Hold' }))
-                      }}
-                      role="radio"
-                      aria-checked={settings.sprintMode === 'Hold'}
-                    >
-                      Hold
-                    </button>
-                    <button
-                      type="button"
-                      className={`settings-pill-btn ${settings.sprintMode === 'Toggle' ? 'is-active' : ''}`}
-                      onClick={() => {
-                        uiAudio.playClick()
-                        setSettings((p) => ({ ...p, sprintMode: 'Toggle' }))
-                      }}
-                      role="radio"
-                      aria-checked={settings.sprintMode === 'Toggle'}
-                    >
-                      Toggle
-                    </button>
-                  </div>
-                </div>
-
-                {/* Language */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="globe" className="settings-row-icon" />
-                    <span>Language</span>
-                  </div>
-                  <select
-                    className="settings-select"
-                    value={settings.language}
-                    onChange={(e) => handleSelectChange('language', e.target.value)}
-                    aria-label="Language"
-                  >
-                    <option value="English">English</option>
-                    <option value="Español">Español</option>
-                    <option value="Français">Français</option>
-                    <option value="Deutsch">Deutsch</option>
-                    <option value="Português">Português</option>
-                  </select>
-                </div>
-
-                {/* Functional Item Quantities Switch (Required by automated tests & inventory) */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="layers" className="settings-row-icon" />
-                    <span>Item quantities</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Item quantities"
-                      checked={showQuantities}
-                      onChange={(e) => {
-                        uiAudio.playCheck()
-                        setShowQuantities(e.target.checked)
-                      }}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* Functional Interface Motion Switch */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="wand" className="settings-row-icon" />
-                    <span>Interface motion</span>
-                  </div>
-                  <label className="settings-toggle-switch">
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      aria-label="Interface motion"
-                      checked={motion}
-                      onChange={(e) => {
-                        uiAudio.playCheck()
-                        setMotion(e.target.checked)
-                      }}
-                    />
-                    
-                  </label>
-                </div>
-
-                {/* Functional Panel Opacity */}
-                <div className="settings-row">
-                  <div className="settings-row-label">
-                    <SettingsIcon name="circleHalf" className="settings-row-icon" />
-                    <span>Panel opacity</span>
-                  </div>
-                  <div className="settings-slider-row">
-                    <input
-                      type="range"
-                      min={40}
-                      max={100}
-                      value={panelOpacity}
-                      onChange={(e) => setPanelOpacity(Number(e.target.value))}
-                      aria-label="Panel opacity"
-                      className="settings-range"
-                    />
-                    <span className="settings-slider-val-tag">{panelOpacity}%</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          {/* ---------------- Column 3: System Info & Tips ---------------- */}
-          <div className="settings-col settings-col-right">
-            {/* Card 1: System Info */}
-            <section className="settings-card settings-sys-card" aria-label="System Information">
-              <div className="settings-card-header">
-                <h2 className="settings-card-title">SYSTEM INFO</h2>
-                <span className="settings-card-sub">Your current setup and performance.</span>
-              </div>
-
-              <div className="settings-sys-list">
-                <div className="settings-sys-row">
-                  <div className="settings-sys-label">
-                    <SettingsIcon name="monitor" className="settings-sys-icon" />
-                    <span>Preset</span>
-                  </div>
-                  <strong className="settings-sys-val is-cyan">High</strong>
-                </div>
-
-                <div className="settings-sys-row">
-                  <div className="settings-sys-label">
-                    <SettingsIcon name="speedometer" className="settings-sys-icon" />
-                    <span>FPS Target</span>
-                  </div>
-                  <strong className="settings-sys-val is-cyan">144</strong>
-                </div>
-
-                <div className="settings-sys-row">
-                  <div className="settings-sys-label">
-                    <SettingsIcon name="wifi" className="settings-sys-icon" />
-                    <span>Ping</span>
-                  </div>
-                  <strong className="settings-sys-val is-green">42 ms</strong>
-                </div>
-
-                <div className="settings-sys-row">
-                  <div className="settings-sys-label">
-                    <SettingsIcon name="chip" className="settings-sys-icon" />
-                    <span>GPU</span>
-                  </div>
-                  <span className="settings-sys-val is-white">NVIDIA RTX 3060</span>
-                </div>
-
-                <div className="settings-sys-row">
-                  <div className="settings-sys-label">
-                    <SettingsIcon name="cpu" className="settings-sys-icon" />
-                    <span>CPU</span>
-                  </div>
-                  <span className="settings-sys-val is-white">AMD Ryzen 5 5600X</span>
-                </div>
-
-                <div className="settings-sys-row">
-                  <div className="settings-sys-label">
-                    <SettingsIcon name="ram" className="settings-sys-icon" />
-                    <span>RAM</span>
-                  </div>
-                  <span className="settings-sys-val is-white">16 GB</span>
-                </div>
-              </div>
-            </section>
-
-            {/* Card 2: Tips */}
-            <div className="settings-card settings-tips-card">
-              <div className="settings-tips-top">
-                <SettingsIcon name="bulb" className="settings-tips-icon" />
-                <strong>TIPS</strong>
-              </div>
-              <p className="settings-tips-body">
-                Lowering shadows and post processing can significantly improve performance, especially in busy areas of Sun City.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* =========================================================================
-            BOTTOM ACTION BAR: Reset to Default, Apply, Back
-            ========================================================================= */}
-        <div className="settings-footer-actions">
-          {appliedToast && (
-            <div className="settings-toast-msg" role="status">
-              <SettingsIcon name="check" />
-              <span>Settings successfully updated</span>
-            </div>
-          )}
-
-          <div className="settings-footer-buttons">
-            <button
-              type="button"
-              className="settings-action-btn btn-reset"
-              onClick={handleResetDefaults}
-            >
-              <SettingsIcon name="refresh" />
-              <span>Reset to Default</span>
-            </button>
-
-            <button
-              type="button"
-              className="settings-action-btn btn-apply"
-              onClick={handleApply}
-            >
-              <SettingsIcon name="check" />
-              <span>Apply</span>
-            </button>
-
-            <button
-              type="button"
-              className="settings-action-btn btn-back"
-              onClick={() => {
-                uiAudio.playClick()
-                onBack?.()
-              }}
-            >
-              <SettingsIcon name="arrowLeft" />
-              <span>Back</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
 }

@@ -6,81 +6,64 @@ export interface SettingsCategory {
 }
 
 export const SETTINGS_CATEGORIES: SettingsCategory[] = [
-  { id: 'general', name: 'General', subtitle: 'Game preferences', icon: 'gear' },
-  { id: 'graphics', name: 'Graphics', subtitle: 'Display & visual quality', icon: 'monitor' },
-  { id: 'audio', name: 'Audio', subtitle: 'Sound & voice chat', icon: 'speaker' },
-  { id: 'controls', name: 'Controls', subtitle: 'Keyboard, mouse & controller', icon: 'gamepad' },
-  { id: 'interface', name: 'Interface', subtitle: 'HUD & UI settings', icon: 'layout' },
-  { id: 'accessibility', name: 'Accessibility', subtitle: 'Visual & gameplay assistance', icon: 'accessibility' },
-  { id: 'keybinds', name: 'Keybinds', subtitle: 'Customize your keys', icon: 'keyboard' },
-  { id: 'notifications', name: 'Notifications', subtitle: 'Alerts & in-game messages', icon: 'bell' },
+  { id: 'general', name: 'General', subtitle: 'Language, UI, gameplay', icon: 'gear' },
+  { id: 'graphics', name: 'Graphics', subtitle: 'Visuals, performance', icon: 'monitor' },
+  { id: 'audio', name: 'Audio', subtitle: 'Volumes, radio, voice', icon: 'speaker' },
+  { id: 'controls', name: 'Controls', subtitle: 'Keybinds, sensitivity', icon: 'gamepad' },
+  { id: 'hud', name: 'HUD', subtitle: 'Interface, minimap, UI', icon: 'layout' },
+  { id: 'notifications', name: 'Notifications', subtitle: 'In-game alerts, messages', icon: 'bell' },
+  { id: 'accessibility', name: 'Accessibility', subtitle: 'Visual, audio, input', icon: 'accessibility' },
+  { id: 'advanced', name: 'Advanced', subtitle: 'Experimental, developer', icon: 'wrench' },
 ]
 
-export interface SettingsState {
-  // Display
-  displayMode: string
-  resolution: string
-  vsync: boolean
-  fpsLimit: string
+export interface StreamlinedSettingsState {
+  // General
+  language: string
+  uiScale: number // 1.00
+  showTooltips: boolean // true
+  streamerMode: boolean // false
+  showQuantities: boolean // true
 
-  // Graphics Quality
-  graphicsQuality: number // 1: Low, 2: Medium, 3: High, 4: Ultra
-  shadowQuality: string
-  textureQuality: string
-  postProcessing: boolean
-  motionBlur: boolean
-  ambientOcclusion: boolean
-  fov: number
+  // Graphics
+  performancePreset: 'Quality' | 'Balanced' | 'Performance'
+  disablePostProcessing: boolean // false
+  reduceEffects: boolean // true
+  lowerReflectionDetail: boolean // true
+  shadowDetail: number // 0.70
+  viewDistance: number // 0.80
 
   // Audio
-  masterVolume: number
-  musicVolume: number
-  sfxVolume: number
-  voiceChat: boolean
+  masterVolume: number // 0.80
+  musicVolume: number // 0.50
+  sfxVolume: number // 0.90
+  radioVolume: number // 0.70
+  voiceChatVolume: number // 0.80
 
-  // Gameplay & Interface
-  uiScale: number
-  showMinimap: boolean
-  showDamageNumbers: boolean
-  colorblindMode: string
-  interactionPrompts: boolean
-  sprintMode: 'Hold' | 'Toggle'
-  language: string
-
-  // Existing core state
-  showQuantities: boolean
+  // Motion & Opacity
   motion: boolean
   panelOpacity: number
 }
 
-export const DEFAULT_SETTINGS: SettingsState = {
-  displayMode: 'Fullscreen',
-  resolution: '1920 x 1080 (16:9)',
-  vsync: false,
-  fpsLimit: '144',
-
-  graphicsQuality: 3,
-  shadowQuality: 'High',
-  textureQuality: 'High',
-  postProcessing: true,
-  motionBlur: false,
-  ambientOcclusion: true,
-  fov: 90,
-
-  masterVolume: 80,
-  musicVolume: 50,
-  sfxVolume: 75,
-  voiceChat: true,
-
-  uiScale: 100,
-  showMinimap: true,
-  showDamageNumbers: true,
-  colorblindMode: 'Off',
-  interactionPrompts: true,
-  sprintMode: 'Hold',
+export const INITIAL_SETTINGS_STATE: StreamlinedSettingsState = {
   language: 'English',
-
+  uiScale: 1.0,
+  showTooltips: true,
+  streamerMode: false,
   showQuantities: true,
+
+  performancePreset: 'Balanced',
+  disablePostProcessing: false,
+  reduceEffects: true,
+  lowerReflectionDetail: true,
+  shadowDetail: 0.7,
+  viewDistance: 0.8,
+
+  masterVolume: 0.8,
+  musicVolume: 0.5,
+  sfxVolume: 0.9,
+  radioVolume: 0.7,
+  voiceChatVolume: 0.8,
+
   motion: true,
   panelOpacity: 100,
 }
