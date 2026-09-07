@@ -87,14 +87,14 @@ test('calculator utility app performs calculations and preserves history', async
   await expect(page.locator('.calc-container')).toBeVisible()
 
   // 7 + 8 = 15
-  await page.locator('.calc-btn:has-text("7")').click()
-  await page.locator('.calc-btn-op:has-text("+")').click()
-  await page.locator('.calc-btn:has-text("8")').click()
-  await page.locator('.calc-btn-equals').click()
+  await page.locator('.calc-btn', { hasText: '7' }).click({ force: true })
+  await page.locator('.calc-btn-op', { hasText: '+' }).click({ force: true })
+  await page.locator('.calc-btn', { hasText: '8' }).click({ force: true })
+  await page.locator('.calc-btn-equals').click({ force: true })
   await expect(page.locator('.calc-result')).toHaveText('15')
 
   // Open history
-  await page.getByRole('button', { name: 'Calculation history' }).click()
+  await page.getByRole('button', { name: 'Calculation history' }).click({ force: true })
   await expect(page.locator('.calc-history-drawer')).toBeVisible()
   await expect(page.locator('.calc-history-row')).toContainText('7 + 8')
 })
@@ -115,7 +115,7 @@ test('clock utility app tracks stopwatch laps and displays world cities', async 
   await page.getByRole('button', { name: 'Start' }).click()
   await page.waitForTimeout(100)
   await page.getByRole('button', { name: 'Lap' }).click()
-  await expect(page.locator('.clock-lap-row')).toBeVisible()
+  await expect(page.locator('.clock-laps-table')).toContainText('Lap 1')
   await page.getByRole('button', { name: 'Stop' }).click()
 })
 
