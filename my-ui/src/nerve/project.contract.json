@@ -5796,6 +5796,341 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "FlipTokService",
+      "Methods": [
+        {
+          "Name": "GetFeed",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "creator": {
+                      "kind": "string"
+                    },
+                    "caption": {
+                      "kind": "string"
+                    },
+                    "musicTrack": {
+                      "kind": "string"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    },
+                    "isLiked": {
+                      "kind": "bool"
+                    },
+                    "commentsCount": {
+                      "kind": "float64"
+                    },
+                    "shares": {
+                      "kind": "float64"
+                    },
+                    "accentGradient": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "LikeVideo",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "reelId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "GetComments",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "reelId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "reelId": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "text": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "AddComment",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "reelId": {
+                "kind": "string"
+              },
+              "text": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "reelId": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "text": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "UploadReel",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "caption": {
+                "kind": "string"
+              },
+              "musicTrack": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "creator": {
+                      "kind": "string"
+                    },
+                    "caption": {
+                      "kind": "string"
+                    },
+                    "musicTrack": {
+                      "kind": "string"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    },
+                    "isLiked": {
+                      "kind": "bool"
+                    },
+                    "commentsCount": {
+                      "kind": "float64"
+                    },
+                    "shares": {
+                      "kind": "float64"
+                    },
+                    "accentGradient": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "VideoLiked",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "reelId": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "NewCommentAdded",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "reelId": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "ReelUploaded",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "creator": {
+                    "kind": "string"
+                  },
+                  "caption": {
+                    "kind": "string"
+                  },
+                  "musicTrack": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "commentsCount": {
+                    "kind": "float64"
+                  },
+                  "shares": {
+                    "kind": "float64"
+                  },
+                  "accentGradient": {
+                    "kind": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -6013,6 +6348,16 @@
       "Name": "FlareController",
       "ServiceDependencies": [
         "FlareService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "FlipTokController",
+      "ServiceDependencies": [
+        "FlipTokService"
       ],
       "Lifecycle": {
         "NerveInit": true,

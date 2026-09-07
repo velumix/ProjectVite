@@ -5636,6 +5636,335 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "FlipTokService": {
+      "GetFeed": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "creator": {
+                    "kind": "string"
+                  },
+                  "caption": {
+                    "kind": "string"
+                  },
+                  "musicTrack": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "commentsCount": {
+                    "kind": "float64"
+                  },
+                  "shares": {
+                    "kind": "float64"
+                  },
+                  "accentGradient": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "LikeVideo": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "reelId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "GetComments": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "reelId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "reelId": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "AddComment": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "reelId": {
+              "kind": "string"
+            },
+            "text": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "reelId": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "text": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "UploadReel": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "caption": {
+              "kind": "string"
+            },
+            "musicTrack": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "creator": {
+                    "kind": "string"
+                  },
+                  "caption": {
+                    "kind": "string"
+                  },
+                  "musicTrack": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "commentsCount": {
+                    "kind": "float64"
+                  },
+                  "shares": {
+                    "kind": "float64"
+                  },
+                  "accentGradient": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "VideoLiked": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "reelId": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "isLiked": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "NewCommentAdded": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "reelId": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "string"
+                },
+                "text": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "ReelUploaded": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "creator": {
+                  "kind": "string"
+                },
+                "caption": {
+                  "kind": "string"
+                },
+                "musicTrack": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "isLiked": {
+                  "kind": "bool"
+                },
+                "commentsCount": {
+                  "kind": "float64"
+                },
+                "shares": {
+                  "kind": "float64"
+                },
+                "accentGradient": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

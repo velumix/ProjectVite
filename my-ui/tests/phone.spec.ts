@@ -1035,3 +1035,53 @@ test('flare app browses discover deck, swipes profiles, celebrates matches, and 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('fliptok app plays vertical video reels, likes clips, comments in drawer, cycles reels, and uploads new clips via Roblox FlipTokService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch FlipTok
+  await page.getByRole('button', { name: 'Open FlipTok' }).click()
+  await expect(page.locator('.fliptok-app-root')).toBeVisible()
+  await expect(page.locator('.fliptok-creator')).toHaveText('@drift_king_ls')
+
+  // Like video
+  const likeBtn = page.locator('.fliptok-action-pill.like')
+  await expect(likeBtn).toContainText('18,400')
+  await likeBtn.click()
+  await expect(likeBtn).toContainText('18,401')
+
+  // Open comments
+  await page.getByRole('button', { name: 'Comments' }).click()
+  await expect(page.locator('.fliptok-drawer')).toBeVisible()
+  await expect(page.locator('.fliptok-comment-item')).toHaveCount(1)
+
+  // Add comment
+  await page.locator('.fliptok-comment-input-bar input').fill('Sick drift angle!')
+  await page.getByRole('button', { name: 'Post' }).click()
+  await expect(page.locator('.fliptok-comment-item')).toHaveCount(2)
+  await expect(page.locator('.fliptok-comment-text').first()).toHaveText('Sick drift angle!')
+
+  // Close drawer
+  await page.locator('.fliptok-drawer-close').click()
+  await expect(page.locator('.fliptok-drawer')).not.toBeVisible()
+
+  // Next reel
+  await page.getByRole('button', { name: 'Next Reel' }).click()
+  await expect(page.locator('.fliptok-creator')).toHaveText('@vinewood_glam')
+
+  // Upload new reel
+  await page.getByRole('button', { name: '+ Upload' }).click()
+  await expect(page.locator('.fliptok-modal-backdrop')).toBeVisible()
+
+  await page.locator('textarea[placeholder*="Describe your video"]').fill('Night drive through Del Perro #nightdrive')
+  await page.getByRole('button', { name: 'POST TO FOR YOU' }).click()
+
+  // Verify toast and newly active reel
+  await expect(page.locator('.fliptok-toast')).toContainText('Reel uploaded to FlipTok')
+  await expect(page.locator('.fliptok-creator')).toHaveText('@alex_mercer')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

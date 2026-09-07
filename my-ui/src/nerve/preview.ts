@@ -740,6 +740,44 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type FlipTokReel = {
+  id: string
+  creator: string
+  caption: string
+  musicTrack: string
+  likes: number
+  isLiked: boolean
+  commentsCount: number
+  shares: number
+  accentGradient: string
+}
+
+export type ReelComment = {
+  id: string
+  reelId: string
+  author: string
+  text: string
+  timestamp: number
+}
+
+export type ReelLikeEvent = {
+  reelId: string
+  likes: number
+  isLiked: boolean
+}
+
+export type PreviewFlipTokService = {
+  GetFeed: NerveMethod<Record<string, never> | undefined, [FlipTokReel[]]>
+  LikeVideo: NerveMethod<{ reelId: string }, [boolean, string?, number?]>
+  GetComments: NerveMethod<{ reelId: string }, [ReelComment[]]>
+  AddComment: NerveMethod<{ reelId: string; text: string }, [boolean, string?, ReelComment?]>
+  UploadReel: NerveMethod<{ caption: string; musicTrack: string }, [boolean, string?, FlipTokReel?]>
+  VideoLiked: NerveSignal<[ReelLikeEvent]>
+  NewCommentAdded: NerveSignal<[ReelComment]>
+  ReelUploaded: NerveSignal<[FlipTokReel]>
+}
+
 export type FlareProfile = {
   id: string
   name: string
@@ -1262,6 +1300,53 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const fliptokReelsData: FlipTokReel[] = [
+    {
+      id: 'reel-1',
+      creator: '@drift_king_ls',
+      caption: 'Tandem drifting through Vinewood sign hairpins in the Sultan RS 🏎️💨 #drift #lsstreet',
+      musicTrack: 'Midnight Tokyo Phonk - DJ Suki',
+      likes: 18400,
+      isLiked: false,
+      commentsCount: 342,
+      shares: 1200,
+      accentGradient: 'linear-gradient(180deg, #1e1b4b 0%, #09090b 100%)',
+    },
+    {
+      id: 'reel-2',
+      creator: '@vinewood_glam',
+      caption: 'Get ready with me for the Diamond Casino Penthouse Gala ✨🥂 #grwm #luxury #vinewood',
+      musicTrack: 'Champagne Skyline - Velvet Room',
+      likes: 9820,
+      isLiked: true,
+      commentsCount: 184,
+      shares: 540,
+      accentGradient: 'linear-gradient(180deg, #4a044e 0%, #09090b 100%)',
+    },
+    {
+      id: 'reel-3',
+      creator: '@tactical_pilot',
+      caption: 'Threading the needle under Del Perro Pier in a Buzzard helicopter 🚁🌊 #aviation #daredevil',
+      musicTrack: 'Danger Zone 2026 - Aerowave',
+      likes: 24100,
+      isLiked: false,
+      commentsCount: 512,
+      shares: 3100,
+      accentGradient: 'linear-gradient(180deg, #064e3b 0%, #09090b 100%)',
+    },
+  ]
+
+  const fliptokCommentsData: ReelComment[] = [
+    {
+      id: 'comm-1',
+      reelId: 'reel-1',
+      author: 'BennyJunior',
+      text: 'That reverse entry angle was insane bro! Clean lines.',
+      timestamp: Date.now() - 3600000,
+    },
+  ]
+
   const flareProfilesData: FlareProfile[] = [
     {
       id: 'flare-1',
@@ -1741,7 +1826,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2277,6 +2362,69 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'FlipTokService.GetFeed': () => {
+        return [fliptokReelsData.map((r) => ({ ...r }))]
+      },
+      'FlipTokService.LikeVideo': (payload) => {
+        if (!isRecord(payload) || typeof payload.reelId !== 'string') return [false, 'Invalid payload', undefined]
+        const r = fliptokReelsData.find((x) => x.id === payload.reelId)
+        if (!r) return [false, 'Reel not found', undefined]
+        if (r.isLiked) {
+          r.isLiked = false
+          r.likes = Math.max(0, r.likes - 1)
+        } else {
+          r.isLiked = true
+          r.likes += 1
+        }
+        adapter.emitSignal('FlipTokService', 'VideoLiked', {
+          reelId: r.id,
+          likes: r.likes,
+          isLiked: r.isLiked,
+        })
+        return [true, undefined, r.likes]
+      },
+      'FlipTokService.GetComments': (payload) => {
+        if (!isRecord(payload) || typeof payload.reelId !== 'string') return [[]]
+        return [fliptokCommentsData.filter((c) => c.reelId === payload.reelId).map((c) => ({ ...c }))]
+      },
+      'FlipTokService.AddComment': (payload) => {
+        if (!isRecord(payload) || typeof payload.reelId !== 'string' || typeof payload.text !== 'string' || !payload.text) {
+          return [false, 'Invalid payload', undefined]
+        }
+        const comm: ReelComment = {
+          id: 'comm-' + Date.now(),
+          reelId: payload.reelId,
+          author: 'Alex Mercer',
+          text: payload.text,
+          timestamp: Date.now(),
+        }
+        fliptokCommentsData.unshift(comm)
+        const r = fliptokReelsData.find((x) => x.id === payload.reelId)
+        if (r) r.commentsCount += 1
+        adapter.emitSignal('FlipTokService', 'NewCommentAdded', { ...comm })
+        return [true, undefined, { ...comm }]
+      },
+      'FlipTokService.UploadReel': (payload) => {
+        if (!isRecord(payload) || typeof payload.caption !== 'string' || !payload.caption) {
+          return [false, 'Caption required', undefined]
+        }
+        const reel: FlipTokReel = {
+          id: 'reel-' + Date.now(),
+          creator: '@alex_mercer',
+          caption: payload.caption,
+          musicTrack: typeof payload.musicTrack === 'string' && payload.musicTrack ? payload.musicTrack : 'Original Sound - Alex Mercer',
+          likes: 1,
+          isLiked: true,
+          commentsCount: 0,
+          shares: 0,
+          accentGradient: 'linear-gradient(180deg, #1e3a8a 0%, #09090b 100%)',
+        }
+        fliptokReelsData.unshift(reel)
+        adapter.emitSignal('FlipTokService', 'ReelUploaded', { ...reel })
+        return [true, undefined, { ...reel }]
+      },
+
       'FlareService.GetProfiles': () => {
         return [flareProfilesData.map((p) => ({ ...p }))]
       },
@@ -2816,3 +2964,4 @@ export const HealthService = nervePreview.GetService<PreviewHealthService>('Heal
 export const LocalPagesService = nervePreview.GetService<PreviewLocalPagesService>('LocalPagesService')
 export const NewsService = nervePreview.GetService<PreviewNewsService>('NewsService')
 export const FlareService = nervePreview.GetService<PreviewFlareService>('FlareService')
+export const FlipTokService = nervePreview.GetService<PreviewFlipTokService>('FlipTokService')
