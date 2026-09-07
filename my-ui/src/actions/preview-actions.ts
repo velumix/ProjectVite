@@ -146,9 +146,29 @@ export function createPreviewHandlers(
         void actions.run('TogglePanel', { Panel: 'Quests' }).promise
       },
     },
+    SideStatsButton: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Stats' }).promise
+      },
+    },
     SideSettingsButton: {
       Activated: () => {
         void actions.run('TogglePanel', { Panel: 'Settings' }).promise
+      },
+    },
+    TopButton_Settings: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Settings' }).promise
+      },
+    },
+    TopButton_Bell: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Quests' }).promise
+      },
+    },
+    TopButton_Party: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Stats' }).promise
       },
     },
     CloseShopButton: {
@@ -162,6 +182,11 @@ export function createPreviewHandlers(
       },
     },
     CloseQuestsButton: {
+      Activated: () => {
+        void actions.run('ClosePanel', {}).promise
+      },
+    },
+    CloseStatsButton: {
       Activated: () => {
         void actions.run('ClosePanel', {}).promise
       },
