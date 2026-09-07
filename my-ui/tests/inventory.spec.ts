@@ -142,3 +142,39 @@ test('character equipment displays ViewportFrame and branding does not include L
   await rotateRightBtn.click()
   await expect(viewport.getByText(/45°/)).toBeVisible()
 })
+
+test('revamped quests screen renders 3-column layout, categories, hero banner, interactive checklist and tracking', async ({ page }) => {
+  await openInventory(page)
+  await page.getByRole('button', { name: 'QUESTS', exact: true }).click()
+  const questsModal = page.locator('[data-roblox-name="QuestsPanelModal"]')
+  await expect(questsModal).toBeVisible()
+
+  // Left column categories and Sun City branding
+  await expect(page.getByText(/EXPLORE. WORK. BUILD./i)).toBeVisible()
+  await expect(page.getByText(/A BRIGHTER TOMORROW IN SUN CITY./i)).toBeVisible()
+  await expect(page.getByRole('button', { name: /Side Jobs/i })).toBeVisible()
+
+  // Center column quests list and search
+  const questCard = page.locator('.quest-card', { hasText: 'Pizza Run' })
+  await expect(questCard).toBeVisible()
+  await questCard.click()
+
+  // Right column details, hero banner, objectives checklist, rewards
+  await expect(page.locator('.quests-hero-banner')).toBeVisible()
+  await expect(page.locator('.quests-detail-title', { hasText: 'Pizza Run' })).toBeVisible()
+  await expect(page.locator('.quests-hero-location-badge')).toContainText('Downtown')
+
+  // Checkbox interactivity
+  const firstCheckbox = page.locator('[role="checkbox"]').first()
+  await firstCheckbox.click()
+
+  // Track Quest button toggle
+  const trackBtn = page.getByRole('button', { name: 'Tracking' })
+  await expect(trackBtn).toBeVisible()
+  await trackBtn.click()
+  await expect(page.getByRole('button', { name: 'Track Quest' })).toBeVisible()
+
+  // Close quests panel via ESC button
+  await page.locator('[data-roblox-name="CloseQuestsButton"]').click()
+  await expect(questsModal).toBeHidden()
+})

@@ -91,7 +91,7 @@ function App() {
   const browserTree = {
     ...renderedTree,
     Children: renderedTree.Children?.map(child => child.Name === 'GameModalsContainer' ? {
-      ...child, Children: child.Children?.filter(panel => !['InventoryPanelModal', 'StatsPanelModal', 'SettingsPanelModal'].includes(panel.Name ?? '')),
+      ...child, Children: child.Children?.filter(panel => !['InventoryPanelModal', 'QuestsPanelModal', 'StatsPanelModal', 'SettingsPanelModal'].includes(panel.Name ?? '')),
     } : child),
   }
   const traceEvents = scenarioRunner.getTrace().events()

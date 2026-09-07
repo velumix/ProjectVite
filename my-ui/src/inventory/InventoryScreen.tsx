@@ -3,9 +3,10 @@ import type { ReactiveBindingStore } from '../bindings/reactive-bindings'
 import { createInventoryState, equipment, inventoryReducer, inventoryWeight, itemById, type ItemDefinition, type InventoryStack } from './inventory-state'
 import './inventory.css'
 import { uiAudio } from '../audio/ui-audio.ts'
+import { QuestsScreen } from '../quests/QuestsScreen.tsx'
 
 const assetRoot = `${import.meta.env.BASE_URL}assets/inventory/`
-const tabs = ['Inventory', 'Map', 'Phone', 'Stats', 'Settings'] as const
+const tabs = ['Inventory', 'Quests', 'Map', 'Phone', 'Stats', 'Settings'] as const
 export type MenuPanel = typeof tabs[number]
 const menuPanelNames = new Set<string>(tabs)
 
@@ -215,7 +216,11 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
         <div className="city-account"><span className="city-balance">$ {Number(bindings.get('Player.Money') ?? 500).toLocaleString()}</span><div><time>12:24</time><span>Sep 6, 2026</span></div></div>
       </header>
 
-      <div className="city-menu-body">
+      <div className={`city-menu-body${panel === 'Quests' ? ' is-quests-body' : ''}`}>
+        {panel === 'Quests' ? (
+          <QuestsScreen />
+        ) : (
+          <>
         <aside className="city-character" aria-label="Character equipment">
           <div className="city-equipment">
             {equipment.map(slot => {
@@ -575,6 +580,8 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
             </div>
           </>}
         </section>
+          </>
+        )}
       </div>
       <footer className="city-menu-footer"><div role="status" className="city-notice" key={inventory.notice}>{inventory.notice}{inventory.dropped && <button type="button" onClick={() => dispatch({ type: 'undo-drop' })}>Undo drop</button>}</div><button type="button" className="city-close" data-roblox-name={`Close${panel}Button`} onClick={onClose}><kbd>ESC</kbd><span>Close</span></button></footer>
     </div>
