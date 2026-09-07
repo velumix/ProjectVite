@@ -32,6 +32,10 @@ jobs:
         working-directory: my-ui
         run: npm ci
 
+      - name: Refresh Roblox API metadata
+        working-directory: my-ui
+        run: npm run generate:roblox-api || echo "Roblox API dump unavailable; using checked-in metadata"
+
       - name: Build
         working-directory: my-ui
         run: npm run build
