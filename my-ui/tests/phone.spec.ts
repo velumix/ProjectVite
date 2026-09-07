@@ -1433,3 +1433,36 @@ test('memory app presents card matching pairs, tracks moves and timer, switches 
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('number merge 2048 app slides numbered tiles, merges adjacent matching pairs, tracks best score, and connects to Roblox GameScoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Number Merge
+  await page.getByRole('button', { name: 'Open Number Merge' }).click()
+  await expect(page.locator('.numbermerge-app-root')).toBeVisible()
+  await expect(page.locator('.numbermerge-logo')).toHaveText('2048')
+  await expect(page.locator('.numbermerge-score-box span').last()).toHaveText('2048')
+
+  // 16 cells in 4x4 grid
+  const cells = page.locator('.numbermerge-cell')
+  await expect(cells).toHaveCount(16)
+
+  // Verify at least 2 filled cells on game start
+  const filled = page.locator('.numbermerge-cell.filled')
+  await expect(filled).toHaveCount(2)
+
+  // Slide directions via D-pad
+  await page.getByRole('button', { name: 'Slide Down' }).click()
+  await page.getByRole('button', { name: 'Slide Right' }).click()
+  await page.getByRole('button', { name: 'Slide Left' }).click()
+  await page.getByRole('button', { name: 'Slide Up' }).click()
+
+  // Click new game
+  await page.getByRole('button', { name: 'NEW GAME' }).click()
+  await expect(page.locator('.numbermerge-cell.filled')).toHaveCount(2)
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

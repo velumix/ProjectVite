@@ -11541,6 +11541,205 @@
   cursor: pointer;
 }
 
+
+/* -------------------------------------------------------------
+   NUMBER MERGE 2048 GAME APP
+   ------------------------------------------------------------- */
+.numbermerge-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #faf8ef;
+  color: #776e65;
+  position: relative;
+  overflow: hidden;
+}
+
+.numbermerge-header {
+  padding: 0.6em 0.8em 0.3em;
+  background: #bbada0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.numbermerge-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.numbermerge-logo {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+  display: block;
+  line-height: 1;
+}
+
+.numbermerge-sub {
+  font-size: 0.58em;
+  color: #eee4da;
+  font-weight: 800;
+}
+
+.numbermerge-scores {
+  display: flex;
+  gap: 8px;
+}
+
+.numbermerge-score-box {
+  background: #8f7a66;
+  border-radius: 6px;
+  padding: 0.3em 0.6em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 52px;
+}
+
+.numbermerge-score-box label {
+  font-size: 0.5em;
+  color: #eee4da;
+  font-weight: 800;
+}
+
+.numbermerge-score-box span {
+  font-size: 0.9em;
+  font-weight: 900;
+  color: #fff;
+}
+
+.numbermerge-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.numbermerge-newgame-btn {
+  border: 0;
+  background: #8f7a66;
+  color: #fff;
+  font-size: 0.65em;
+  font-weight: 800;
+  padding: 0.35em 0.8em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Board */
+.numbermerge-board-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6em;
+}
+
+.numbermerge-board {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 280px;
+  background: #bbada0;
+  border-radius: 8px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 8px;
+  position: relative;
+}
+
+.numbermerge-cell {
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.25em;
+  user-select: none;
+  transition: transform 0.1s;
+}
+
+.numbermerge-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(238, 228, 218, 0.92);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  z-index: 10;
+}
+
+.numbermerge-overlay h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #776e65;
+  font-weight: 900;
+}
+
+.numbermerge-overlay p {
+  margin: 0;
+  font-size: 0.85em;
+  color: #776e65;
+}
+
+.numbermerge-retry-btn {
+  border: 0;
+  background: #8f7a66;
+  color: #fff;
+  font-weight: 800;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Controls */
+.numbermerge-controls {
+  padding: 0.6em;
+  background: #bbada0;
+  display: flex;
+  justify-content: center;
+}
+
+.numbermerge-dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.nm-dpad-mid {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.nm-dpad-btn {
+  width: 44px;
+  height: 36px;
+  border: 0;
+  background: #8f7a66;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nm-dpad-center {
+  width: 44px;
+  height: 36px;
+  background: #a39281;
+  border-radius: 6px;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {
