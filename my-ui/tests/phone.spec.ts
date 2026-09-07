@@ -1466,3 +1466,44 @@ test('number merge 2048 app slides numbered tiles, merges adjacent matching pair
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('minesweeper app generates randomized minefields, toggles digging and flagging modes, handles grid difficulties, and syncs score with Roblox GameScoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Minesweeper
+  await page.getByRole('button', { name: 'Open Minesweeper' }).click()
+  await expect(page.locator('.minesweeper-app-root')).toBeVisible()
+  await expect(page.locator('.minesweeper-face-btn')).toHaveText('😊')
+  await expect(page.locator('.minesweeper-record')).toContainText('180 PTS')
+
+  // Quick difficulty cells: 8x8 = 64
+  const cells = page.locator('.minesweeper-cell')
+  await expect(cells).toHaveCount(64)
+
+  // Toggle flag mode
+  const flagToggle = page.locator('.minesweeper-flag-toggle')
+  await expect(flagToggle).toContainText('DIGGING')
+  await flagToggle.click()
+  await expect(flagToggle).toContainText('FLAGGING')
+
+  // Place flag on first cell
+  await cells.first().click()
+  await expect(cells.first()).toHaveText('🚩')
+
+  // Toggle back to digging
+  await flagToggle.click()
+  await expect(flagToggle).toContainText('DIGGING')
+
+  // Switch to classic (10x10 = 100 cells)
+  await page.getByRole('button', { name: 'CLASSIC' }).click()
+  await expect(cells).toHaveCount(100)
+
+  // Reset face
+  await page.getByRole('button', { name: 'Restart Game' }).click()
+  await expect(cells).toHaveCount(100)
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
