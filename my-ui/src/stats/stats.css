@@ -1,0 +1,1112 @@
+/* ==========================================================================
+   Sun City - Stats Dashboard Styling (Matching Mockup 1:1)
+   Glassmorphism, High-contrast Dark Accents, Pixel-Aware Fluidity
+   ========================================================================== */
+
+.stats-screen {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 1.2%;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 0.4%;
+  color: #e2e8f0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.stats-col-left,
+.stats-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 142, 157, 0.3) transparent;
+}
+
+/* ==========================================================================
+   Reusable Stats Card Base
+   ========================================================================== */
+
+.stats-card {
+  background: linear-gradient(135deg, rgba(16, 23, 30, 0.78), rgba(11, 16, 21, 0.92));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(124, 142, 157, 0.2);
+  border-radius: 0.65em;
+  padding: 0.85em 1em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.stats-card:hover {
+  border-color: rgba(139, 219, 255, 0.28);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(139, 219, 255, 0.1);
+}
+
+.stats-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65em;
+  flex-shrink: 0;
+}
+
+.stats-card-title {
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #f1f5f9;
+  text-transform: uppercase;
+}
+
+.stats-card-sub {
+  display: block;
+  font-size: 0.64em;
+  letter-spacing: 0.12em;
+  color: #7b8e9f;
+  margin-top: 0.15em;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Card 1: Progression (Level Ring, XP Bar, Quote)
+   ========================================================================== */
+
+.stats-progression-card {
+  padding-bottom: 0.95em;
+}
+
+.stats-progression-content {
+  display: flex;
+  align-items: center;
+  gap: 1.4em;
+}
+
+.stats-level-ring-wrap {
+  position: relative;
+  width: 5.6em;
+  height: 5.6em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-level-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.stats-ring-bg {
+  fill: #090e13;
+  stroke: rgba(26, 39, 52, 0.8);
+  stroke-width: 6.5;
+}
+
+.stats-ring-meter {
+  fill: none;
+  stroke-width: 6.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
+  transition: stroke-dashoffset 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.stats-level-ring-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.stats-level-number {
+  font-size: 1.85em;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.stats-level-caption {
+  font-size: 0.58em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #8bdbff;
+  margin-top: 0.25em;
+}
+
+.stats-player-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+
+.stats-player-header-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.stats-player-name-box {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65em;
+}
+
+.stats-player-name {
+  margin: 0;
+  font-size: 1.35em;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+.stats-citizen-badge {
+  font-size: 0.68em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #38bdf8;
+}
+
+.stats-xp-counter {
+  font-size: 0.78em;
+  color: #94a3b8;
+}
+
+.stats-xp-counter strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.stats-xp-bar-track {
+  width: 100%;
+  height: 0.55em;
+  background: rgba(18, 28, 38, 0.95);
+  border-radius: 1em;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(124, 142, 157, 0.15);
+}
+
+.stats-xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  border-radius: inherit;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  transition: width 400ms ease;
+}
+
+.stats-player-quote {
+  margin: 0;
+  font-size: 0.76em;
+  font-style: italic;
+  color: #8296a8;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   Card 2: Attributes
+   ========================================================================== */
+
+.stats-points-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.stats-points-badge {
+  font-size: 0.68em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f59e0b;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.stats-points-badge.has-points {
+  color: #10b981;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.stats-dev-point-btn {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  border-radius: 0.3em;
+  padding: 0.15em 0.45em;
+  font-size: 0.62em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.stats-dev-point-btn:hover {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fff;
+  border-color: #f59e0b;
+}
+
+.stats-attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55em;
+}
+
+.stats-attr-card {
+  background: rgba(14, 21, 28, 0.7);
+  border: 1px solid rgba(124, 142, 157, 0.18);
+  border-radius: 0.5em;
+  padding: 0.65em 0.4em 0.55em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35em;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.stats-attr-card:hover {
+  background: rgba(20, 30, 42, 0.85);
+  border-color: rgba(139, 219, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.stats-attr-icon {
+  width: 1.5em;
+  height: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-attr-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.stats-attr-name {
+  font-size: 0.64em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.stats-attr-level-line {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.stats-attr-level {
+  font-size: 0.62em;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.stats-attr-track {
+  width: 82%;
+  height: 3px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stats-attr-fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 300ms ease;
+}
+
+.stats-attr-plus-btn {
+  width: 1.9em;
+  height: 1.45em;
+  margin-top: 0.2em;
+  background: rgba(22, 33, 45, 0.85);
+  border: 1px solid rgba(124, 142, 157, 0.28);
+  border-radius: 0.3em;
+  color: #94a3b8;
+  font-size: 0.85em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.stats-attr-plus-btn:not(:disabled) {
+  color: #ffffff;
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.stats-attr-plus-btn:not(:disabled):hover {
+  background: #0284c7;
+  color: #fff;
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  transform: scale(1.08);
+}
+
+.stats-attr-plus-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Card 3: Skills (10 Skills in 2 Columns)
+   ========================================================================== */
+
+.stats-total-skills {
+  font-size: 0.66em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #94a3b8;
+}
+
+.stats-skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45em 1.2em;
+}
+
+.stats-skills-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+}
+
+.stats-skill-item {
+  display: grid;
+  grid-template-columns: 1.3em 4.2em minmax(0, 1fr) 2.4em;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.28em 0.4em;
+  border-radius: 0.35em;
+  transition: background 120ms ease;
+}
+
+.stats-skill-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.stats-skill-icon-wrap {
+  width: 1.15em;
+  height: 1.15em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+}
+
+.stats-skill-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.stats-skill-name {
+  font-size: 0.74em;
+  font-weight: 500;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+.stats-skill-bar-wrap {
+  height: 0.34em;
+  background: rgba(22, 33, 45, 0.9);
+  border-radius: 1em;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.stats-skill-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 350ms ease;
+}
+
+.stats-skill-level {
+  font-size: 0.7em;
+  color: #94a3b8;
+  text-align: right;
+  font-family: inherit;
+}
+
+/* ==========================================================================
+   Card 4: Reputation (5 Faction Badges)
+   ========================================================================== */
+
+.stats-reputation-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55em;
+}
+
+.stats-rep-card {
+  background: rgba(14, 21, 28, 0.7);
+  border: 1px solid rgba(124, 142, 157, 0.18);
+  border-radius: 0.5em;
+  padding: 0.6em 0.5em 0.45em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+  text-align: left;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.stats-rep-card:hover,
+.stats-rep-card.is-selected {
+  background: rgba(22, 33, 46, 0.85);
+  border-color: rgba(139, 219, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.stats-rep-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.stats-rep-icon {
+  width: 1.3em;
+  height: 1.3em;
+  flex-shrink: 0;
+  color: #8bdbff;
+}
+
+.stats-rep-labels {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.stats-rep-name {
+  font-size: 0.68em;
+  font-weight: 700;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-rep-status {
+  font-size: 0.6em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stats-rep-line {
+  height: 3px;
+  border-radius: 2px;
+  width: 100%;
+}
+
+.stats-faction-tooltip {
+  margin-top: 0.5em;
+  padding: 0.45em 0.75em;
+  background: rgba(10, 16, 22, 0.9);
+  border: 1px solid rgba(139, 219, 255, 0.25);
+  border-radius: 0.4em;
+  font-size: 0.72em;
+  animation: stats-tooltip-enter 160ms ease-out;
+}
+
+.stats-faction-tooltip strong {
+  display: block;
+  color: #8bdbff;
+  margin-bottom: 0.15em;
+}
+
+.stats-faction-tooltip p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+@keyframes stats-tooltip-enter {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   RIGHT COLUMN: Active Quests (Thumbnails, Badges, Checklists)
+   ========================================================================== */
+
+.stats-active-count,
+.stats-completed-count {
+  font-size: 0.66em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #94a3b8;
+}
+
+.stats-active-quests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+}
+
+.stats-active-quest-item {
+  display: grid;
+  grid-template-columns: 4.8em minmax(0, 1fr) auto;
+  gap: 0.85em;
+  align-items: center;
+  background: rgba(14, 21, 28, 0.55);
+  border: 1px solid rgba(124, 142, 157, 0.15);
+  border-radius: 0.45em;
+  padding: 0.45em 0.65em 0.45em 0.45em;
+  transition: all 140ms ease;
+}
+
+.stats-active-quest-item:hover {
+  background: rgba(22, 33, 46, 0.75);
+  border-color: rgba(139, 219, 255, 0.25);
+  transform: translateX(2px);
+}
+
+.stats-quest-thumb-wrap {
+  width: 4.8em;
+  height: 3.2em;
+  border-radius: 0.35em;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #090e13;
+  border: 1px solid rgba(124, 142, 157, 0.2);
+}
+
+.stats-quest-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stats-quest-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
+.stats-quest-title {
+  margin: 0;
+  font-size: 0.86em;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.stats-quest-sub {
+  margin: 0;
+  font-size: 0.68em;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-quest-check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  margin-top: 0.25em;
+  font-size: 0.7em;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.stats-quest-checkbox {
+  accent-color: #10b981;
+  width: 1.05em;
+  height: 1.05em;
+  cursor: pointer;
+}
+
+.is-checked-text {
+  text-decoration: line-through;
+  color: #64748b;
+}
+
+.stats-quest-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65em;
+  margin-top: 0.3em;
+}
+
+.stats-quest-progress-track {
+  flex: 1;
+  height: 0.35em;
+  background: rgba(22, 33, 45, 0.9);
+  border-radius: 1em;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.stats-quest-progress-fill {
+  height: 100%;
+  background: #38bdf8;
+  border-radius: inherit;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+  transition: width 250ms ease;
+}
+
+.stats-quest-progress-num {
+  background: none;
+  border: 0;
+  color: #94a3b8;
+  font-size: 0.68em;
+  cursor: pointer;
+  padding: 0;
+}
+
+.stats-quest-progress-num:hover {
+  color: #38bdf8;
+}
+
+.stats-quest-rewards-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15em;
+  min-width: 4.8em;
+}
+
+.stats-quest-badge {
+  font-size: 0.58em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 0.2em 0.55em;
+  border-radius: 0.25em;
+}
+
+.badge-main {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.badge-side {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.badge-daily {
+  background: rgba(234, 179, 8, 0.18);
+  color: #fde047;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+}
+
+.stats-quest-cash {
+  font-size: 0.78em;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.stats-quest-xp {
+  font-size: 0.66em;
+  color: #8bdbff;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Completed Quests
+   ========================================================================== */
+
+.stats-completed-quests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+
+.stats-completed-quest-item {
+  display: grid;
+  grid-template-columns: 3.8em 1.4em minmax(0, 1fr) auto;
+  gap: 0.65em;
+  align-items: center;
+  background: rgba(14, 21, 28, 0.4);
+  border: 1px solid rgba(124, 142, 157, 0.12);
+  border-radius: 0.4em;
+  padding: 0.35em 0.65em 0.35em 0.35em;
+  transition: background 120ms ease;
+}
+
+.stats-completed-quest-item:hover {
+  background: rgba(20, 30, 42, 0.65);
+}
+
+.stats-completed-thumb-wrap {
+  width: 3.8em;
+  height: 2.5em;
+  border-radius: 0.3em;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #090e13;
+}
+
+.stats-completed-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85);
+}
+
+.stats-completed-check-icon {
+  width: 1.25em;
+  height: 1.25em;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-completed-check-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.stats-completed-info {
+  min-width: 0;
+}
+
+.stats-completed-title {
+  margin: 0;
+  font-size: 0.8em;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.stats-completed-sub {
+  margin: 0;
+  font-size: 0.64em;
+  color: #7b8e9f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-completed-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1em;
+}
+
+.stats-completed-date {
+  font-size: 0.62em;
+  color: #8496a8;
+}
+
+.stats-completed-cash {
+  font-size: 0.74em;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Milestones (4 Cards)
+   ========================================================================== */
+
+.stats-view-all-btn {
+  background: rgba(18, 28, 38, 0.8);
+  border: 1px solid rgba(124, 142, 157, 0.3);
+  color: #cbd5e1;
+  border-radius: 0.3em;
+  padding: 0.3em 0.65em;
+  font-size: 0.62em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.stats-view-all-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+}
+
+.stats-milestones-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55em;
+}
+
+.stats-milestone-card {
+  background: rgba(14, 21, 28, 0.65);
+  border: 1px solid rgba(124, 142, 157, 0.18);
+  border-radius: 0.5em;
+  padding: 0.65em 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 140ms ease;
+}
+
+.stats-milestone-card:hover {
+  background: rgba(22, 33, 46, 0.85);
+  border-color: rgba(139, 219, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.stats-milestone-icon {
+  width: 1.4em;
+  height: 1.4em;
+  color: #e2e8f0;
+  margin-bottom: 0.3em;
+}
+
+.stats-milestone-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.stats-milestone-title {
+  font-size: 0.66em;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.stats-milestone-track {
+  width: 86%;
+  height: 0.32em;
+  background: rgba(24, 36, 48, 0.9);
+  border-radius: 1em;
+  overflow: hidden;
+  margin: 0.45em 0 0.25em;
+}
+
+.stats-milestone-fill {
+  height: 100%;
+  background: #38bdf8;
+  border-radius: inherit;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+  transition: width 350ms ease;
+}
+
+.stats-milestone-counter {
+  font-size: 0.62em;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Modal for View All Milestones */
+.stats-milestones-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  animation: stats-modal-fade 180ms ease;
+}
+
+.stats-milestones-modal {
+  background: #0f1720;
+  border: 1px solid rgba(139, 219, 255, 0.3);
+  border-radius: 0.7em;
+  padding: 1.2em 1.5em;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(56, 189, 248, 0.2);
+}
+
+.stats-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4em;
+}
+
+.stats-modal-header h3 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #fff;
+  letter-spacing: 0.08em;
+}
+
+.stats-modal-close {
+  background: none;
+  border: 0;
+  color: #94a3b8;
+  font-size: 1.4em;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.stats-modal-close:hover {
+  color: #fff;
+}
+
+.stats-modal-desc {
+  margin: 0 0 1em;
+  font-size: 0.8em;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.stats-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.stats-modal-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  padding: 0.6em;
+  border-radius: 0.4em;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(124, 142, 157, 0.15);
+}
+
+.stats-modal-icon {
+  width: 1.4em;
+  height: 1.4em;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.stats-modal-row strong {
+  display: block;
+  font-size: 0.85em;
+  color: #f1f5f9;
+}
+
+.stats-modal-row span {
+  display: block;
+  font-size: 0.72em;
+  color: #8296a8;
+}
+
+.stats-modal-status {
+  margin-left: auto;
+  font-size: 0.85em;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+@keyframes stats-modal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   Footer Stats Lore Taglines & Mottos (Matching Mockup)
+   ========================================================================== */
+
+.city-stats-footer-tagline {
+  font-size: 0.74em;
+  letter-spacing: 0.16em;
+  color: #7b8e9f;
+  font-weight: 600;
+}
+
+.city-stats-footer-motto {
+  display: flex;
+  align-items: center;
+  gap: 1.6em;
+  margin-left: auto;
+  margin-right: 1.6em;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #64748b;
+}
+
+.city-stats-footer-motto span {
+  transition: color 140ms ease;
+}
+
+.city-stats-footer-motto span:hover {
+  color: #8bdbff;
+}
+
+/* ==========================================================================
+   Pixel-Aware Responsive Adapters
+   ========================================================================== */
+
+@container (max-width: 820px) {
+  .stats-screen {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 0.8em;
+  }
+
+  .stats-col-left,
+  .stats-col-right {
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .stats-attributes-grid {
+    grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  }
+
+  .stats-reputation-grid {
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  }
+
+  .stats-milestones-grid {
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  }
+}
+
+@container (max-height: 520px) {
+  .stats-screen {
+    gap: 0.8%;
+  }
+
+  .stats-card {
+    padding: 0.5em 0.7em;
+  }
+
+  .stats-level-ring-wrap {
+    width: 4.2em;
+    height: 4.2em;
+  }
+
+  .stats-level-number {
+    font-size: 1.4em;
+  }
+
+  .stats-active-quest-item {
+    padding: 0.3em 0.5em;
+  }
+
+  .stats-quest-thumb-wrap {
+    width: 3.8em;
+    height: 2.5em;
+  }
+}

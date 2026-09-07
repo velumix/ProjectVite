@@ -4,6 +4,7 @@ import { createInventoryState, equipment, inventoryReducer, inventoryWeight, ite
 import './inventory.css'
 import { uiAudio } from '../audio/ui-audio.ts'
 import { QuestsScreen } from '../quests/QuestsScreen.tsx'
+import { StatsScreen } from '../stats/StatsScreen.tsx'
 
 const assetRoot = `${import.meta.env.BASE_URL}assets/inventory/`
 const tabs = ['Inventory', 'Quests', 'Map', 'Phone', 'Stats', 'Settings'] as const
@@ -209,16 +210,18 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
       style={{ '--city-scene': `url("${assetRoot}city-backdrop.jpg")`, '--city-panel-opacity': panelOpacity / 100 } as CSSProperties} onKeyDown={handleKeyDown}>
       <div className="city-menu-backdrop" />
       <header className="city-menu-header">
-        <div className="city-brand"><strong>SUN CITY</strong></div>
+        <div className="city-brand"><strong>SUN CITY</strong><span>A BRIGHTER TOMORROW</span></div>
         <nav className="city-tabs" aria-label="Game menu">
           {tabs.map(tab => <button type="button" key={tab} aria-current={panel === tab ? 'page' : undefined} onClick={() => onPanelChange(tab)}>{tab.toUpperCase()}</button>)}
         </nav>
         <div className="city-account"><span className="city-balance">$ {Number(bindings.get('Player.Money') ?? 500).toLocaleString()}</span><div><time>12:24</time><span>Sep 6, 2026</span></div></div>
       </header>
 
-      <div className={`city-menu-body${panel === 'Quests' ? ' is-quests-body' : ''}`}>
+      <div className={`city-menu-body${panel === 'Quests' ? ' is-quests-body' : ''}${panel === 'Stats' ? ' is-stats-body' : ''}`}>
         {panel === 'Quests' ? (
           <QuestsScreen />
+        ) : panel === 'Stats' ? (
+          <StatsScreen bindings={bindings} />
         ) : (
           <>
         <aside className="city-character" aria-label="Character equipment">
@@ -583,7 +586,29 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
           </>
         )}
       </div>
-      <footer className="city-menu-footer"><div role="status" className="city-notice" key={inventory.notice}>{inventory.notice}{inventory.dropped && <button type="button" onClick={() => dispatch({ type: 'undo-drop' })}>Undo drop</button>}</div><button type="button" className="city-close" data-roblox-name={`Close${panel}Button`} onClick={onClose}><kbd>ESC</kbd><span>Close</span></button></footer>
+      <footer className="city-menu-footer">
+        <div role="status" className="city-notice" key={inventory.notice}>
+          {panel === 'Stats' ? (
+            <span className="city-stats-footer-tagline">SUN CITY &bull; A BRIGHTER TOMORROW IN SUN CITY</span>
+          ) : (
+            <>
+              {inventory.notice}
+              {inventory.dropped && <button type="button" onClick={() => dispatch({ type: 'undo-drop' })}>Undo drop</button>}
+            </>
+          )}
+        </div>
+        {panel === 'Stats' && (
+          <div className="city-stats-footer-motto">
+            <span>PEOPLE</span>
+            <span>CARS</span>
+            <span>OPPORTUNITY</span>
+            <span>TROUBLE</span>
+          </div>
+        )}
+        <button type="button" className="city-close" data-roblox-name={`Close${panel}Button`} onClick={onClose}>
+          <kbd>ESC</kbd><span>Close</span>
+        </button>
+      </footer>
     </div>
   )
 }

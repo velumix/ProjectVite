@@ -213,6 +213,63 @@ class UiAudioManager {
   /**
    * Low drop/move thud
    */
+  /**
+   * Crisp high checkmark click
+   */
+  public playCheck() {
+    if (this.isMuted) return
+    const ctx = this.getContext()
+    if (!ctx) return
+    try {
+      const t = ctx.currentTime
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'triangle'
+      osc.frequency.setValueAtTime(1100, t)
+      osc.frequency.exponentialRampToValueAtTime(1600, t + 0.04)
+      gain.gain.setValueAtTime(0.045, t)
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.05)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(t)
+      osc.stop(t + 0.055)
+    } catch {
+      // Audio execution failed gracefully
+    }
+  }
+
+  /**
+   * Triumphant reward chime
+   */
+  public playReward() {
+    if (this.isMuted) return
+    const ctx = this.getContext()
+    if (!ctx) return
+    try {
+      const t = ctx.currentTime
+      const freqs = [523.25, 659.25, 783.99, 1046.50] // C5, E5, G5, C6 arpeggio
+      freqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        const noteStart = t + idx * 0.045
+        osc.frequency.setValueAtTime(freq, noteStart)
+        gain.gain.setValueAtTime(0.04, noteStart)
+        gain.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.12)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(noteStart)
+        osc.stop(noteStart + 0.14)
+      })
+    } catch {
+      // Audio execution failed gracefully
+    }
+  }
+
+  public playTick() {
+    this.playClick()
+  }
+
   public playDrop() {
     if (this.isMuted) return
     const ctx = this.getContext()

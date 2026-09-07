@@ -219,3 +219,79 @@ test('dynamic UI adapts across all devices without overflowing canvas bounds', a
 
   await page.getByRole('button', { name: 'Exit preview' }).click()
 })
+
+test('revamped stats screen renders 2-column progression dashboard with interactive attributes and quest tracking', async ({ page }) => {
+  await openInventory(page)
+  await page.getByRole('button', { name: 'STATS', exact: true }).click()
+  const statsModal = page.locator('[data-roblox-name="StatsPanelModal"]')
+  await expect(statsModal).toBeVisible()
+
+  // Left Column: Progression
+  await expect(page.locator('.stats-level-number')).toHaveText('42')
+  await expect(page.getByText(/Same city, different story/i)).toBeVisible()
+  await expect(page.locator('.stats-player-name')).toHaveText('Player1')
+  await expect(page.locator('.stats-citizen-badge')).toHaveText('CITIZEN')
+
+  // Left Column: Attributes & interactive point allocation
+  await expect(page.getByText(/0 POINTS AVAILABLE/i)).toBeVisible()
+  const plusPointBtn = page.getByRole('button', { name: '+ Point' })
+  await plusPointBtn.click()
+  await expect(page.getByText(/2 POINTS AVAILABLE/i)).toBeVisible()
+
+  // Upgrade Health attribute
+  const healthCard = page.locator('.stats-attr-card', { hasText: 'HEALTH' })
+  await expect(healthCard.locator('.stats-attr-level')).toHaveText('LV. 4')
+  await healthCard.locator('.stats-attr-plus-btn').click()
+  await expect(healthCard.locator('.stats-attr-level')).toHaveText('LV. 5')
+  await expect(page.getByText(/1 POINT AVAILABLE/i)).toBeVisible()
+
+  // Left Column: Skills
+  await expect(page.getByText(/TOTAL SKILL LEVEL 28/i)).toBeVisible()
+  await expect(page.getByText('Driving', { exact: true })).toBeVisible()
+  await expect(page.getByText('Shooting', { exact: true })).toBeVisible()
+  await expect(page.getByText('Charisma', { exact: true })).toBeVisible()
+
+  // Left Column: Reputation
+  const policeRep = page.locator('.stats-rep-card', { hasText: 'Police' })
+  await expect(policeRep).toBeVisible()
+  await policeRep.click()
+  await expect(page.locator('.stats-faction-tooltip')).toContainText('Police')
+
+  // Right Column: Active Quests
+  const betterRideQuest = page.locator('.stats-active-quest-item', { hasText: 'A Better Ride' })
+  await expect(betterRideQuest).toBeVisible()
+  await expect(betterRideQuest.getByText('MAIN')).toBeVisible()
+  const mechanicCheck = betterRideQuest.locator('input[type="checkbox"]')
+  await expect(mechanicCheck).not.toBeChecked()
+  await mechanicCheck.click()
+  await expect(mechanicCheck).toBeChecked()
+
+  // City Life photo progress
+  const cityLifeQuest = page.locator('.stats-active-quest-item', { hasText: 'City Life' })
+  await expect(cityLifeQuest.locator('.stats-quest-progress-num')).toHaveText('2 / 5')
+  await cityLifeQuest.locator('.stats-quest-progress-track').click()
+  await expect(cityLifeQuest.locator('.stats-quest-progress-num')).toHaveText('3 / 5')
+
+  // Right Column: Completed Quests
+  await expect(page.getByText('124 COMPLETED')).toBeVisible()
+  await expect(page.getByText('First Steps')).toBeVisible()
+  await expect(page.getByText('Helping Hands')).toBeVisible()
+
+  // Right Column: Milestones & Modal
+  await expect(page.getByText('Own 5 Properties')).toBeVisible()
+  const viewAllBtn = page.getByRole('button', { name: 'VIEW ALL' })
+  await viewAllBtn.click()
+  const modal = page.locator('.stats-milestones-modal')
+  await expect(modal).toBeVisible()
+  await expect(modal.getByText(/SUN CITY CITIZEN MILESTONES/i)).toBeVisible()
+  await page.locator('.stats-modal-close').click()
+  await expect(modal).toBeHidden()
+
+  // Footer lore & motto
+  await expect(page.getByText('SUN CITY • A BRIGHTER TOMORROW IN SUN CITY')).toBeVisible()
+  await expect(page.getByText('OPPORTUNITY')).toBeVisible()
+
+  // Close Stats modal
+  await page.locator('[data-roblox-name="CloseStatsButton"]').click()
+  await expect(statsModal).toBeHidden()
+})
