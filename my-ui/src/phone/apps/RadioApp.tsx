@@ -209,7 +209,9 @@ export function RadioApp() {
           <button
             type="button"
             className={`radio-ptt-button ${radioState.isTalking ? 'talking' : ''}`}
+            onPointerDown={() => handlePTT(true)}
             onMouseDown={() => handlePTT(true)}
+            onPointerUp={() => handlePTT(false)}
             onMouseUp={() => handlePTT(false)}
             onTouchStart={() => handlePTT(true)}
             onTouchEnd={() => handlePTT(false)}

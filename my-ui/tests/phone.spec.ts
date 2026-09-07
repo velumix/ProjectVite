@@ -1169,9 +1169,10 @@ test('radio app connects to walkie frequency, switches channel presets, adjusts 
   // Push To Talk
   const pttBtn = page.locator('.radio-ptt-button')
   await expect(pttBtn).toContainText('HOLD TO TALK')
-  await pttBtn.dispatchEvent('mousedown')
+  await pttBtn.hover()
+  await page.mouse.down()
   await expect(pttBtn).toContainText('TRANSMITTING')
-  await pttBtn.dispatchEvent('mouseup')
+  await page.mouse.up()
   await expect(pttBtn).toContainText('HOLD TO TALK')
 
   // Toggle Power
