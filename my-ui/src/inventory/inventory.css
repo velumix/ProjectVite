@@ -583,3 +583,22 @@
   width: 1.1em;
   height: 1.1em;
 }
+
+
+.city-content-phone {
+  padding: 0.4em !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.city-content-phone .phone-device {
+  width: min(100%, 30em);
+  height: 100%;
+  max-height: 100%;
+  box-shadow: 0 1.5em 4em rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(140, 169, 187, 0.25);
+}
