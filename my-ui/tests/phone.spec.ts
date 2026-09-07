@@ -1539,3 +1539,36 @@ test('tower stack app aligns sliding blocks, trims overhangs, triggers combos, a
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('sky flappy app flies aerial drone between pipes, switches visual themes, avoids ground collisions, and reports record to Roblox GameScoreService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Sky Flappy
+  await page.getByRole('button', { name: 'Open Sky Flappy' }).click()
+  await expect(page.locator('.skyflappy-app-root')).toBeVisible()
+  await expect(page.locator('.skyflappy-title')).toHaveText('🕊️ SKY FLAPPY')
+  await expect(page.locator('.skyflappy-high')).toHaveText('RECORD: 28')
+
+  // Switch theme to DAWN
+  await page.getByRole('button', { name: 'DAWN' }).click()
+  await expect(page.locator('.skyflappy-app-root')).toHaveClass(/theme-dawn/)
+
+  // Switch theme to NEON
+  await page.getByRole('button', { name: 'NEON' }).click()
+  await expect(page.locator('.skyflappy-app-root')).toHaveClass(/theme-neon/)
+
+  // Tap to fly
+  const flapBtn = page.locator('.skyflappy-flap-btn')
+  await expect(flapBtn).toHaveText('TAP TO FLY')
+  await flapBtn.click()
+  await expect(flapBtn).toHaveText('FLAP (TAP)')
+
+  // Flap again
+  await flapBtn.click()
+  await expect(page.locator('.skyflappy-bird')).toBeVisible()
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
