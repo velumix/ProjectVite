@@ -91,6 +91,76 @@ export type PreviewBankingService = {
   BankingChanged: NerveSignal<[BankingNotification]>
 }
 
+export type MediaItem = {
+  id: string
+  mediaType: 'photo' | 'video'
+  url: string
+  thumbnailUrl?: string
+  favorite: boolean
+  createdAt: number
+  title: string
+  location?: string
+}
+
+export type MediaCounts = {
+  all: number
+  photos: number
+  videos: number
+  favorites: number
+}
+
+export type PreviewMediaService = {
+  GetMediaList: NerveMethod<{ filter?: string; favoritesOnly?: boolean } | undefined, [MediaItem[], MediaCounts]>
+  CaptureMedia: NerveMethod<{ mediaType: string; url: string; title?: string; location?: string }, [boolean, MediaItem?, string?]>
+  ToggleFavorite: NerveMethod<{ id: string }, [boolean, boolean, string?]>
+  DeleteMedia: NerveMethod<{ ids: string[] }, [boolean, string?]>
+  MediaChanged: NerveSignal<[string]>
+}
+
+export function createMockPhotoSvg(title: string, sky = '#172554', land = '#111827', accent = '#7c3aed'): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="${sky}"/><stop offset="1" stop-color="${accent}"/></linearGradient><linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${land}"/><stop offset="1" stop-color="#101114"/></linearGradient></defs><rect width="900" height="1200" fill="url(#sky)"/><circle cx="690" cy="260" r="105" fill="#fff" opacity=".72"/><path d="M0 690 210 440 390 650 585 360 900 720V1200H0Z" fill="${land}" opacity=".84"/><path d="M0 790 230 620 410 765 650 525 900 770V1200H0Z" fill="url(#land)"/><path d="M360 1200 475 690 560 690 690 1200Z" fill="${accent}" opacity=".48"/><text x="54" y="1100" fill="#fff" font-family="system-ui,sans-serif" font-size="62" font-weight="700">${title}</text><text x="57" y="1160" fill="#fff" opacity=".72" font-family="system-ui,sans-serif" font-size="30">Sun City Mobile</text></svg>`
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`
+}
+
+const INITIAL_MEDIA_ITEMS: MediaItem[] = [
+  {
+    id: 'photo-1',
+    mediaType: 'photo',
+    url: createMockPhotoSvg('City Skyline', '#172554', '#111827', '#7c3aed'),
+    favorite: true,
+    createdAt: Date.now() - 7200000,
+    title: 'City Skyline',
+    location: 'Downtown Sun City',
+  },
+  {
+    id: 'photo-2',
+    mediaType: 'photo',
+    url: createMockPhotoSvg('Del Perro Pier', '#0369a1', '#164e63', '#fbbf24'),
+    favorite: false,
+    createdAt: Date.now() - 18000000,
+    title: 'Del Perro Pier',
+    location: 'Del Perro Boardwalk',
+  },
+  {
+    id: 'photo-3',
+    mediaType: 'photo',
+    url: createMockPhotoSvg('Chiliad Sunset', '#c2410c', '#422006', '#facc15'),
+    favorite: true,
+    createdAt: Date.now() - 43200000,
+    title: 'Chiliad Sunset',
+    location: 'Mount Chiliad Lookout',
+  },
+  {
+    id: 'photo-4',
+    mediaType: 'photo',
+    url: createMockPhotoSvg('Marlowe Vineyards', '#166534', '#14532d', '#86efac'),
+    favorite: false,
+    createdAt: Date.now() - 86400000,
+    title: 'Marlowe Vineyards',
+    location: 'Tongva Hills',
+  },
+]
+
 const INITIAL_PHONE_STATE: PhoneState = {
   phoneNumber: '555-0199',
   battery: 87,
@@ -173,6 +243,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     ...INITIAL_BANKING_STATE,
     transactions: [...INITIAL_BANKING_STATE.transactions],
   }
+  let mediaItems: MediaItem[] = [...INITIAL_MEDIA_ITEMS]
   let adapter: ReturnType<typeof createNerveBrowserAdapter>
 
   const readSettings = async (): Promise<StreamlinedSettingsState> => {
@@ -198,23 +269,23 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       },
       'SettingsService.SaveSettings': async (payload) => {
         if (!isRecord(payload)) return [false, 'Invalid settings payload']
-        const nextSettings = normalizeSettings(payload)
+        const normalized = normalizeSettings(payload)
+        cachedSettings = normalized
         if (options.persistence) {
           await options.persistence.DataStoreService
             .GetDataStore(SETTINGS_DATASTORE_NAME)
-            .UpdateAsync(playerKey, (current) => ({
-              ...(isRecord(current) ? current : {}),
-              Settings: nextSettings,
-            }))
+            .SetAsync(playerKey, { Settings: normalized })
         }
-        cachedSettings = nextSettings
-        adapter.emitSignal('SettingsService', 'SettingsChanged', nextSettings)
+        adapter.emitSignal('SettingsService', 'SettingsChanged', normalized)
         return [true, undefined]
       },
       'PhoneService.GetPhoneState': () => [clonePhoneState(phoneState)],
-      'PhoneService.GetMessages': (payload) => {
-        const contact = phoneState.contacts.find((entry) => entry.number === payload || entry.id === payload)
-        return [contact ? [...(phoneMessages[contact.id] ?? [])] : []]
+      'PhoneService.GetMessages': (contactId) => {
+        if (typeof contactId !== 'string') return [[]]
+        if (phoneMessages[contactId]) return [[...phoneMessages[contactId]]]
+        const byNum = phoneState.contacts.find((c) => c.number === contactId)
+        if (byNum && phoneMessages[byNum.id]) return [[...phoneMessages[byNum.id]]]
+        return [[]]
       },
       'PhoneService.SendMessage': (payload) => {
         if (!isRecord(payload) || typeof payload.number !== 'string' || typeof payload.body !== 'string' || !payload.body.trim()) return [false, 'Message cannot be empty']
@@ -332,6 +403,57 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         })
         return [true, undefined]
       },
+      'MediaService.GetMediaList': (options) => {
+        const filter = isRecord(options) && typeof options.filter === 'string' ? options.filter : 'all'
+        const favoritesOnly = isRecord(options) && options.favoritesOnly === true
+        const counts: MediaCounts = {
+          all: mediaItems.length,
+          photos: mediaItems.filter((item) => item.mediaType === 'photo').length,
+          videos: mediaItems.filter((item) => item.mediaType === 'video').length,
+          favorites: mediaItems.filter((item) => item.favorite).length,
+        }
+        const filtered = mediaItems.filter((item) => {
+          const matchType = filter === 'all' || item.mediaType === filter
+          const matchFav = !favoritesOnly || item.favorite
+          return matchType && matchFav
+        })
+        return [filtered, counts]
+      },
+      'MediaService.CaptureMedia': (payload) => {
+        if (!isRecord(payload) || typeof payload.url !== 'string') return [false, undefined, 'Invalid media payload']
+        const mediaType = payload.mediaType === 'video' ? 'video' : 'photo'
+        const title = typeof payload.title === 'string' && payload.title.trim() ? payload.title.trim() : `Capture ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
+        const location = typeof payload.location === 'string' ? payload.location : 'Sun City'
+        const newItem: MediaItem = {
+          id: `media-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          mediaType,
+          url: payload.url,
+          favorite: false,
+          createdAt: Date.now(),
+          title,
+          location,
+        }
+        mediaItems = [newItem, ...mediaItems]
+        adapter.emitSignal('MediaService', 'MediaChanged', 'capture')
+        return [true, newItem, undefined]
+      },
+      'MediaService.ToggleFavorite': (payload) => {
+        if (!isRecord(payload) || typeof payload.id !== 'string') return [false, false, 'Invalid payload']
+        const index = mediaItems.findIndex((item) => item.id === payload.id)
+        if (index < 0) return [false, false, 'Media item not found']
+        const updated = { ...mediaItems[index], favorite: !mediaItems[index].favorite }
+        mediaItems = [...mediaItems]
+        mediaItems[index] = updated
+        adapter.emitSignal('MediaService', 'MediaChanged', 'favorite')
+        return [true, updated.favorite, undefined]
+      },
+      'MediaService.DeleteMedia': (payload) => {
+        if (!isRecord(payload) || !Array.isArray(payload.ids)) return [false, 'Invalid payload']
+        const idSet = new Set(payload.ids)
+        mediaItems = mediaItems.filter((item) => !idSet.has(item.id))
+        adapter.emitSignal('MediaService', 'MediaChanged', 'delete')
+        return [true, undefined]
+      },
     },
   })
 
@@ -350,3 +472,4 @@ export const nervePreview = createNervePreview()
 
 export const InventoryService = nervePreview.GetService<PreviewInventoryService>('InventoryService')
 export const BankingService = nervePreview.GetService<PreviewBankingService>('BankingService')
+export const MediaService = nervePreview.GetService<PreviewMediaService>('MediaService')

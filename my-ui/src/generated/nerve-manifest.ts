@@ -951,6 +951,235 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "MediaService": {
+      "GetMediaList": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "filter": {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            "favoritesOnly": {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "mediaType": {
+                    "kind": "string"
+                  },
+                  "url": {
+                    "kind": "string"
+                  },
+                  "thumbnailUrl": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "favorite": {
+                    "kind": "bool"
+                  },
+                  "createdAt": {
+                    "kind": "float64"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "struct",
+              "fields": {
+                "all": {
+                  "kind": "float64"
+                },
+                "photos": {
+                  "kind": "float64"
+                },
+                "videos": {
+                  "kind": "float64"
+                },
+                "favorites": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CaptureMedia": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "mediaType": {
+              "kind": "string"
+            },
+            "url": {
+              "kind": "string"
+            },
+            "title": {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            "location": {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "mediaType": {
+                    "kind": "string"
+                  },
+                  "url": {
+                    "kind": "string"
+                  },
+                  "thumbnailUrl": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  },
+                  "favorite": {
+                    "kind": "bool"
+                  },
+                  "createdAt": {
+                    "kind": "float64"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "location": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleFavorite": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "id": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "DeleteMedia": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "ids": {
+              "kind": "array",
+              "value": {
+                "kind": "string"
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "MediaChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "string"
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

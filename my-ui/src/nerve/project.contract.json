@@ -198,6 +198,130 @@
         }
       ],
       "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    },
+    {
+      "Name": "MediaService",
+      "Methods": [
+        {
+          "Name": "GetMediaList",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "filter": { "kind": "optional", "value": { "kind": "string" } },
+              "favoritesOnly": { "kind": "optional", "value": { "kind": "bool" } }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": { "kind": "string" },
+                    "mediaType": { "kind": "string" },
+                    "url": { "kind": "string" },
+                    "thumbnailUrl": { "kind": "optional", "value": { "kind": "string" } },
+                    "favorite": { "kind": "bool" },
+                    "createdAt": { "kind": "float64" },
+                    "title": { "kind": "string" },
+                    "location": { "kind": "optional", "value": { "kind": "string" } }
+                  }
+                }
+              },
+              {
+                "kind": "struct",
+                "fields": {
+                  "all": { "kind": "float64" },
+                  "photos": { "kind": "float64" },
+                  "videos": { "kind": "float64" },
+                  "favorites": { "kind": "float64" }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "CaptureMedia",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "mediaType": { "kind": "string" },
+              "url": { "kind": "string" },
+              "title": { "kind": "optional", "value": { "kind": "string" } },
+              "location": { "kind": "optional", "value": { "kind": "string" } }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              { "kind": "bool" },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": { "kind": "string" },
+                    "mediaType": { "kind": "string" },
+                    "url": { "kind": "string" },
+                    "thumbnailUrl": { "kind": "optional", "value": { "kind": "string" } },
+                    "favorite": { "kind": "bool" },
+                    "createdAt": { "kind": "float64" },
+                    "title": { "kind": "string" },
+                    "location": { "kind": "optional", "value": { "kind": "string" } }
+                  }
+                }
+              },
+              { "kind": "optional", "value": { "kind": "string" } }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleFavorite",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "id": { "kind": "string" }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              { "kind": "bool" },
+              { "kind": "bool" },
+              { "kind": "optional", "value": { "kind": "string" } }
+            ]
+          }
+        },
+        {
+          "Name": "DeleteMedia",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "ids": { "kind": "array", "value": { "kind": "string" } }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              { "kind": "bool" },
+              { "kind": "optional", "value": { "kind": "string" } }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "MediaChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [{ "kind": "string" }]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
     }
   ],
   "Controllers": [
@@ -219,6 +343,11 @@
     {
       "Name": "BankingController",
       "ServiceDependencies": ["BankingService"],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    },
+    {
+      "Name": "MediaController",
+      "ServiceDependencies": ["MediaService"],
       "Lifecycle": { "NerveInit": true, "NerveStart": true }
     }
   ]

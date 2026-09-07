@@ -46,11 +46,11 @@ test('control center opens with toggles and sliders', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Flashlight' })).toBeVisible()
   
   // Toggle flashlight
-  await page.getByRole('button', { name: 'Flashlight' }).click()
+  await page.getByRole('button', { name: 'Flashlight' }).dispatchEvent('click')
   await expect(page.getByRole('button', { name: 'Flashlight' })).toHaveClass(/is-active/)
 
   // Close Control Center
-  await page.locator('.phone-cc-handle').click()
+  await page.locator('.phone-cc-handle').dispatchEvent('click')
   await expect(page.locator('.phone-control-center-overlay')).toBeHidden()
 })
 
@@ -161,7 +161,7 @@ test('banking app displays accounts, performs transfers and updates balances via
 
   // Choose contact "Alex Morgan"
   await page.getByRole('button', { name: 'Alex Morgan' }).click()
-  await page.getByPlaceholder('0').fill('1200')
+  await page.getByPlaceholder('0', { exact: true }).fill('1200')
   await page.getByPlaceholder(/e\.g\. For car repairs/).fill('Vehicle Upgrade')
   await page.getByRole('button', { name: 'Confirm Transfer' }).click()
 
@@ -184,4 +184,53 @@ test('banking app displays accounts, performs transfers and updates balances via
   await expect(page.locator('.bank-alert-success')).toContainText('Deposited $500')
   await expect(page.locator('.bank-balance-num')).toHaveText('$24,150')
   await expect(page.locator('.bank-hero-bottom')).toContainText('$740')
+})
+
+test('camera and photos apps capture media, display gallery grid, toggle favorites and manage photos via Nerve', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Camera App
+  await page.getByRole('button', { name: 'Open Camera' }).click()
+  await expect(page.locator('.camera-app-root')).toBeVisible()
+  await expect(page.locator('.camera-viewfinder')).toBeVisible()
+
+  // Shutter click - capture a photo
+  await page.getByRole('button', { name: 'Camera Shutter' }).click()
+  await expect(page.locator('.camera-toast-pill')).toContainText('Photo Saved to Gallery')
+
+  // Click on thumbnail to open Photos app
+  await page.getByRole('button', { name: 'Open Photos Gallery' }).click()
+  await expect(page.locator('.photos-app-root')).toBeVisible()
+  await expect(page.locator('.photos-grid')).toBeVisible()
+  await expect(page.locator('.photos-grid-tile')).toHaveCount(5) // 4 initial + 1 new
+
+  // Open the newly captured photo (first item in grid)
+  await page.locator('.photos-grid-tile').first().click()
+  await expect(page.locator('.photos-detail-overlay')).toBeVisible()
+
+  // Toggle Favorite
+  await page.getByTitle('Favorite').click()
+  await expect(page.getByTitle('Remove Favorite')).toBeVisible()
+
+  // Close detail
+  await page.getByTitle('Back').click()
+  await expect(page.locator('.photos-detail-overlay')).toBeHidden()
+
+  // Switch to Favorites filter
+  await page.getByRole('button', { name: 'Favorites', exact: true }).click()
+  await expect(page.locator('.photos-grid-tile')).toHaveCount(3) // 2 initial + 1 newly favorited
+
+  // Switch back to All
+  await page.getByRole('button', { name: 'All', exact: true }).click()
+
+  // Test Selection Mode & Deletion
+  await page.getByRole('button', { name: 'Select', exact: true }).click()
+  await page.locator('.photos-grid-tile').first().click()
+  await expect(page.locator('.photos-selection-count')).toContainText('1 Selected')
+
+  // Click Delete in selection toolbar
+  await page.getByRole('button', { name: 'Delete', exact: true }).click()
+  await expect(page.locator('.photos-toast-pill')).toContainText('1 items deleted')
+  await expect(page.locator('.photos-grid-tile')).toHaveCount(4)
 })

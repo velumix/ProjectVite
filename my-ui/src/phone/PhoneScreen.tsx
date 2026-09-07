@@ -3,8 +3,10 @@ import type { NervePreviewAdapter } from '../nerve/contracts.ts'
 import { type PhoneContact, type PhoneMessage, type PhoneSettings, type PhoneState, type PreviewPhoneService } from '../nerve/preview.ts'
 import { BankingApp } from './apps/BankingApp.tsx'
 import { CalculatorApp } from './apps/CalculatorApp.tsx'
+import { CameraApp } from './apps/CameraApp.tsx'
 import { ClockApp } from './apps/ClockApp.tsx'
 import { NotesApp } from './apps/NotesApp.tsx'
+import { PhotosApp } from './apps/PhotosApp.tsx'
 import { WeatherApp } from './apps/WeatherApp.tsx'
 import { DOCK_PHONE_APPS, INSTALLED_PHONE_APPS, PHONE_APPS } from './phone-apps.ts'
 import { PhoneControlCenter } from './PhoneControlCenter.tsx'
@@ -235,6 +237,18 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'banking' && (
               <BankingApp nerve={nerve} contacts={state.contacts} />
             )}
+            {activeApp === 'camera' && (
+              <CameraApp
+                nerve={nerve}
+                onOpenPhotos={() => launch('photos')}
+              />
+            )}
+            {activeApp === 'photos' && (
+              <PhotosApp
+                nerve={nerve}
+                contacts={state.contacts}
+              />
+            )}
             {activeApp === 'calculator' && <CalculatorApp />}
             {activeApp === 'clock' && <ClockApp />}
             {activeApp === 'weather' && <WeatherApp />}
@@ -244,6 +258,8 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'phone' &&
               activeApp !== 'settings' &&
               activeApp !== 'banking' &&
+              activeApp !== 'camera' &&
+              activeApp !== 'photos' &&
               activeApp !== 'calculator' &&
               activeApp !== 'clock' &&
               activeApp !== 'weather' &&
