@@ -29,10 +29,10 @@ export function RobloxViewportPreview({ runtime, device, children }: Props) {
     return () => observer.disconnect()
   }, [])
 
-  return <section className="absolute bottom-4 left-4 right-4 top-28 flex flex-col overflow-hidden rounded-lg border border-border bg-background/80 p-2">
-    <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
-      <span className="font-semibold">Roblox viewport</span>
-      <select className="input py-1 text-xs" value={effectiveMode} onChange={(event) => setMode(event.target.value as RobloxViewportMode)}>
+  return <section className="workbench-viewport">
+    <div className="workbench-viewport-toolbar">
+      <span className="workbench-section-title">Roblox viewport</span>
+      <select className="ui-input workbench-select" value={effectiveMode} onChange={(event) => setMode(event.target.value as RobloxViewportMode)}>
         <option value="Runtime">Runtime</option><option value="Desktop">Desktop</option><option value="Tablet">Tablet</option><option value="PhonePortrait">Phone portrait</option><option value="PhoneLandscape">Phone landscape</option><option value="Custom">Custom</option>
       </select>
       {effectiveMode === 'Custom' && <><input className="input w-20 py-1 text-xs" type="number" min="1" value={custom.X} onChange={(event) => setCustom({ ...custom, X: Number(event.target.value) })} aria-label="Viewport width" /><span>×</span><input className="input w-20 py-1 text-xs" type="number" min="1" value={custom.Y} onChange={(event) => setCustom({ ...custom, Y: Number(event.target.value) })} aria-label="Viewport height" /></>}
@@ -40,8 +40,8 @@ export function RobloxViewportPreview({ runtime, device, children }: Props) {
       <label className="flex items-center gap-1 text-text-muted"><input type="checkbox" checked={pixelPerfect} onChange={(event) => setPixelPerfect(event.target.checked)} /> Pixel perfect</label>
       <span className="text-text-muted">Inset {viewport.inset.Min.X},{viewport.inset.Min.Y} / {viewport.inset.Max.X},{viewport.inset.Max.Y}</span>
     </div>
-    <div ref={stageRef} className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto bg-[#05070a]">
-      <div className="relative shrink-0 overflow-hidden border border-primary/60 bg-background" style={{ width: viewport.size.X, height: viewport.size.Y, transform: `scale(${scale})` }}>
+    <div ref={stageRef} className="workbench-stage">
+      <div className="workbench-canvas" style={{ width: viewport.size.X, height: viewport.size.Y, transform: `scale(${scale})` }}>
         {children}
         <div className="pointer-events-none absolute border border-dashed border-primary/70" style={insetStyle} />
       </div>

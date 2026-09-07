@@ -62,27 +62,27 @@ function App() {
   }, [actions, activeScenario, bindingStore, effectPlayer, featureProject, scenarioId, scenarioRunner])
 
   return (
-    <main className="relative h-screen bg-background text-text">
-      <section className="absolute left-4 right-4 top-4 z-10 rounded-lg border border-border bg-surface/95 p-3 shadow-panel">
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-        <select className="input" value={scenarioId} onChange={(event) => { const nextId = event.target.value; setScenarioId(nextId); const nextScenario = featureProject.Scenarios.find((scenario) => scenario.id === nextId); setParameters(Object.fromEntries(Object.entries(nextScenario?.parameters ?? {}).map(([name, definition]) => [name, definition.default]))) }}>
+    <main className="workbench">
+      <section className="workbench-toolbar">
+        <div className="workbench-toolbar-row">
+        <select className="ui-input workbench-select" value={scenarioId} onChange={(event) => { const nextId = event.target.value; setScenarioId(nextId); const nextScenario = featureProject.Scenarios.find((scenario) => scenario.id === nextId); setParameters(Object.fromEntries(Object.entries(nextScenario?.parameters ?? {}).map(([name, definition]) => [name, definition.default]))) }} aria-label="Scenario">
           {featureProject.Scenarios.map((scenario) => <option key={scenario.id} value={scenario.id}>{scenario.name}</option>)}
         </select>
-          <button className="button-secondary" onClick={() => scenarioRunner.play()}>Play</button>
-          <button className="button-secondary" onClick={() => scenarioRunner.pause()}>Pause</button>
-          <button className="button-secondary" onClick={() => { actions.cancel(); scenarioRunner.restart() }}>Restart</button>
-          <button className="button-secondary" onClick={() => scenarioRunner.stepForward()}>Step forward</button>
-          <select className="input" value={playback.speed} onChange={(event) => scenarioRunner.setSpeed(Number(event.target.value) as PlaybackSpeed)}>
+          <button className="ui-button ui-button-primary workbench-control" onClick={() => scenarioRunner.play()}>Play</button>
+          <button className="ui-button ui-button-secondary workbench-control" onClick={() => scenarioRunner.pause()}>Pause</button>
+          <button className="ui-button ui-button-secondary workbench-control" onClick={() => { actions.cancel(); scenarioRunner.restart() }}>Restart</button>
+          <button className="ui-button ui-button-secondary workbench-control" onClick={() => scenarioRunner.stepForward()}>Step</button>
+          <select className="ui-input workbench-select workbench-speed" value={playback.speed} onChange={(event) => scenarioRunner.setSpeed(Number(event.target.value) as PlaybackSpeed)} aria-label="Playback speed">
             {[0.25, 0.5, 1, 2].map((speed) => <option key={speed} value={speed}>{speed}x</option>)}
           </select>
-          <span className="text-text-muted">{Math.round(playback.timeMs)}ms / {playback.durationMs}ms</span>
-          <span className="text-text">{playback.currentStep ?? 'Ready'}</span>
+          <span className="workbench-readout">{Math.round(playback.timeMs)}ms / {playback.durationMs}ms</span>
+          <span className="workbench-step">{playback.currentStep ?? 'Ready'}</span>
           {featureProject.Scenarios.find((scenario) => scenario.id === scenarioId)?.triggers?.map((trigger) => (
-            <button key={trigger.id} className="button-secondary" onClick={() => scenarioRunner.trigger(trigger.id)}>{trigger.label}</button>
+            <button key={trigger.id} className="ui-button ui-button-secondary workbench-control" onClick={() => scenarioRunner.trigger(trigger.id)}>{trigger.label}</button>
           ))}
         </div>
         <ScenarioParameters definitions={activeScenario.parameters ?? {}} values={parameters} onChange={(name, value) => { scenarioRunner.setParameter(name, value); setParameters(scenarioRunner.getParameters()) }} />
-        <input className="mt-2 w-full accent-primary" type="range" min="0" max={playback.durationMs} step="1" value={playback.timeMs} onChange={(event) => { actions.cancel(); scenarioRunner.scrub(Number(event.target.value)) }} aria-label="Scenario timeline" />
+        <input className="workbench-timeline" type="range" min="0" max={playback.durationMs} step="1" value={playback.timeMs} onChange={(event) => { actions.cancel(); scenarioRunner.scrub(Number(event.target.value)) }} aria-label="Scenario timeline" />
       </section>
       <ScenarioInspector
         scenarioName={featureProject.Scenarios.find((scenario) => scenario.id === scenarioId)?.name}

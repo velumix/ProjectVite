@@ -31,12 +31,12 @@ export function ScenarioInspector({ scenarioName, playback, events, bindings, re
   const assertionEvents = events.filter((event) => event.type === 'assertion' || event.type === 'error' && event.name.startsWith('state ') || event.name.startsWith('signal ') || event.name.startsWith('method ') || event.name.startsWith('profile ')).slice(-8).reverse()
 
   return (
-    <aside className="absolute bottom-4 right-4 z-20 w-[min(440px,calc(100vw-2rem))] overflow-hidden rounded-lg border border-border bg-surface/95 text-sm shadow-panel">
-      <button className="flex w-full items-center justify-between border-b border-border px-3 py-2 text-left font-semibold" onClick={() => setOpen((value) => !value)}>
+    <aside className="workbench-inspector absolute bottom-4 right-4 z-20 w-[min(440px,calc(100vw-2rem))] overflow-hidden rounded-lg border border-border bg-surface/95 text-sm shadow-panel">
+      <button className="workbench-inspector-toggle flex w-full items-center justify-between border-b border-border px-3 py-2 text-left font-semibold" onClick={() => setOpen((value) => !value)}>
         <span>Scenario inspector</span>
         <span className="text-text-muted">{open ? '−' : '+'}</span>
       </button>
-      {open && <div className="max-h-[min(70vh,620px)] overflow-y-auto p-3">
+      {open && <div className="workbench-inspector-body max-h-[min(70vh,620px)] overflow-y-auto p-3">
         <div className="grid grid-cols-2 gap-2 text-xs">
           <Summary label="Scenario" value={scenarioName ?? 'Ready'} />
           <Summary label="Virtual time" value={`${Math.round(playback.timeMs)}ms`} />

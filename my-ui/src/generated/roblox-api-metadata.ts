@@ -4,7 +4,7 @@ export const ROBLOX_API_METADATA = {
   "Source": {
     "Version": "version-d0e8cfcd943d4ae2",
     "DumpUrl": "https://setup.rbxcdn.com/version-d0e8cfcd943d4ae2-API-Dump.json",
-    "GeneratedAt": "2026-09-07T02:19:32.408Z",
+    "GeneratedAt": "2026-09-07T04:49:02.406Z",
     "Source": "network"
   },
   "PrioritizedClasses": [

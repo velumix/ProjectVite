@@ -5,7 +5,7 @@ type Props = { definitions: Record<string, ScenarioParameter>; values: Record<st
 export function ScenarioParameters({ definitions, values, onChange }: Props) {
   const entries = Object.entries(definitions)
   if (entries.length === 0) return null
-  return <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-border pt-2 text-xs">
+  return <div className="workbench-parameters mt-2 flex flex-wrap items-center gap-2 border-t border-border pt-2 text-xs">
     <span className="text-text-muted">Parameters</span>
     {entries.map(([name, definition]) => <label key={name} className="flex items-center gap-1 rounded bg-surface-hover px-2 py-1">
       <span className="text-text-muted">{name}</span>
