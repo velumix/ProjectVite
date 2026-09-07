@@ -2197,7 +2197,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar', 'memos', 'skyride', 'citymarkt', 'snake', 'memory', 'number-merge', 'minesweeper', 'tower-stack', 'sky-flappy', 'neon-drop'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar', 'memos', 'skyride', 'citymarkt', 'memory', 'number-merge', 'minesweeper', 'tower-stack', 'sky-flappy', 'neon-drop'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 

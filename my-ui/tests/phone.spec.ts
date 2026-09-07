@@ -1058,7 +1058,7 @@ test('fliptok app plays vertical video reels, likes clips, comments in drawer, c
 
   // Add comment
   await page.locator('.fliptok-comment-input-bar input').fill('Sick drift angle!')
-  await page.locator('.picstagram-post-comm-btn').click()
+  await page.locator('.fliptok-comment-send').click()
   await expect(page.locator('.fliptok-comment-item')).toHaveCount(2)
   await expect(page.locator('.fliptok-comment-text').first()).toHaveText('Sick drift angle!')
 
@@ -1372,8 +1372,15 @@ test('snake app controls retro snake motion, adjusts speed difficulty, displays 
   await openPhone(page)
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
 
-  // Launch Snake
-  await page.getByRole('button', { name: 'Open Snake' }).click()
+  // Launch Snake (install from App Store if running standalone)
+  const snakeBtn = page.getByRole('button', { name: 'Open Snake' })
+  if (!(await snakeBtn.isVisible())) {
+    await page.getByRole('button', { name: 'Open App Store' }).click()
+    await page.getByRole('button', { name: 'Games' }).click()
+    await page.locator('.store-app-card', { hasText: 'Snake' }).locator('.store-btn-get').click()
+    await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  }
+  await snakeBtn.click()
   await expect(page.locator('.snake-app-root')).toBeVisible()
   await expect(page.locator('.snake-title')).toHaveText('🐍 SNAKE RETRO')
   await expect(page.locator('.snake-high')).toHaveText('BEST: 120')
