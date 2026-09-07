@@ -621,6 +621,113 @@ const INITIAL_VEHICLES: VehicleItem[] = [
   },
 ]
 
+
+export type SocialAuthor = {
+  id: string
+  name: string
+  handle: string
+  avatar: string
+  verified: boolean
+}
+
+export type SocialPost = {
+  id: string
+  author: SocialAuthor
+  content: string
+  timestamp: number
+  likes: number
+  retweets: number
+  replies: number
+  liked: boolean
+  retweeted: boolean
+  hashtags: string[]
+}
+
+export type PreviewSocialService = {
+  GetFeed: NerveMethod<{ tag?: string; query?: string } | undefined, [SocialPost[]]>
+  CreatePost: NerveMethod<{ content: string; hashtags?: string[] }, [boolean, SocialPost?, string?]>
+  ToggleLike: NerveMethod<{ postId: string }, [boolean, boolean?, number?, string?]>
+  ToggleRetweet: NerveMethod<{ postId: string }, [boolean, boolean?, number?, string?]>
+  DeletePost: NerveMethod<{ postId: string }, [boolean, string?]>
+  PostCreated: NerveSignal<[SocialPost]>
+  PostUpdated: NerveSignal<[SocialPost]>
+}
+
+const INITIAL_POSTS: SocialPost[] = [
+  {
+    id: 'post-1',
+    author: {
+      id: 'auth-weazel',
+      name: 'Weazel News',
+      handle: 'weazelnews',
+      avatar: '📰',
+      verified: true,
+    },
+    content: 'BREAKING: Traffic alert on Del Perro Freeway eastbound due to high-speed pursuit. Avoid the area! #SunCity #TrafficAlert',
+    timestamp: Date.now() - 15 * 60000,
+    likes: 142,
+    retweets: 38,
+    replies: 15,
+    liked: false,
+    retweeted: false,
+    hashtags: ['SunCity', 'TrafficAlert'],
+  },
+  {
+    id: 'post-2',
+    author: {
+      id: 'auth-bennys',
+      name: "Benny's Original Motor Works",
+      handle: 'bennyscustoms',
+      avatar: '🔧',
+      verified: true,
+    },
+    content: 'Fresh batch of widebody kits just arrived for the Karin Sultan RS! Stop by Strawberry today. #Bennys #CarCulture',
+    timestamp: Date.now() - 45 * 60000,
+    likes: 89,
+    retweets: 24,
+    replies: 8,
+    liked: false,
+    retweeted: false,
+    hashtags: ['Bennys', 'CarCulture'],
+  },
+  {
+    id: 'post-3',
+    author: {
+      id: 'auth-casino',
+      name: 'Diamond Casino & Resort',
+      handle: 'diamondcasino',
+      avatar: '💎',
+      verified: true,
+    },
+    content: 'Tonight only: Triple payouts on High Stakes Blackjack at the penthouse lounge. Dress to impress. #DiamondCasino #Nightlife',
+    timestamp: Date.now() - 2 * 3600000,
+    likes: 210,
+    retweets: 56,
+    replies: 32,
+    liked: true,
+    retweeted: false,
+    hashtags: ['DiamondCasino', 'Nightlife'],
+  },
+  {
+    id: 'post-4',
+    author: {
+      id: 'auth-scpd',
+      name: 'Sun City Police Dept',
+      handle: 'scpd_official',
+      avatar: '🚓',
+      verified: true,
+    },
+    content: 'Community safety reminder: Always lock your vehicle doors when parked downtown. Stay alert Sun City! #PublicSafety #SCPD',
+    timestamp: Date.now() - 4 * 3600000,
+    likes: 64,
+    retweets: 12,
+    replies: 4,
+    liked: false,
+    retweeted: false,
+    hashtags: ['PublicSafety', 'SCPD'],
+  },
+]
+
 export function createNervePreview(options: NervePreviewOptions = {}) {
   const playerKey = options.playerKey ?? SETTINGS_DATASTORE_KEY
   let cachedSettings = { ...INITIAL_SETTINGS_STATE }
@@ -637,6 +744,9 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   let worldPois: MapPoi[] = [...INITIAL_MAP_POIS]
 
   const musicTracks: MusicTrack[] = [...INITIAL_MUSIC_TRACKS]
+
+  let feedPosts: SocialPost[] = INITIAL_POSTS.map((p) => ({ ...p, author: { ...p.author }, hashtags: [...p.hashtags] }))
+
 
   let vehicles: VehicleItem[] = INITIAL_VEHICLES.map((v) => ({ ...v }))
 
@@ -1068,6 +1178,94 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         if (!target) return [false, undefined, 'Vehicle not found']
         return [true, { x: target.x, y: target.y, label: `${target.label} (${target.plate})` }, undefined]
       },
+      'SocialService.GetFeed': (payload) => {
+        const filterTag = isRecord(payload) && typeof payload.tag === 'string' ? payload.tag.toLowerCase() : undefined
+        const filterQuery = isRecord(payload) && typeof payload.query === 'string' ? payload.query.toLowerCase() : undefined
+
+        let filtered = [...feedPosts]
+        if (filterTag && filterTag !== 'all') {
+          filtered = filtered.filter((p) => p.hashtags.some((t) => t.toLowerCase() === filterTag))
+        }
+        if (filterQuery && filterQuery.trim().length > 0) {
+          filtered = filtered.filter(
+            (p) =>
+              p.content.toLowerCase().includes(filterQuery) ||
+              p.author.name.toLowerCase().includes(filterQuery) ||
+              p.author.handle.toLowerCase().includes(filterQuery)
+          )
+        }
+        return [filtered]
+      },
+      'SocialService.CreatePost': (payload) => {
+        if (!isRecord(payload) || typeof payload.content !== 'string') return [false, undefined, 'Invalid post payload']
+        const trimmed = payload.content.trim()
+        if (!trimmed) return [false, undefined, 'Post cannot be empty']
+        if (trimmed.length > 280) return [false, undefined, 'Post exceeds 280 characters']
+
+        const tags: string[] = []
+        if (Array.isArray(payload.hashtags)) {
+          for (const t of payload.hashtags) {
+            if (typeof t === 'string' && t) tags.push(t)
+          }
+        }
+        const matches = trimmed.match(/#(\w+)/g)
+        if (matches) {
+          for (const m of matches) {
+            const tag = m.slice(1)
+            if (!tags.some((t) => t.toLowerCase() === tag.toLowerCase())) {
+              tags.push(tag)
+            }
+          }
+        }
+
+        const newPost: SocialPost = {
+          id: 'post-' + Date.now(),
+          author: {
+            id: 'user-self',
+            name: 'Alex Mercer',
+            handle: 'alexmercer',
+            avatar: '🪶',
+            verified: false,
+          },
+          content: trimmed,
+          timestamp: Date.now(),
+          likes: 0,
+          retweets: 0,
+          replies: 0,
+          liked: false,
+          retweeted: false,
+          hashtags: tags,
+        }
+
+        feedPosts.unshift(newPost)
+        adapter.emitSignal('SocialService', 'PostCreated', { ...newPost })
+        return [true, { ...newPost }, undefined]
+      },
+      'SocialService.ToggleLike': (payload) => {
+        if (!isRecord(payload) || typeof payload.postId !== 'string') return [false, undefined, undefined, 'Invalid post id']
+        const post = feedPosts.find((p) => p.id === payload.postId)
+        if (!post) return [false, undefined, undefined, 'Post not found']
+        post.liked = !post.liked
+        post.likes += post.liked ? 1 : -1
+        adapter.emitSignal('SocialService', 'PostUpdated', { ...post })
+        return [true, post.liked, post.likes, undefined]
+      },
+      'SocialService.ToggleRetweet': (payload) => {
+        if (!isRecord(payload) || typeof payload.postId !== 'string') return [false, undefined, undefined, 'Invalid post id']
+        const post = feedPosts.find((p) => p.id === payload.postId)
+        if (!post) return [false, undefined, undefined, 'Post not found']
+        post.retweeted = !post.retweeted
+        post.retweets += post.retweeted ? 1 : -1
+        adapter.emitSignal('SocialService', 'PostUpdated', { ...post })
+        return [true, post.retweeted, post.retweets, undefined]
+      },
+      'SocialService.DeletePost': (payload) => {
+        if (!isRecord(payload) || typeof payload.postId !== 'string') return [false, 'Invalid post id']
+        const idx = feedPosts.findIndex((p) => p.id === payload.postId)
+        if (idx === -1) return [false, 'Post not found']
+        feedPosts.splice(idx, 1)
+        return [true, undefined]
+      },
 
       'MusicService.SeekTrack': (payload) => {
         if (!isRecord(payload) || typeof payload.position !== 'number') return [false, 'Invalid position']
@@ -1104,3 +1302,4 @@ export const MailService = nervePreview.GetService<PreviewMailService>('MailServ
 export const MapService = nervePreview.GetService<PreviewMapService>('MapService')
 export const MusicService = nervePreview.GetService<PreviewMusicService>('MusicService')
 export const GarageService = nervePreview.GetService<PreviewGarageService>('GarageService')
+export const SocialService = nervePreview.GetService<PreviewSocialService>('SocialService')

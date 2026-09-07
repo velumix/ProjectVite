@@ -2519,6 +2519,422 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "SocialService",
+      "Methods": [
+        {
+          "Name": "GetFeed",
+          "Request": {
+            "kind": "optional",
+            "value": {
+              "kind": "struct",
+              "fields": {
+                "tag": {
+                  "kind": "optional",
+                  "value": {
+                    "kind": "string"
+                  }
+                },
+                "query": {
+                  "kind": "optional",
+                  "value": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "name": {
+                          "kind": "string"
+                        },
+                        "handle": {
+                          "kind": "string"
+                        },
+                        "avatar": {
+                          "kind": "string"
+                        },
+                        "verified": {
+                          "kind": "bool"
+                        }
+                      }
+                    },
+                    "content": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    },
+                    "retweets": {
+                      "kind": "float64"
+                    },
+                    "replies": {
+                      "kind": "float64"
+                    },
+                    "liked": {
+                      "kind": "bool"
+                    },
+                    "retweeted": {
+                      "kind": "bool"
+                    },
+                    "hashtags": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "CreatePost",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "content": {
+                "kind": "string"
+              },
+              "hashtags": {
+                "kind": "optional",
+                "value": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": {
+                          "kind": "string"
+                        },
+                        "name": {
+                          "kind": "string"
+                        },
+                        "handle": {
+                          "kind": "string"
+                        },
+                        "avatar": {
+                          "kind": "string"
+                        },
+                        "verified": {
+                          "kind": "bool"
+                        }
+                      }
+                    },
+                    "content": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    },
+                    "retweets": {
+                      "kind": "float64"
+                    },
+                    "replies": {
+                      "kind": "float64"
+                    },
+                    "liked": {
+                      "kind": "bool"
+                    },
+                    "retweeted": {
+                      "kind": "bool"
+                    },
+                    "hashtags": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleLike",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "postId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleRetweet",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "postId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "bool"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "DeletePost",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "postId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "PostCreated",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "name": {
+                        "kind": "string"
+                      },
+                      "handle": {
+                        "kind": "string"
+                      },
+                      "avatar": {
+                        "kind": "string"
+                      },
+                      "verified": {
+                        "kind": "bool"
+                      }
+                    }
+                  },
+                  "content": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "retweets": {
+                    "kind": "float64"
+                  },
+                  "replies": {
+                    "kind": "float64"
+                  },
+                  "liked": {
+                    "kind": "bool"
+                  },
+                  "retweeted": {
+                    "kind": "bool"
+                  },
+                  "hashtags": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "PostUpdated",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "name": {
+                        "kind": "string"
+                      },
+                      "handle": {
+                        "kind": "string"
+                      },
+                      "avatar": {
+                        "kind": "string"
+                      },
+                      "verified": {
+                        "kind": "bool"
+                      }
+                    }
+                  },
+                  "content": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "retweets": {
+                    "kind": "float64"
+                  },
+                  "replies": {
+                    "kind": "float64"
+                  },
+                  "liked": {
+                    "kind": "bool"
+                  },
+                  "retweeted": {
+                    "kind": "bool"
+                  },
+                  "hashtags": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -2606,6 +3022,16 @@
       "Name": "GarageController",
       "ServiceDependencies": [
         "GarageService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "SocialController",
+      "ServiceDependencies": [
+        "SocialService"
       ],
       "Lifecycle": {
         "NerveInit": true,

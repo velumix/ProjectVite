@@ -2458,6 +2458,415 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "SocialService": {
+      "GetFeed": {
+        "kind": "method",
+        "request": {
+          "kind": "optional",
+          "value": {
+            "kind": "struct",
+            "fields": {
+              "tag": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              "query": {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "name": {
+                        "kind": "string"
+                      },
+                      "handle": {
+                        "kind": "string"
+                      },
+                      "avatar": {
+                        "kind": "string"
+                      },
+                      "verified": {
+                        "kind": "bool"
+                      }
+                    }
+                  },
+                  "content": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "retweets": {
+                    "kind": "float64"
+                  },
+                  "replies": {
+                    "kind": "float64"
+                  },
+                  "liked": {
+                    "kind": "bool"
+                  },
+                  "retweeted": {
+                    "kind": "bool"
+                  },
+                  "hashtags": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CreatePost": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "content": {
+              "kind": "string"
+            },
+            "hashtags": {
+              "kind": "optional",
+              "value": {
+                "kind": "array",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "name": {
+                        "kind": "string"
+                      },
+                      "handle": {
+                        "kind": "string"
+                      },
+                      "avatar": {
+                        "kind": "string"
+                      },
+                      "verified": {
+                        "kind": "bool"
+                      }
+                    }
+                  },
+                  "content": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "retweets": {
+                    "kind": "float64"
+                  },
+                  "replies": {
+                    "kind": "float64"
+                  },
+                  "liked": {
+                    "kind": "bool"
+                  },
+                  "retweeted": {
+                    "kind": "bool"
+                  },
+                  "hashtags": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleLike": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "postId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleRetweet": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "postId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "DeletePost": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "postId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "PostCreated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "handle": {
+                      "kind": "string"
+                    },
+                    "avatar": {
+                      "kind": "string"
+                    },
+                    "verified": {
+                      "kind": "bool"
+                    }
+                  }
+                },
+                "content": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "retweets": {
+                  "kind": "float64"
+                },
+                "replies": {
+                  "kind": "float64"
+                },
+                "liked": {
+                  "kind": "bool"
+                },
+                "retweeted": {
+                  "kind": "bool"
+                },
+                "hashtags": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "PostUpdated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "handle": {
+                      "kind": "string"
+                    },
+                    "avatar": {
+                      "kind": "string"
+                    },
+                    "verified": {
+                      "kind": "bool"
+                    }
+                  }
+                },
+                "content": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "retweets": {
+                  "kind": "float64"
+                },
+                "replies": {
+                  "kind": "float64"
+                },
+                "liked": {
+                  "kind": "bool"
+                },
+                "retweeted": {
+                  "kind": "bool"
+                },
+                "hashtags": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

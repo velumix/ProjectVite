@@ -6,7 +6,7 @@ type Props = {
   installedApps: PhoneAppDefinition[]
 }
 
-const APPS_PER_PAGE = 16
+const APPS_PER_PAGE = 24
 
 export function PhoneSpringboard({ onLaunch, installedApps }: Props) {
   const [activePageIndex, setActivePageIndex] = useState(0)

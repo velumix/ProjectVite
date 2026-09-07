@@ -451,3 +451,60 @@ test('garage app lists owned vehicles, filters by status, opens remote key fob, 
   // Verify updated status on card is Out in World
   await expect(page.locator('.garage-status-badge')).toHaveText('Out in World')
 })
+
+test('feather social app loads timeline, likes and retweets posts, filters tags and publishes new chirps via Roblox SocialService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Feather App from Springboard
+  await page.getByRole('button', { name: 'Open Feather' }).click()
+  await expect(page.locator('.feather-app-root')).toBeVisible()
+
+  // Verify initial posts loaded
+  const postCards = page.locator('.feather-post-card')
+  await expect(postCards).toHaveCount(4)
+  await expect(page.locator('.feather-author-name').first()).toHaveText('Weazel News')
+
+  // Like a post
+  const firstLikeBtn = page.locator('.feather-action-btn').filter({ hasText: /🤍|❤️/ }).first()
+  await firstLikeBtn.click()
+  await expect(page.locator('.feather-action-btn.is-liked').first()).toBeVisible()
+  await expect(page.locator('.feather-toast')).toContainText('Liked post')
+
+  // Retweet a post
+  const secondRetweetBtn = page.locator('.feather-action-btn').filter({ hasText: '🔁' }).nth(1)
+  await secondRetweetBtn.click()
+  await expect(page.locator('.feather-action-btn.is-retweeted').first()).toBeVisible()
+  await expect(page.locator('.feather-toast')).toContainText('Retweeted')
+
+  // Filter by tag
+  await page.locator('.feather-tag-pill').filter({ hasText: '#Bennys' }).click()
+  await expect(page.locator('.feather-post-card')).toHaveCount(1)
+  await expect(page.locator('.feather-author-name')).toHaveText("Benny's Original Motor Works")
+
+  // Return to All
+  await page.locator('.feather-tag-pill').filter({ hasText: '#All' }).click()
+  await expect(page.locator('.feather-post-card')).toHaveCount(4)
+
+  // Open Compose Modal
+  await page.getByRole('button', { name: '+ Chirp' }).click()
+  await expect(page.locator('.feather-compose-modal')).toBeVisible()
+
+  // Type new chirp
+  await page.locator('.feather-textarea').fill('Cruising down Vinewood Blvd tonight! #SunCity #Nightlife')
+  await expect(page.locator('.feather-char-count')).toContainText('224')
+
+  // Submit chirp
+  await page.getByRole('button', { name: 'Chirp 🪶' }).click()
+  await expect(page.locator('.feather-compose-modal')).toBeHidden()
+  await expect(page.locator('.feather-toast')).toContainText('Chirped to Feather')
+
+  // Verify new post appears at the top
+  await expect(page.locator('.feather-post-card')).toHaveCount(5)
+  await expect(page.locator('.feather-author-name').first()).toHaveText('Alex Mercer')
+  await expect(page.locator('.feather-text').first()).toContainText('Cruising down Vinewood Blvd')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
