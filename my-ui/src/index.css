@@ -1401,3 +1401,170 @@ input:checked + .ag-switch-slider {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* ==========================================================================
+   Pixel-Aware Responsive Dynamic HUD Adapters
+   Understands canvas pixels via CSS Container Queries on .ag-canvas-frame
+   ========================================================================== */
+
+/* Mobile Landscape & Short Screens (Canvas height <= 540px) */
+@container (max-height: 540px) {
+  [data-roblox-name="SideActionDock"] {
+    transform: scale(0.72) !important;
+    transform-origin: right center !important;
+  }
+  [data-roblox-name="PlayerStatsCard"] {
+    transform: scale(0.78) !important;
+    transform-origin: left top !important;
+    top: 8px !important;
+    left: 10px !important;
+  }
+  [data-roblox-name="TopRightDock"] {
+    transform: scale(0.78) !important;
+    transform-origin: right top !important;
+    top: 8px !important;
+    right: 10px !important;
+  }
+  [data-roblox-name="LocationWeatherCard"] {
+    transform: scale(0.76) !important;
+    transform-origin: left bottom !important;
+    bottom: 6px !important;
+    left: 10px !important;
+  }
+  [data-roblox-name="HotbarDock"] {
+    transform: scale(0.78) !important;
+    transform-origin: center bottom !important;
+    bottom: 6px !important;
+  }
+  [data-roblox-name="KeybindTooltip"] {
+    transform: scale(0.76) !important;
+    transform-origin: right bottom !important;
+    bottom: 6px !important;
+    right: 10px !important;
+  }
+  [data-roblox-name="CompassContainer"] {
+    transform: scale(0.78) !important;
+    transform-origin: top center !important;
+    top: 6px !important;
+  }
+}
+
+/* Mobile Portrait & Narrow Screens (Canvas width <= 768px) */
+@container (max-width: 768px) {
+  [data-roblox-name="PlayerStatsCard"] {
+    transform: scale(0.72) !important;
+    transform-origin: left top !important;
+    left: 8px !important;
+    top: 10px !important;
+  }
+  [data-roblox-name="TopRightDock"] {
+    transform: scale(0.72) !important;
+    transform-origin: right top !important;
+    right: 8px !important;
+    top: 72px !important;
+  }
+  [data-roblox-name="CompassContainer"] {
+    transform: scale(0.62) !important;
+    transform-origin: top center !important;
+    top: 8px !important;
+    opacity: 0.85;
+  }
+  [data-roblox-name="SideActionDock"] {
+    transform: scale(0.7) !important;
+    transform-origin: right center !important;
+    right: 4px !important;
+  }
+  [data-roblox-name="HotbarDock"] {
+    transform: scale(0.78) !important;
+    transform-origin: center bottom !important;
+    bottom: 8px !important;
+  }
+  [data-roblox-name="LocationWeatherCard"] {
+    transform: scale(0.72) !important;
+    transform-origin: left bottom !important;
+    bottom: 78px !important;
+    left: 8px !important;
+  }
+  [data-roblox-name="KeybindTooltip"] {
+    display: none !important;
+  }
+}
+
+/* Ultra-compact Portrait Screens (Canvas width <= 480px) */
+@container (max-width: 480px) {
+  [data-roblox-name="PlayerStatsCard"] {
+    transform: scale(0.65) !important;
+    left: 6px !important;
+    top: 6px !important;
+  }
+  [data-roblox-name="TopRightDock"] {
+    transform: scale(0.65) !important;
+    right: 6px !important;
+    top: 62px !important;
+  }
+  [data-roblox-name="HotbarDock"] {
+    transform: scale(0.7) !important;
+    bottom: 6px !important;
+  }
+  [data-roblox-name="LocationWeatherCard"] {
+    transform: scale(0.65) !important;
+    bottom: 72px !important;
+    left: 6px !important;
+  }
+  [data-roblox-name="SideActionDock"] {
+    transform: scale(0.64) !important;
+    right: 2px !important;
+  }
+}
+
+/* Tablet Screens (Canvas width 769px - 1100px with normal aspect ratio) */
+@container (min-width: 769px) and (max-width: 1100px) and (min-height: 541px) {
+  [data-roblox-name="PlayerStatsCard"] {
+    transform: scale(0.88) !important;
+    transform-origin: left top !important;
+  }
+  [data-roblox-name="TopRightDock"] {
+    transform: scale(0.88) !important;
+    transform-origin: right top !important;
+  }
+  [data-roblox-name="HotbarDock"] {
+    transform: scale(0.88) !important;
+    transform-origin: center bottom !important;
+  }
+  [data-roblox-name="SideActionDock"] {
+    transform: scale(0.88) !important;
+    transform-origin: right center !important;
+  }
+  [data-roblox-name="LocationWeatherCard"] {
+    transform: scale(0.88) !important;
+    transform-origin: left bottom !important;
+  }
+}
+
+/* Large Displays / 4K (Canvas width >= 1600px) */
+@container (min-width: 1600px) {
+  [data-roblox-name="PlayerStatsCard"] {
+    transform: scale(1.18) !important;
+    transform-origin: left top !important;
+  }
+  [data-roblox-name="TopRightDock"] {
+    transform: scale(1.18) !important;
+    transform-origin: right top !important;
+  }
+  [data-roblox-name="HotbarDock"] {
+    transform: scale(1.18) !important;
+    transform-origin: center bottom !important;
+  }
+  [data-roblox-name="LocationWeatherCard"] {
+    transform: scale(1.18) !important;
+    transform-origin: left bottom !important;
+  }
+  [data-roblox-name="KeybindTooltip"] {
+    transform: scale(1.18) !important;
+    transform-origin: right bottom !important;
+  }
+  [data-roblox-name="SideActionDock"] {
+    transform: scale(1.18) !important;
+    transform-origin: right center !important;
+  }
+}

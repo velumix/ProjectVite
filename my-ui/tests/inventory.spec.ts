@@ -178,3 +178,44 @@ test('revamped quests screen renders 3-column layout, categories, hero banner, i
   await page.locator('[data-roblox-name="CloseQuestsButton"]').click()
   await expect(questsModal).toBeHidden()
 })
+
+test('dynamic UI adapts across all devices without overflowing canvas bounds', async ({ page }) => {
+  await openInventory(page)
+  await page.getByRole('button', { name: 'Expand preview' }).click()
+  const mode = page.getByLabel('Viewport device mode')
+
+  for (const device of ['PhonePortrait', 'PhoneLandscape', 'Tablet', 'Desktop']) {
+    await mode.selectOption(device)
+    await expect(mode).toHaveValue(device)
+
+    // Switch to Quests tab
+    await page.getByRole('button', { name: 'QUESTS', exact: true }).click()
+    const questsScreen = page.locator('.quests-screen')
+    await expect(questsScreen).toBeVisible()
+
+    // Assert Quests screen remains within menu bounds
+    await expect(async () => {
+      const qBounds = await questsScreen.boundingBox()
+      const menuBounds = await page.locator('.city-menu').boundingBox()
+      expect(qBounds).not.toBeNull()
+      expect(menuBounds).not.toBeNull()
+      expect(qBounds!.x + qBounds!.width).toBeLessThanOrEqual(menuBounds!.x + menuBounds!.width + 2)
+      expect(qBounds!.y + qBounds!.height).toBeLessThanOrEqual(menuBounds!.y + menuBounds!.height + 2)
+    }).toPass()
+
+    // Switch back to Inventory tab
+    await page.getByRole('button', { name: 'INVENTORY', exact: true }).click()
+    const inventoryContent = page.locator('.city-content')
+    await expect(inventoryContent).toBeVisible()
+    await expect(async () => {
+      const iBounds = await inventoryContent.boundingBox()
+      const menuBounds = await page.locator('.city-menu').boundingBox()
+      expect(iBounds).not.toBeNull()
+      expect(menuBounds).not.toBeNull()
+      expect(iBounds!.x + iBounds!.width).toBeLessThanOrEqual(menuBounds!.x + menuBounds!.width + 2)
+      expect(iBounds!.y + iBounds!.height).toBeLessThanOrEqual(menuBounds!.y + menuBounds!.height + 2)
+    }).toPass()
+  }
+
+  await page.getByRole('button', { name: 'Exit preview' }).click()
+})

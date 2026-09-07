@@ -953,3 +953,123 @@
 .quest-act-btn:active {
   transform: scale(0.96) !important;
 }
+
+/* ==========================================================================
+   Pixel-Aware Responsive Dynamic Quests Adapters
+   ========================================================================== */
+
+/* Responsive Compact Devices (Canvas width <= 768px, e.g. Phone Portrait) */
+@container (max-width: 768px) {
+  .quests-screen {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 0.75em;
+  }
+
+  .quests-sidebar {
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    flex-shrink: 0;
+  }
+
+  .quests-category-list {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    gap: 0.35em;
+    flex: 1;
+    min-width: 0;
+    scrollbar-width: none;
+  }
+
+  .quests-cat-btn {
+    white-space: nowrap;
+    padding: 0.45em 0.75em;
+    flex-shrink: 0;
+    width: auto;
+    font-size: 0.8em;
+  }
+
+  .quests-slogan-card,
+  .quests-player-card {
+    display: none;
+  }
+
+  .quests-list-panel {
+    max-height: 42%;
+    flex-shrink: 0;
+  }
+
+  .quests-detail-panel {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .quests-hero-banner {
+    height: 7.5em;
+  }
+
+  .quests-rewards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Responsive Short Screens (Canvas height <= 540px, e.g. Phone Landscape) */
+@container (max-height: 540px) {
+  .quests-screen {
+    gap: 0.8%;
+  }
+
+  .quests-slogan-card {
+    display: none;
+  }
+
+  .quests-hero-banner {
+    height: 6.2em;
+  }
+
+  .quests-cat-btn {
+    padding: 0.4em 0.6em;
+    font-size: 0.8em;
+  }
+
+  .quests-header-row {
+    padding-bottom: 0.3em;
+  }
+
+  .quests-title-box h2 {
+    font-size: 1.15em;
+  }
+
+  .quests-title-box p {
+    display: none;
+  }
+
+  .quests-card-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .quests-card-inner {
+    padding: 0.45em 0.6em;
+  }
+
+  .quests-reward-card {
+    padding: 0.4em 0.5em;
+    gap: 0.4em;
+  }
+
+  .quest-objective-item {
+    padding: 0.35em 0.5em;
+  }
+
+  .quest-act-btn {
+    padding: 0.5em 0.7em;
+  }
+}

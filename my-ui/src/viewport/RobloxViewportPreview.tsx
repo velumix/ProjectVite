@@ -138,11 +138,17 @@ export function RobloxViewportPreview({ runtime, device, children }: Props) {
         <div className="ag-canvas-size" style={{ width: viewport.size.X * scale, height: viewport.size.Y * scale }}>
           <div
             className="ag-canvas-frame"
+            data-viewport-mode={effectiveMode}
+            data-viewport-w={viewport.size.X}
+            data-viewport-h={viewport.size.Y}
             style={{
               width: viewport.size.X,
               height: viewport.size.Y,
               transform: `scale(${scale})`,
-            }}
+              '--canvas-w': `${viewport.size.X}px`,
+              '--canvas-h': `${viewport.size.Y}px`,
+              '--canvas-scale': scale,
+            } as CSSProperties}
           >
             {children}
             {showSafeArea && <div

@@ -8,12 +8,12 @@
   z-index: 150;
   display: flex;
   flex-direction: column;
-  padding: 2.15% 2.2% 1.8%;
+  padding: clamp(8px, 1.8cqmin, 22px);
   overflow: hidden;
   background: #080d12;
   color: var(--city-text);
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 1cqw;
+  font-size: clamp(9.5px, min(1.08cqw, 1.85cqh), 13.5px);
   line-height: 1.35;
   outline: none;
   isolation: isolate;
@@ -329,3 +329,216 @@
 .city-message-note { font-size: .85em; color: #93a4b1; border-top: 1px solid var(--city-line); margin-top: 3em; padding-top: 1.5em; }
 .city-menu-still *, .city-menu-still { animation: none !important; transition: none !important; }
 @keyframes city-menu-enter { from { opacity: 0; } to { opacity: 1; } }
+
+/* ==========================================================================
+   Pixel-Aware Responsive Dynamic Inventory Adapters
+   ========================================================================== */
+
+/* Responsive Compact Devices (Canvas width <= 768px, e.g. Phone Portrait) */
+@container (max-width: 768px) {
+  .city-menu-header {
+    height: auto;
+    min-height: auto;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    padding-bottom: 0.6em;
+  }
+
+  .city-brand {
+    width: auto;
+  }
+
+  .city-brand strong {
+    font-size: 1.3em;
+    letter-spacing: 0.12em;
+  }
+
+  .city-account {
+    margin-left: auto;
+    gap: 0.8em;
+  }
+
+  .city-account time {
+    font-size: 0.95em;
+  }
+
+  .city-tabs {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    gap: 1.2em;
+    height: auto;
+    padding-bottom: 0.2em;
+    scrollbar-width: none;
+  }
+
+  .city-tabs button {
+    padding: 0.3em 0 0.5em;
+    white-space: nowrap;
+  }
+
+  .city-menu-body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 0.6em;
+  }
+
+  .city-character {
+    height: 160px;
+    flex-shrink: 0;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .city-equipment {
+    width: 48%;
+    height: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0.35em;
+  }
+
+  .city-viewport-frame {
+    flex: 1;
+    height: 100%;
+  }
+
+  .city-player-card {
+    display: none;
+  }
+
+  .city-inventory-heading {
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin-bottom: 0.8em;
+  }
+
+  .city-search {
+    width: 55%;
+  }
+
+  .city-capacity {
+    width: 38%;
+    margin-right: 0;
+  }
+
+  .city-inventory-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+  }
+
+  .city-items-column {
+    min-height: 240px;
+  }
+
+  .city-item-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .city-quick-use {
+    height: auto;
+    min-height: auto;
+    padding-top: 0.4em;
+  }
+
+  .city-quick-slots {
+    width: 100%;
+  }
+
+  .city-details-column {
+    min-height: 200px;
+  }
+}
+
+/* Responsive Short Screens (Canvas height <= 540px, e.g. Phone Landscape) */
+@container (max-height: 540px) {
+  .city-menu {
+    padding: 6px 12px;
+  }
+
+  .city-menu-header {
+    height: auto;
+    min-height: 2.2em;
+    padding: 0;
+  }
+
+  .city-brand strong {
+    font-size: 1.2em;
+  }
+
+  .city-tabs {
+    gap: 1.4em;
+  }
+
+  .city-tabs button {
+    padding: 0.2em 0 0.5em;
+    font-size: 0.88em;
+  }
+
+  .city-account {
+    gap: 1em;
+  }
+
+  .city-account time {
+    font-size: 0.9em;
+  }
+
+  .city-balance {
+    font-size: 1.1em;
+  }
+
+  .city-menu-body {
+    gap: 1.2%;
+  }
+
+  .city-equipment {
+    padding: 0.3em 0.2em;
+    gap: 0.25em;
+  }
+
+  .city-equipment-slot {
+    padding: 0.2em;
+  }
+
+  .city-inventory-heading {
+    margin-bottom: 0.6em;
+    min-height: 2em;
+  }
+
+  .city-content h1 {
+    font-size: 1.2em;
+  }
+
+  .city-search {
+    padding: 0.4em 0.6em;
+  }
+
+  .city-content {
+    padding: 0.8em 1em 0.6em;
+  }
+
+  .city-quick-use {
+    height: auto;
+    min-height: 4em;
+    padding-top: 0.4em;
+    gap: 0.3em;
+  }
+
+  .city-item-actions {
+    height: auto;
+    min-height: 3.5em;
+    padding-bottom: 0.4em;
+  }
+
+  .city-menu-footer {
+    height: auto;
+    min-height: 1.8em;
+    padding: 0.2em 0;
+  }
+
+  .city-player-card {
+    display: none;
+  }
+}
