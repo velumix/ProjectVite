@@ -2,6 +2,7 @@ import { useEffect, useId, useReducer, useRef, useState, type CSSProperties, typ
 import type { ReactiveBindingStore } from '../bindings/reactive-bindings'
 import { createInventoryState, equipment, inventoryReducer, inventoryWeight, itemById, type ItemDefinition, type InventoryStack } from './inventory-state'
 import './inventory.css'
+import { uiAudio } from '../audio/ui-audio.ts'
 
 const assetRoot = `${import.meta.env.BASE_URL}assets/inventory/`
 const tabs = ['Inventory', 'Map', 'Phone', 'Stats', 'Settings'] as const
@@ -125,6 +126,7 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
   }, [open, inventory.slots, splitting, query])
 
   function selectStack(stack: InventoryStack) {
+    uiAudio.playClick()
     setSelectedId(stack.id)
     setSelectedEquipment(null)
     setSplitting(false)
@@ -135,6 +137,7 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
     if (!stack) return
     const item = itemById[stack.itemId]
     if (!item.action) return
+    uiAudio.playEquip()
     dispatch({ type: 'use', id: stack.id })
     if (item.health) bindings.set('Player.HealthPercent', Math.min(1, Number(bindings.get('Player.HealthPercent') ?? 1) + item.health))
     if (item.id === 'phone') onPanelChange('Phone')
@@ -487,10 +490,10 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
                               }
                             } else {
                               const dropId = payload.id || event.dataTransfer.getData('text/plain')
-                              if (dropId) dispatch({ type: 'assign', id: dropId, slot: index })
+                              if (dropId) { uiAudio.playEquip(); dispatch({ type: 'assign', id: dropId, slot: index }) }
                             }
                           }}
-                          onClick={() => { if (selectedStack) dispatch({ type: 'assign', id: selectedStack.id, slot: index }); else if (stack) selectStack(stack) }}
+                          onClick={() => { if (selectedStack) { uiAudio.playEquip(); dispatch({ type: 'assign', id: selectedStack.id, slot: index }); } else if (stack) { selectStack(stack); } }}
                           onContextMenu={event => {
                             event.preventDefault()
                             if (stack) dispatch({ type: 'unassign-quick', slot: index })
@@ -537,7 +540,7 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
                       setDraggedItem(null)
                       if (!payload) return
                       if (payload.type === 'grid' && payload.id) {
-                        dispatch({ type: 'drop', id: payload.id })
+                        uiAudio.playDrop(); dispatch({ type: 'drop', id: payload.id })
                         if (selectedId === payload.id) {
                           setSelectedId(null)
                           setSplitting(false)
@@ -548,7 +551,7 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
                         dispatch({ type: 'unequip-item', itemId: payload.itemId })
                       }
                     }}
-                    onClick={() => { if (selectedStack) dispatch({ type: 'drop', id: selectedStack.id }); setSelectedId(null); setSplitting(false) }}><kbd><Icon name="mouse" /></kbd><span>Drop</span></button>
+                    onClick={() => { if (selectedStack) { uiAudio.playDrop(); dispatch({ type: 'drop', id: selectedStack.id }); } setSelectedId(null); setSplitting(false); }}><kbd><Icon name="mouse" /></kbd><span>Drop</span></button>
                   <button type="button" aria-label="Split" aria-keyshortcuts="R" disabled={!selectedStack || selectedStack.quantity < 2} onClick={startSplit}><kbd aria-hidden="true">R</kbd><span>Split</span></button>
                   <button type="button" aria-label="Inspect" aria-keyshortcuts="E" disabled={!selectedItem} aria-pressed={inspecting} onClick={() => setInspecting(value => !value)}><kbd aria-hidden="true">E</kbd><span>Inspect</span></button>
                 </div>

@@ -3,10 +3,12 @@ import { bind, computed } from '../bindings/reactive-bindings.ts'
 import { hudIcon, type HudIcon } from './hud-icons.ts'
 
 const color = (R: number, G: number, B: number) => ({ R, G, B })
-const white = color(.86, .9, .97)
-const muted = color(.62, .69, .8)
-const stroke = color(.14, .19, .27)
+const white = color(.94, .96, .98)
+const muted = color(.55, .61, .67)
+const stroke = color(.49, .56, .62)
 const cyan = color(0, .7, 1)
+const success = color(0.4, 0.89, 0.53)
+const panelBg = color(0.051, 0.075, 0.098)
 const size = (x: number, y: number) => ({ X: { Scale: 0, Offset: x }, Y: { Scale: 0, Offset: y } })
 const position = (x: number, y: number, sx = 0, sy = 0) => ({ X: { Scale: sx, Offset: x }, Y: { Scale: sy, Offset: y } })
 const corner = (radius = 10): Node => ({ ClassName: 'UICorner', CornerRadius: { Scale: 0, Offset: radius } })
@@ -17,7 +19,7 @@ const frame = (Name: string, width: number, height: number, x: number, y: number
 })
 const panel = (Name: string, width: number, height: number, x: number, y: number, Children: Node[], extra: Partial<Node> = {}): Node =>
   frame(Name, width, height, x, y, [corner(), border(), ...Children], {
-    BackgroundColor3: color(.035, .05, .075), BackgroundTransparency: .22, ...extra,
+    BackgroundColor3: panelBg, BackgroundTransparency: .18, ...extra,
   })
 const label = (Name: string, Text: unknown, width: number, height: number, x: number, y: number, TextSize = 12, extra: Partial<Node> = {}): Node => ({
   ClassName: 'TextLabel', Name, Text, TextSize, TextColor3: white,
@@ -56,11 +58,11 @@ export const mainHudTree: Node = {
       frame('CompassRule', 386, 1, 0, 15, [], { BackgroundColor3: stroke, BackgroundTransparency: 0 }),
       ...Array.from({ length: 13 }, (_, index) => frame(`CompassTick${index}`, index % 3 === 0 ? 2 : 1, index % 3 === 0 ? 9 : 5, index * 32.16, index % 3 === 0 ? 7 : 11, [], { BackgroundColor3: muted, BackgroundTransparency: .4 })),
       ...['W', 'NW', 'N', 'NE', 'E'].map((direction, index) => label(`Compass_${direction}`, direction, 36, 22, index * 96.5 - 18, 21, direction === 'N' ? 16 : 13, { TextXAlignment: 'Center', TextColor3: direction === 'N' ? white : color(.43, .5, .61) })),
-      label('CompassHeading', '▼', 20, 14, 183, -5, 13, { TextXAlignment: 'Center' }),
+      label('CompassHeading', '▼', 20, 14, 183, -5, 13, { TextXAlignment: 'Center', TextColor3: cyan }),
     ], { Position: position(0, 20, .5), AnchorPoint: { X: .5, Y: 0 } }),
     panel('TopRightDock', 328, 50, 0, 0, [
       icon('CurrencyIcon', 'coin', 25, 25, 16, 12, 22),
-      label('MoneyCounter', bind('Player.Money', { Format: value => `$${Number(value ?? 0).toLocaleString()}` }), 87, 28, 46, 11, 17, { TextColor3: color(1, .79, .2) }),
+      label('MoneyCounter', bind('Player.Money', { Format: value => `$${Number(value ?? 0).toLocaleString()}` }), 87, 28, 46, 11, 17, { TextColor3: success }),
       frame('TopHeaderDivider', 1, 27, 137, 11, [], { BackgroundColor3: stroke, BackgroundTransparency: 0 }),
       button('TopButton_Bell', 'bell', 39, 36, 158, 7),
       button('TopButton_Party', 'party', 39, 36, 217, 7),
@@ -83,7 +85,7 @@ export const mainHudTree: Node = {
           icon(`HotbarIcon_${index + 1}`, (['bat', 'pot', 'shield', 'run', 'burger'] as const)[index], 80, 46, 0, 8, index === 0 ? 39 : index === 2 ? 22 : 29),
           panel(`HotbarKey_${index + 1}`, 18, 19, 5, 4, [label(`HotbarKeyText_${index + 1}`, String(index + 1), 16, 17, 0, 0, 12, { TextXAlignment: 'Center' })]),
           label(`HotbarName_${index + 1}`, name, 80, 20, 0, 50, 12, { TextXAlignment: 'Center' }),
-        ], { ClassName: 'TextButton', Text: '', BackgroundColor3: color(.04, .055, .085), BackgroundTransparency: .25 })
+        ], { ClassName: 'TextButton', Text: '', BackgroundColor3: color(.04, .06, .09), BackgroundTransparency: .25 })
       }),
     ], { Position: position(0, -50, .5, 1), AnchorPoint: { X: .5, Y: 1 } }),
     panel('KeybindTooltip', 205, 44, 0, 0, [

@@ -18,6 +18,7 @@ import { ScenarioInspector } from './scenarios/ScenarioInspector.tsx'
 import { ScenarioParameters } from './scenarios/ScenarioParameters.tsx'
 import { RobloxViewportPreview } from './viewport/RobloxViewportPreview.tsx'
 import { InventoryScreen } from './inventory/InventoryScreen.tsx'
+import { setupLivingUiListeners, uiAudio } from './audio/ui-audio.ts'
 
 function App() {
   const bindingStore = useMemo(() => createReactiveBindingStore(), [])
@@ -94,6 +95,18 @@ function App() {
     } : child),
   }
   const traceEvents = scenarioRunner.getTrace().events()
+
+  useEffect(() => {
+    const cleanup = setupLivingUiListeners()
+    return cleanup
+  }, [])
+
+  const currentActivePanel = String(bindingStore.get('UI.ActivePanel') ?? 'None')
+  useEffect(() => {
+    if (currentActivePanel !== 'None') {
+      uiAudio.playModalOpen()
+    }
+  }, [currentActivePanel])
 
   useEffect(() => {
     const openInventory = (event: KeyboardEvent) => {
