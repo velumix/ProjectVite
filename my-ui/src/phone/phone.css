@@ -6211,6 +6211,407 @@
   cursor: not-allowed;
 }
 
+
+/* -------------------------------------------------------------
+   COMPANIES APP
+   ------------------------------------------------------------- */
+.companies-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #090e17;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.companies-header {
+  padding: 0.6em 0.8em 0.4em;
+  background: #0d1522;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+
+.companies-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.companies-branding {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+}
+
+.companies-logo {
+  font-size: 1.3em;
+}
+
+.companies-branding h3 {
+  margin: 0;
+  font-size: 1.05em;
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+.companies-branding small {
+  font-size: 0.65em;
+  color: #94a3b8;
+}
+
+.companies-total-badge {
+  font-size: 0.65em;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.25em 0.6em;
+  border-radius: 10px;
+  color: #94a3b8;
+}
+
+.companies-tab-ribbon {
+  display: flex;
+  gap: 4px;
+  background: #090e17;
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.companies-tab-btn {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  padding: 0.35em 0;
+  font-size: 0.7em;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.companies-tab-btn.active {
+  background: #0284c7;
+  color: #fff;
+}
+
+/* Toast */
+.companies-toast {
+  position: absolute;
+  top: 100px;
+  left: 14px;
+  right: 14px;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #38bdf8;
+  border-radius: 10px;
+  padding: 0.45em 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.2s ease-out;
+}
+
+.companies-toast small {
+  color: #f1f5f9;
+  font-size: 0.75em;
+  font-weight: 600;
+}
+
+/* Modal */
+.companies-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+}
+
+.companies-modal-dialog {
+  width: 100%;
+  background: #0d1522;
+  border-top: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 16px 16px 0 0;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+}
+
+.companies-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.companies-modal-header h4 {
+  margin: 0;
+  color: #fff;
+  font-size: 0.92em;
+}
+
+.companies-modal-header small {
+  font-size: 0.68em;
+  color: #38bdf8;
+}
+
+.companies-close-modal {
+  border: 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.companies-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.companies-form input,
+.companies-form textarea {
+  background: #162234;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.4em 0.6em;
+  font-size: 0.75em;
+  outline: none;
+}
+
+.companies-submit-ticket-btn {
+  border: 0;
+  background: #0284c7;
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 800;
+  padding: 0.55em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Scroll & Cards */
+.companies-main-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8em;
+}
+
+.companies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65em;
+}
+
+.companies-card,
+.companies-job-card,
+.companies-ticket-card {
+  background: #111a28;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.companies-card-top,
+.companies-job-header,
+.companies-ticket-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.companies-category-tag,
+.companies-job-hiring-tag,
+.companies-ticket-id {
+  font-size: 0.56em;
+  font-weight: 800;
+  color: #38bdf8;
+  text-transform: uppercase;
+}
+
+.companies-job-hiring-tag {
+  color: #10b981;
+}
+
+.companies-card-name,
+.companies-job-role,
+.companies-ticket-subject {
+  margin: 0.1em 0;
+  font-size: 0.88em;
+  color: #fff;
+}
+
+.companies-address,
+.companies-ticket-company {
+  margin: 0;
+  font-size: 0.68em;
+  color: #94a3b8;
+}
+
+.companies-card-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.companies-open-pill {
+  font-size: 0.55em;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.companies-open-pill.open {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.companies-open-pill.closed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.companies-stars {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.companies-action-bar {
+  display: flex;
+  gap: 5px;
+}
+
+.companies-action-btn {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #162234;
+  color: #cbd5e1;
+  border-radius: 6px;
+  padding: 0.35em 0;
+  font-size: 0.65em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.companies-action-btn:hover {
+  background: #0284c7;
+  color: #fff;
+}
+
+/* Jobs specific */
+.companies-job-company {
+  display: block;
+  font-size: 0.68em;
+  color: #94a3b8;
+}
+
+.companies-wage-box {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 0.3em 0.5em;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.companies-wage-box strong {
+  font-size: 0.95em;
+  color: #34d399;
+}
+
+.companies-wage-box small {
+  font-size: 0.58em;
+  color: #a7f3d0;
+  display: block;
+}
+
+.companies-job-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.4em;
+}
+
+.companies-job-loc {
+  font-size: 0.68em;
+  color: #64748b;
+}
+
+.companies-apply-btn {
+  border: 0;
+  background: #10b981;
+  color: #fff;
+  font-size: 0.68em;
+  font-weight: 800;
+  padding: 0.35em 0.7em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Tickets specific */
+.companies-ticket-status {
+  font-size: 0.55em;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.companies-ticket-status.open {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.companies-ticket-status.in_progress {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.companies-ticket-msg {
+  margin: 0;
+  font-size: 0.72em;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.companies-ticket-footer {
+  font-size: 0.62em;
+  color: #64748b;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.3em;
+}
+
+.companies-empty {
+  text-align: center;
+  padding: 3em 1em;
+  color: #64748b;
+}
+
+.companies-empty span {
+  font-size: 2em;
+  display: block;
+  margin-bottom: 0.3em;
+}
+
+.companies-empty p {
+  margin: 0;
+  font-size: 0.8em;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {

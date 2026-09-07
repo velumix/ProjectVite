@@ -4322,6 +4322,269 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "CompanyService",
+      "Methods": [
+        {
+          "Name": "GetCompanies",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "rating": {
+                      "kind": "float64"
+                    },
+                    "phone": {
+                      "kind": "string"
+                    },
+                    "address": {
+                      "kind": "string"
+                    },
+                    "open": {
+                      "kind": "bool"
+                    },
+                    "hiring": {
+                      "kind": "bool"
+                    },
+                    "jobRole": {
+                      "kind": "string"
+                    },
+                    "hourlyWage": {
+                      "kind": "float64"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "GetTickets",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "ticketId": {
+                      "kind": "string"
+                    },
+                    "companyId": {
+                      "kind": "string"
+                    },
+                    "companyName": {
+                      "kind": "string"
+                    },
+                    "subject": {
+                      "kind": "string"
+                    },
+                    "message": {
+                      "kind": "string"
+                    },
+                    "senderName": {
+                      "kind": "string"
+                    },
+                    "status": {
+                      "kind": "string"
+                    },
+                    "createdAt": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ApplyForJob",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "companyId": {
+                "kind": "string"
+              },
+              "coverLetter": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "CreateTicket",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "companyId": {
+                "kind": "string"
+              },
+              "subject": {
+                "kind": "string"
+              },
+              "message": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "ticketId": {
+                      "kind": "string"
+                    },
+                    "companyId": {
+                      "kind": "string"
+                    },
+                    "companyName": {
+                      "kind": "string"
+                    },
+                    "subject": {
+                      "kind": "string"
+                    },
+                    "message": {
+                      "kind": "string"
+                    },
+                    "senderName": {
+                      "kind": "string"
+                    },
+                    "status": {
+                      "kind": "string"
+                    },
+                    "createdAt": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "JobApplicationSubmitted",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "companyId": {
+                    "kind": "string"
+                  },
+                  "companyName": {
+                    "kind": "string"
+                  },
+                  "role": {
+                    "kind": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "TicketCreated",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "ticketId": {
+                    "kind": "string"
+                  },
+                  "companyId": {
+                    "kind": "string"
+                  },
+                  "companyName": {
+                    "kind": "string"
+                  },
+                  "subject": {
+                    "kind": "string"
+                  },
+                  "message": {
+                    "kind": "string"
+                  },
+                  "senderName": {
+                    "kind": "string"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "createdAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -4479,6 +4742,16 @@
       "Name": "DarkChatController",
       "ServiceDependencies": [
         "DarkChatService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "CompanyController",
+      "ServiceDependencies": [
+        "CompanyService"
       ],
       "Lifecycle": {
         "NerveInit": true,

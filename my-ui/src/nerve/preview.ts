@@ -734,6 +734,48 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type CompanyListing = {
+  id: string
+  name: string
+  category: string
+  rating: number
+  phone: string
+  address: string
+  open: boolean
+  hiring: boolean
+  jobRole: string
+  hourlyWage: number
+  x: number
+  y: number
+}
+
+export type ServiceTicket = {
+  ticketId: string
+  companyId: string
+  companyName: string
+  subject: string
+  message: string
+  senderName: string
+  status: string
+  createdAt: number
+}
+
+export type JobApplicationEvent = {
+  companyId: string
+  companyName: string
+  role: string
+}
+
+export type PreviewCompanyService = {
+  GetCompanies: NerveMethod<Record<string, never> | undefined, [CompanyListing[]]>
+  GetTickets: NerveMethod<Record<string, never> | undefined, [ServiceTicket[]]>
+  ApplyForJob: NerveMethod<{ companyId: string; coverLetter: string }, [boolean, string?]>
+  CreateTicket: NerveMethod<{ companyId: string; subject: string; message: string }, [boolean, string?, ServiceTicket?]>
+  JobApplicationSubmitted: NerveSignal<[JobApplicationEvent]>
+  TicketCreated: NerveSignal<[ServiceTicket]>
+}
+
 export type DarkMessage = {
   id: string
   channelId: string
@@ -1055,6 +1097,79 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const initialCompanies: CompanyListing[] = [
+    {
+      id: 'comp-1',
+      name: 'Los Santos Customs',
+      category: 'Automotive',
+      rating: 4.9,
+      phone: '555-0182',
+      address: 'Carcer Way, Burton',
+      open: true,
+      hiring: true,
+      jobRole: 'Master Technician',
+      hourlyWage: 120,
+      x: -360,
+      y: -135,
+    },
+    {
+      id: 'comp-2',
+      name: 'Dynasty 8 Executive',
+      category: 'Real Estate',
+      rating: 4.8,
+      phone: '555-0144',
+      address: 'Alta Street, Downtown',
+      open: true,
+      hiring: false,
+      jobRole: 'Property Agent',
+      hourlyWage: 95,
+      x: -140,
+      y: -620,
+    },
+    {
+      id: 'comp-3',
+      name: 'Up-n-Atom Burgers',
+      category: 'Food & Hospitality',
+      rating: 4.6,
+      phone: '555-0199',
+      address: 'Vinewood Boulevard 88',
+      open: true,
+      hiring: true,
+      jobRole: 'Shift Supervisor',
+      hourlyWage: 45,
+      x: 85,
+      y: 280,
+    },
+    {
+      id: 'comp-4',
+      name: 'FlyUS Aviation',
+      category: 'Transport & Logistics',
+      rating: 4.7,
+      phone: '555-0112',
+      address: 'LSIA Terminal 4',
+      open: false,
+      hiring: true,
+      jobRole: 'Cargo Dispatcher',
+      hourlyWage: 150,
+      x: -1020,
+      y: -2750,
+    },
+  ]
+
+  const serviceTickets: ServiceTicket[] = [
+    {
+      ticketId: 'tkt-01',
+      companyId: 'comp-1',
+      companyName: 'Los Santos Customs',
+      subject: 'Vehicle armor upgrade quote',
+      message: 'Looking for titanium plating and turbo tune for Sultan RS.',
+      senderName: 'Alex Mercer',
+      status: 'in_progress',
+      createdAt: Date.now() - 7200000,
+    },
+  ]
+
   const darkChannels: DarkChannel[] = [
     {
       id: 'chan-drop',
@@ -1304,7 +1419,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -1834,6 +1949,46 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'CompanyService.GetCompanies': () => {
+        return [initialCompanies.map((c) => ({ ...c }))]
+      },
+      'CompanyService.GetTickets': () => {
+        return [serviceTickets.map((t) => ({ ...t }))]
+      },
+      'CompanyService.ApplyForJob': (payload) => {
+        if (!isRecord(payload) || typeof payload.companyId !== 'string') return [false, 'Invalid payload']
+        const comp = initialCompanies.find((c) => c.id === payload.companyId)
+        if (!comp) return [false, 'Company not found']
+        if (!comp.hiring) return [false, 'Company is not hiring']
+        adapter.emitSignal('CompanyService', 'JobApplicationSubmitted', {
+          companyId: comp.id,
+          companyName: comp.name,
+          role: comp.jobRole,
+        })
+        return [true, undefined]
+      },
+      'CompanyService.CreateTicket': (payload) => {
+        if (!isRecord(payload) || typeof payload.companyId !== 'string' || typeof payload.subject !== 'string') {
+          return [false, 'Invalid payload', undefined]
+        }
+        const comp = initialCompanies.find((c) => c.id === payload.companyId)
+        if (!comp) return [false, 'Company not found', undefined]
+        const newTicket: ServiceTicket = {
+          ticketId: 'tkt-' + Date.now(),
+          companyId: comp.id,
+          companyName: comp.name,
+          subject: String(payload.subject),
+          message: String(payload.message || ''),
+          senderName: 'Alex Mercer',
+          status: 'open',
+          createdAt: Date.now(),
+        }
+        serviceTickets.unshift(newTicket)
+        adapter.emitSignal('CompanyService', 'TicketCreated', { ...newTicket })
+        return [true, undefined, { ...newTicket }]
+      },
+
       'DarkChatService.GetChannels': () => {
         return [darkChannels.map((c) => ({ ...c }))]
       },
@@ -2150,3 +2305,4 @@ export const HouseService = nervePreview.GetService<PreviewHouseService>('HouseS
 export const BillingService = nervePreview.GetService<PreviewBillingService>('BillingService')
 export const EmergencyService = nervePreview.GetService<PreviewEmergencyService>('EmergencyService')
 export const DarkChatService = nervePreview.GetService<PreviewDarkChatService>('DarkChatService')
+export const CompanyService = nervePreview.GetService<PreviewCompanyService>('CompanyService')

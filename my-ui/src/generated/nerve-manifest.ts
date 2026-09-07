@@ -4208,6 +4208,262 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "CompanyService": {
+      "GetCompanies": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "name": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "rating": {
+                    "kind": "float64"
+                  },
+                  "phone": {
+                    "kind": "string"
+                  },
+                  "address": {
+                    "kind": "string"
+                  },
+                  "open": {
+                    "kind": "bool"
+                  },
+                  "hiring": {
+                    "kind": "bool"
+                  },
+                  "jobRole": {
+                    "kind": "string"
+                  },
+                  "hourlyWage": {
+                    "kind": "float64"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "GetTickets": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "ticketId": {
+                    "kind": "string"
+                  },
+                  "companyId": {
+                    "kind": "string"
+                  },
+                  "companyName": {
+                    "kind": "string"
+                  },
+                  "subject": {
+                    "kind": "string"
+                  },
+                  "message": {
+                    "kind": "string"
+                  },
+                  "senderName": {
+                    "kind": "string"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "createdAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ApplyForJob": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "companyId": {
+              "kind": "string"
+            },
+            "coverLetter": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "CreateTicket": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "companyId": {
+              "kind": "string"
+            },
+            "subject": {
+              "kind": "string"
+            },
+            "message": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "ticketId": {
+                    "kind": "string"
+                  },
+                  "companyId": {
+                    "kind": "string"
+                  },
+                  "companyName": {
+                    "kind": "string"
+                  },
+                  "subject": {
+                    "kind": "string"
+                  },
+                  "message": {
+                    "kind": "string"
+                  },
+                  "senderName": {
+                    "kind": "string"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "createdAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "JobApplicationSubmitted": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "companyId": {
+                  "kind": "string"
+                },
+                "companyName": {
+                  "kind": "string"
+                },
+                "role": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "TicketCreated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "ticketId": {
+                  "kind": "string"
+                },
+                "companyId": {
+                  "kind": "string"
+                },
+                "companyName": {
+                  "kind": "string"
+                },
+                "subject": {
+                  "kind": "string"
+                },
+                "message": {
+                  "kind": "string"
+                },
+                "senderName": {
+                  "kind": "string"
+                },
+                "status": {
+                  "kind": "string"
+                },
+                "createdAt": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

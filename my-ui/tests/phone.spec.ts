@@ -774,3 +774,50 @@ test('darkchat app displays encrypted channels, unlocks passcode-protected rooms
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('companies app displays city business directory, applies to hiring job roles, and files support tickets via Roblox CompanyService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Companies
+  await page.getByRole('button', { name: 'Open Companies' }).click()
+  await expect(page.locator('.companies-app-root')).toBeVisible()
+  await expect(page.locator('.companies-branding h3')).toHaveText('City Directory')
+
+  // Directory cards
+  const cards = page.locator('.companies-card')
+  await expect(cards).toHaveCount(4)
+  await expect(page.locator('.companies-card-name').first()).toHaveText('Los Santos Customs')
+
+  // Jobs tab
+  await page.getByRole('button', { name: 'Jobs (3)' }).click()
+  const jobCards = page.locator('.companies-job-card')
+  await expect(jobCards).toHaveCount(3)
+  await expect(page.locator('.companies-job-role').first()).toHaveText('Master Technician')
+
+  // Quick Apply
+  await page.locator('.companies-apply-btn').first().click()
+  await expect(page.locator('.companies-toast')).toContainText('Application submitted for Master Technician')
+
+  // Tickets tab
+  await page.getByRole('button', { name: 'Tickets (1)' }).click()
+  await expect(page.locator('.companies-ticket-card')).toHaveCount(1)
+
+  // Back to Directory to file a new ticket
+  await page.getByRole('button', { name: 'Directory' }).click()
+  await page.locator('.companies-card').nth(2).locator('.companies-action-btn', { hasText: 'Ticket' }).click()
+  await expect(page.locator('.companies-modal-backdrop')).toBeVisible()
+
+  await page.locator('input[placeholder="Inquiry Subject..."]').fill('Catering Inquiry for 50 Pax')
+  await page.locator('textarea[placeholder*="Describe your request"]').fill('Need burger platters and shakes delivered.')
+  await page.getByRole('button', { name: 'SUBMIT INQUIRY' }).click()
+
+  // Toast & tickets count verification
+  await expect(page.locator('.companies-toast')).toContainText('opened with Up-n-Atom Burgers')
+  await expect(page.locator('.companies-ticket-card')).toHaveCount(2)
+  await expect(page.locator('.companies-ticket-subject').first()).toHaveText('Catering Inquiry for 50 Pax')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
