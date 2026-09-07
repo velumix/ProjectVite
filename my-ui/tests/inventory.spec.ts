@@ -295,3 +295,71 @@ test('revamped stats screen renders 2-column progression dashboard with interact
   await page.locator('[data-roblox-name="CloseStatsButton"]').click()
   await expect(statsModal).toBeHidden()
 })
+
+test('revamped settings screen renders full dashboard with display, graphics, audio, gameplay, system info and controls', async ({ page }) => {
+  await openInventory(page)
+  await page.getByRole('button', { name: 'SETTINGS', exact: true }).click()
+  const settingsModal = page.locator('[data-roblox-name="SettingsPanelModal"]')
+  await expect(settingsModal).toBeVisible()
+
+  // Verify left sidebar categories
+  await expect(page.getByRole('button', { name: /Graphics Display & visual quality/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /General Game preferences/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Audio Sound & voice chat/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Controls Keyboard, mouse & controller/i })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Keybinds Customize your keys/i })).toBeVisible()
+
+  // Verify slogan card without Los Santos
+  const sloganCard = page.locator('.settings-slogan-card')
+  await expect(sloganCard).toContainText('SUN CITY')
+  await expect(sloganCard).toContainText('A BRIGHTER TOMORROW')
+  await expect(page.locator('body')).not.toContainText('LOS SANTOS INSPIRED')
+
+  // Verify Display card
+  await expect(page.getByRole('heading', { name: 'DISPLAY', exact: true })).toBeVisible()
+  const vsyncToggle = page.getByRole('switch', { name: 'VSync' })
+  await expect(vsyncToggle).not.toBeChecked()
+  await vsyncToggle.click()
+  await expect(vsyncToggle).toBeChecked()
+
+  // Verify Graphics Quality card
+  await expect(page.getByRole('heading', { name: 'GRAPHICS QUALITY', exact: true })).toBeVisible()
+  await expect(page.getByRole('combobox', { name: 'Shadow Quality' })).toHaveValue('High')
+  await expect(page.getByRole('switch', { name: 'Post Processing' })).toBeChecked()
+
+  // Verify Audio card
+  await expect(page.getByRole('heading', { name: 'AUDIO', exact: true })).toBeVisible()
+  await expect(page.getByRole('slider', { name: 'Master Volume' })).toBeVisible()
+  await expect(page.getByRole('switch', { name: 'Voice Chat' })).toBeChecked()
+
+  // Verify Gameplay & Interface card
+  await expect(page.getByRole('heading', { name: 'GAMEPLAY & INTERFACE', exact: true })).toBeVisible()
+  const sprintPillToggle = page.getByRole('radio', { name: 'Toggle' })
+  await sprintPillToggle.click()
+  await expect(sprintPillToggle).toHaveClass(/is-active/)
+
+  // Verify System Info card
+  await expect(page.getByRole('heading', { name: 'SYSTEM INFO', exact: true })).toBeVisible()
+  await expect(page.getByText('NVIDIA RTX 3060')).toBeVisible()
+  await expect(page.getByText('AMD Ryzen 5 5600X')).toBeVisible()
+  await expect(page.getByText('16 GB')).toBeVisible()
+  await expect(page.getByText('42 ms')).toBeVisible()
+
+  // Verify Tips card
+  await expect(page.getByText(/Lowering shadows and post processing can significantly improve performance/i)).toBeVisible()
+
+  // Test Apply button and notification toast
+  const applyBtn = page.getByRole('button', { name: 'Apply' })
+  await applyBtn.click()
+  await expect(page.locator('.settings-toast-msg')).toContainText('Settings successfully updated')
+
+  // Test Reset to Default button
+  const resetBtn = page.getByRole('button', { name: 'Reset to Default' })
+  await resetBtn.click()
+  await expect(vsyncToggle).not.toBeChecked()
+
+  // Test Back button
+  const backBtn = page.getByRole('button', { name: 'Back' })
+  await backBtn.click()
+  await expect(page.locator('.city-content')).toBeVisible()
+})

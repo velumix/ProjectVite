@@ -5,6 +5,7 @@ import './inventory.css'
 import { uiAudio } from '../audio/ui-audio.ts'
 import { QuestsScreen } from '../quests/QuestsScreen.tsx'
 import { StatsScreen } from '../stats/StatsScreen.tsx'
+import { SettingsScreen } from '../settings/SettingsScreen.tsx'
 
 const assetRoot = `${import.meta.env.BASE_URL}assets/inventory/`
 const tabs = ['Inventory', 'Quests', 'Map', 'Phone', 'Stats', 'Settings'] as const
@@ -217,11 +218,21 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
         <div className="city-account"><span className="city-balance">$ {Number(bindings.get('Player.Money') ?? 500).toLocaleString()}</span><div><time>12:24</time><span>Sep 6, 2026</span></div></div>
       </header>
 
-      <div className={`city-menu-body${panel === 'Quests' ? ' is-quests-body' : ''}${panel === 'Stats' ? ' is-stats-body' : ''}`}>
+      <div className={`city-menu-body${panel === 'Quests' ? ' is-quests-body' : ''}${panel === 'Stats' ? ' is-stats-body' : ''}${panel === 'Settings' ? ' is-settings-body' : ''}`}>
         {panel === 'Quests' ? (
           <QuestsScreen />
         ) : panel === 'Stats' ? (
           <StatsScreen bindings={bindings} />
+        ) : panel === 'Settings' ? (
+          <SettingsScreen
+            showQuantities={showQuantities}
+            setShowQuantities={setShowQuantities}
+            motion={motion}
+            setMotion={setMotion}
+            panelOpacity={panelOpacity}
+            setPanelOpacity={setPanelOpacity}
+            onBack={() => onPanelChange('Inventory')}
+          />
         ) : (
           <>
         <aside className="city-character" aria-label="Character equipment">
@@ -588,7 +599,7 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
       </div>
       <footer className="city-menu-footer">
         <div role="status" className="city-notice" key={inventory.notice}>
-          {panel === 'Stats' ? (
+          {panel === 'Stats' || panel === 'Settings' ? (
             <span className="city-stats-footer-tagline">SUN CITY &bull; A BRIGHTER TOMORROW IN SUN CITY</span>
           ) : (
             <>
@@ -597,7 +608,7 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
             </>
           )}
         </div>
-        {panel === 'Stats' && (
+        {(panel === 'Stats' || panel === 'Settings') && (
           <div className="city-stats-footer-motto">
             <span>PEOPLE</span>
             <span>CARS</span>

@@ -44,7 +44,7 @@
 .city-account div > span { color: #a1acb9; display: block; font-size: .75em; }
 
 .city-menu-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 22.2% minmax(0, 1fr); gap: 1.85%; }
-.city-menu-body.is-quests-body, .city-menu-body.is-stats-body { display: flex; flex-direction: column; gap: 0; }
+.city-menu-body.is-quests-body, .city-menu-body.is-stats-body, .city-menu-body.is-settings-body { display: flex; flex-direction: column; gap: 0; }
 .city-character { position: relative; min-width: 0; border: 1px solid var(--city-line); border-bottom-color: transparent; border-radius: .95em .95em 0 0; background: linear-gradient(90deg, #0b111529, transparent); }
 .city-equipment { position: relative; z-index: 2; width: 29%; height: 85.5%; padding: .55em .45em; display: grid; grid-template-rows: repeat(6, minmax(0, 1fr)); gap: .6em; }
 .city-equipment-slot { isolation: isolate; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 0; min-height: 0; padding: .45em .2em; background: linear-gradient(115deg, #1d242aeb, #11171ceb); border: 1px solid #69798740; border-radius: .55em; transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 140ms ease, box-shadow 140ms ease; }
