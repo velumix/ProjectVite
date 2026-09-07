@@ -279,7 +279,7 @@ function App() {
                 bindingStore.set('UI.ActivePanel', 'Phone')
               }
             }}
-            title="Toggle SunPhone (Press P)"
+            aria-label="Toggle Phone" title="Toggle SunPhone (Press P)"
           >
             <span className="text-xs">📱</span>
             <span>Phone</span>
