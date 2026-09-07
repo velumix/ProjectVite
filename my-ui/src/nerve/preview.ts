@@ -55,6 +55,42 @@ export type PreviewPhoneService = {
   PhoneSettingsChanged: NerveSignal<[PhoneSettings]>
 }
 
+export type BankingTransactionKind = 'deposit' | 'withdrawal' | 'transfer_in' | 'transfer_out'
+
+export type BankingTransaction = {
+  id: string
+  kind: BankingTransactionKind
+  amount: number
+  label: string
+  reference: string
+  createdAt: number
+}
+
+export type BankingOverview = {
+  bank: number
+  cash: number
+  currency: string
+  playerId: number
+  playerName: string
+  transactions: BankingTransaction[]
+}
+
+export type BankingNotification = {
+  kind: string
+  amount: number
+  currency: string
+  sender?: string
+  label?: string
+}
+
+export type PreviewBankingService = {
+  GetBankingOverview: NerveMethod<undefined, [BankingOverview]>
+  TransferMoney: NerveMethod<{ amount: number; phoneNumber: string; note?: string }, [boolean, string?]>
+  DepositMoney: NerveMethod<{ amount: number }, [boolean, string?]>
+  WithdrawMoney: NerveMethod<{ amount: number }, [boolean, string?]>
+  BankingChanged: NerveSignal<[BankingNotification]>
+}
+
 const INITIAL_PHONE_STATE: PhoneState = {
   phoneNumber: '555-0199',
   battery: 87,
@@ -80,6 +116,48 @@ const INITIAL_PHONE_MESSAGES: Record<string, PhoneMessage[]> = {
   services: [{ id: 'services-1', body: 'New in town? Stop by City Hall to learn about local jobs.', fromPlayer: false, time: '09:30' }],
 }
 
+const INITIAL_BANKING_STATE: BankingOverview = {
+  bank: 24850,
+  cash: 1240,
+  currency: '$',
+  playerId: 1042,
+  playerName: 'Player One',
+  transactions: [
+    {
+      id: 'tx-1',
+      kind: 'transfer_in',
+      amount: 1500,
+      label: 'Cargo Delivery (Alex Mercer)',
+      reference: 'REF-98214',
+      createdAt: Date.now() - 3600000 * 2,
+    },
+    {
+      id: 'tx-2',
+      kind: 'transfer_out',
+      amount: 350,
+      label: "Benny's Motorworks",
+      reference: 'REF-98188',
+      createdAt: Date.now() - 3600000 * 18,
+    },
+    {
+      id: 'tx-3',
+      kind: 'deposit',
+      amount: 5000,
+      label: 'ATM Deposit (Legion Square)',
+      reference: 'REF-97992',
+      createdAt: Date.now() - 3600000 * 36,
+    },
+    {
+      id: 'tx-4',
+      kind: 'transfer_out',
+      amount: 120,
+      label: 'Sun City Power & Water',
+      reference: 'REF-97640',
+      createdAt: Date.now() - 3600000 * 60,
+    },
+  ],
+}
+
 export type NervePreviewOptions = {
   persistence?: RobloxPersistence
   playerKey?: string
@@ -91,6 +169,10 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   let phoneState: PhoneState = clonePhoneState(INITIAL_PHONE_STATE)
   const phoneMessages = Object.fromEntries(Object.entries(INITIAL_PHONE_MESSAGES).map(([key, messages]) => [key, [...messages]])) as Record<string, PhoneMessage[]>
   let activeCall: { number: string } | undefined
+  let bankingState: BankingOverview = {
+    ...INITIAL_BANKING_STATE,
+    transactions: [...INITIAL_BANKING_STATE.transactions],
+  }
   let adapter: ReturnType<typeof createNerveBrowserAdapter>
 
   const readSettings = async (): Promise<StreamlinedSettingsState> => {
@@ -163,6 +245,93 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         adapter.emitSignal('PhoneService', 'PhoneSettingsChanged', phoneState.settings)
         return [true, undefined]
       },
+      'BankingService.GetBankingOverview': () => [bankingState],
+      'BankingService.TransferMoney': (payload) => {
+        if (!isRecord(payload) || typeof payload.amount !== 'number' || typeof payload.phoneNumber !== 'string') {
+          return [false, 'Invalid transfer payload']
+        }
+        const amount = Math.floor(payload.amount)
+        if (amount <= 0) return [false, 'Invalid transfer amount']
+        if (bankingState.bank < amount) return [false, 'Insufficient bank funds']
+        const memo = (typeof payload.note === 'string' && payload.note.trim()) ? payload.note.trim() : `Transfer to ${payload.phoneNumber}`
+        const ref = `TR-${Math.random().toString(36).substring(2, 9).toUpperCase()}`
+        const tx: BankingTransaction = {
+          id: `tx-${Date.now()}`,
+          kind: 'transfer_out',
+          amount,
+          label: memo,
+          reference: ref,
+          createdAt: Date.now(),
+        }
+        bankingState = {
+          ...bankingState,
+          bank: bankingState.bank - amount,
+          transactions: [tx, ...bankingState.transactions],
+        }
+        adapter.emitSignal('BankingService', 'BankingChanged', {
+          kind: 'transfer_out',
+          amount,
+          currency: bankingState.currency,
+          label: memo,
+        })
+        return [true, undefined]
+      },
+      'BankingService.DepositMoney': (payload) => {
+        if (!isRecord(payload) || typeof payload.amount !== 'number') return [false, 'Invalid payload']
+        const amount = Math.floor(payload.amount)
+        if (amount <= 0) return [false, 'Invalid deposit amount']
+        if (bankingState.cash < amount) return [false, 'Insufficient cash on hand']
+        const ref = `DEP-${Math.random().toString(36).substring(2, 9).toUpperCase()}`
+        const tx: BankingTransaction = {
+          id: `tx-${Date.now()}`,
+          kind: 'deposit',
+          amount,
+          label: 'ATM Cash Deposit',
+          reference: ref,
+          createdAt: Date.now(),
+        }
+        bankingState = {
+          ...bankingState,
+          cash: bankingState.cash - amount,
+          bank: bankingState.bank + amount,
+          transactions: [tx, ...bankingState.transactions],
+        }
+        adapter.emitSignal('BankingService', 'BankingChanged', {
+          kind: 'deposit',
+          amount,
+          currency: bankingState.currency,
+          label: 'ATM Cash Deposit',
+        })
+        return [true, undefined]
+      },
+      'BankingService.WithdrawMoney': (payload) => {
+        if (!isRecord(payload) || typeof payload.amount !== 'number') return [false, 'Invalid payload']
+        const amount = Math.floor(payload.amount)
+        if (amount <= 0) return [false, 'Invalid withdrawal amount']
+        if (bankingState.bank < amount) return [false, 'Insufficient bank funds']
+        const ref = `WTH-${Math.random().toString(36).substring(2, 9).toUpperCase()}`
+        const tx: BankingTransaction = {
+          id: `tx-${Date.now()}`,
+          kind: 'withdrawal',
+          amount,
+          label: 'ATM Cash Withdrawal',
+          reference: ref,
+          createdAt: Date.now(),
+        }
+        bankingState = {
+          ...bankingState,
+          bank: bankingState.bank - amount,
+          cash: bankingState.cash + amount,
+          transactions: [tx, ...bankingState.transactions],
+        }
+        adapter.emitSignal('BankingService', 'BankingChanged', {
+          kind: 'withdrawal',
+          amount,
+          currency: bankingState.currency,
+          label: 'ATM Cash Withdrawal',
+        })
+        return [true, undefined]
+      },
     },
   })
 
@@ -180,3 +349,4 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 export const nervePreview = createNervePreview()
 
 export const InventoryService = nervePreview.GetService<PreviewInventoryService>('InventoryService')
+export const BankingService = nervePreview.GetService<PreviewBankingService>('BankingService')

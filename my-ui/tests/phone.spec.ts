@@ -143,3 +143,45 @@ test('weather and notes utility apps render forecasts and manage notes', async (
   await page.locator('.notes-back-btn').click()
   await expect(page.locator('.notes-item-card:has-text("Emergency Meeting")')).toBeVisible()
 })
+
+test('banking app displays accounts, performs transfers and updates balances via Nerve', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Banking app
+  await page.getByRole('button', { name: 'Open Banking' }).click()
+  await expect(page.locator('.bank-app-container')).toBeVisible()
+  await expect(page.locator('.bank-brand')).toContainText('Sun City Bank')
+  await expect(page.locator('.bank-balance-num')).toHaveText('$24,850')
+  await expect(page.locator('.bank-hero-bottom')).toContainText('$1,240')
+
+  // Open Send Transfer modal
+  await page.getByRole('button', { name: 'Transfer money' }).click()
+  await expect(page.getByRole('dialog', { name: 'Transfer Money' })).toBeVisible()
+
+  // Choose contact "Alex Morgan"
+  await page.getByRole('button', { name: 'Alex Morgan' }).click()
+  await page.getByPlaceholder('0').fill('1200')
+  await page.getByPlaceholder(/e\.g\. For car repairs/).fill('Vehicle Upgrade')
+  await page.getByRole('button', { name: 'Confirm Transfer' }).click()
+
+  // Wait for success and balance update
+  await expect(page.locator('.bank-alert-success')).toContainText('Sent $1,200 successfully')
+  await expect(page.locator('.bank-balance-num')).toHaveText('$23,650')
+
+  // Switch to Activity tab and verify new transaction is recorded
+  await page.getByRole('button', { name: 'Activity' }).click()
+  await expect(page.locator('.bank-tx-list')).toContainText('Vehicle Upgrade')
+  await expect(page.locator('.bank-tx-list')).toContainText('−$1,200')
+
+  // Switch back to Overview & test ATM Cash Deposit
+  await page.getByRole('button', { name: 'Overview' }).click()
+  await page.getByRole('button', { name: 'ATM Deposit' }).click()
+  await expect(page.getByRole('dialog', { name: 'ATM deposit' })).toBeVisible()
+  await page.getByRole('button', { name: '+$500' }).click()
+  await page.getByRole('button', { name: 'Confirm Deposit' }).click()
+
+  await expect(page.locator('.bank-alert-success')).toContainText('Deposited $500')
+  await expect(page.locator('.bank-balance-num')).toHaveText('$24,150')
+  await expect(page.locator('.bank-hero-bottom')).toContainText('$740')
+})

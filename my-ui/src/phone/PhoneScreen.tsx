@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { NervePreviewAdapter } from '../nerve/contracts.ts'
 import { type PhoneContact, type PhoneMessage, type PhoneSettings, type PhoneState, type PreviewPhoneService } from '../nerve/preview.ts'
+import { BankingApp } from './apps/BankingApp.tsx'
 import { CalculatorApp } from './apps/CalculatorApp.tsx'
 import { ClockApp } from './apps/ClockApp.tsx'
 import { NotesApp } from './apps/NotesApp.tsx'
@@ -231,6 +232,9 @@ export function PhoneScreen({ nerve }: Props) {
                 onChange={updateSetting}
               />
             )}
+            {activeApp === 'banking' && (
+              <BankingApp nerve={nerve} contacts={state.contacts} />
+            )}
             {activeApp === 'calculator' && <CalculatorApp />}
             {activeApp === 'clock' && <ClockApp />}
             {activeApp === 'weather' && <WeatherApp />}
@@ -239,6 +243,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
               activeApp !== 'settings' &&
+              activeApp !== 'banking' &&
               activeApp !== 'calculator' &&
               activeApp !== 'clock' &&
               activeApp !== 'weather' &&
