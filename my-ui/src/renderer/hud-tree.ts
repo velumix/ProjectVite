@@ -76,23 +76,23 @@ export const mainHudTree: Node = {
       icon('WeatherIcon', 'cloud', 25, 23, 169, 14, 23),
       label('WeatherText', '18°C', 48, 20, 201, 14, 14, { TextColor3: muted }),
       label('WeatherTimeText', '12:24 PM', 58, 19, 201, 34, 11, { TextColor3: muted }),
-    ], { Position: position(18, -48, 0, 1), AnchorPoint: { X: 0, Y: 1 } }),
-    panel('HotbarDock', 460, 92, 0, 0, [
+    ], { Position: position(18, -18, 0, 1), AnchorPoint: { X: 0, Y: 1 } }),
+    panel('HotbarDock', 396, 78, 0, 0, [
       ...(['Bat', 'Pot', 'Defend', 'Run', 'Eat'] as const).map((name, index) => {
         const selected = (state: Record<string, unknown>) => (state.Player as { SelectedSlot?: number })?.SelectedSlot === index + 1
-        return frame(`HotbarSlot_${index + 1}`, 82, 78, 8 + index * 90, 7, [
+        return frame(`HotbarSlot_${index + 1}`, 68, 66, 8 + index * 76, 6, [
           corner(7), { ClassName: 'UIStroke', Color: computed(['Player.SelectedSlot'], state => selected(state) ? cyan : stroke), Thickness: 1.5 },
-          icon(`HotbarIcon_${index + 1}`, (['bat', 'pot', 'shield', 'run', 'burger'] as const)[index], 80, 46, 0, 8, index === 0 ? 39 : index === 2 ? 22 : 29),
-          panel(`HotbarKey_${index + 1}`, 18, 19, 5, 4, [label(`HotbarKeyText_${index + 1}`, String(index + 1), 16, 17, 0, 0, 12, { TextXAlignment: 'Center' })]),
-          label(`HotbarName_${index + 1}`, name, 80, 20, 0, 50, 12, { TextXAlignment: 'Center' }),
+          icon(`HotbarIcon_${index + 1}`, (['bat', 'pot', 'shield', 'run', 'burger'] as const)[index], 66, 38, 0, 6, index === 0 ? 30 : index === 2 ? 18 : 23),
+          panel(`HotbarKey_${index + 1}`, 16, 17, 5, 4, [label(`HotbarKeyText_${index + 1}`, String(index + 1), 14, 15, 0, 0, 11, { TextXAlignment: 'Center' })]),
+          label(`HotbarName_${index + 1}`, name, 66, 18, 0, 43, 11, { TextXAlignment: 'Center' }),
         ], { ClassName: 'TextButton', Text: '', BackgroundColor3: color(.04, .06, .09), BackgroundTransparency: .25 })
       }),
-    ], { Position: position(0, -50, .5, 1), AnchorPoint: { X: .5, Y: 1 } }),
+    ], { Position: position(0, -18, .5, 1), AnchorPoint: { X: .5, Y: 1 } }),
     panel('KeybindTooltip', 205, 44, 0, 0, [
       label('KeybindText', 'Press', 36, 24, 17, 10, 12, { TextColor3: muted }),
       panel('TabKey', 37, 22, 59, 10, [label('TabKeyText', 'TAB', 35, 20, 0, 0, 12, { TextXAlignment: 'Center' })]),
       label('CursorHint', 'to open cursor', 89, 24, 109, 10, 12, { TextColor3: muted }),
-    ], { Position: position(-18, -50, 1, 1), AnchorPoint: { X: 1, Y: 1 } }),
+    ], { Position: position(-18, -18, 1, 1), AnchorPoint: { X: 1, Y: 1 } }),
     frame('SideActionDock', 64, 418, 0, 0, [
       { ClassName: 'UIListLayout', FillDirection: 'Vertical', SortOrder: 'LayoutOrder', Padding: { Scale: 0, Offset: 9 } },
       ...(['Items', 'Quests', 'Stats', 'Shop', 'Options'] as const).map((name, index) => panel(

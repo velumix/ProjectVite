@@ -295,7 +295,7 @@ export function setupLivingUiListeners(): () => void {
     }
   }
 
-  const handlePointerDown = (e: PointerEvent) => {
+  const handleClick = (e: MouseEvent) => {
     if (e.button !== 0) return
     const target = e.target as Element | null
     if (isInteractive(target)) {
@@ -304,10 +304,10 @@ export function setupLivingUiListeners(): () => void {
   }
 
   window.addEventListener('pointerover', handlePointerOver, { passive: true })
-  window.addEventListener('pointerdown', handlePointerDown, { passive: true })
+  window.addEventListener('click', handleClick, { passive: true })
 
   return () => {
     window.removeEventListener('pointerover', handlePointerOver)
-    window.removeEventListener('pointerdown', handlePointerDown)
+    window.removeEventListener('click', handleClick)
   }
 }
