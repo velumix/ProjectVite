@@ -474,7 +474,7 @@ export function SettingsScreen({
                         checked={settings.vsync}
                         onChange={() => handleToggle('vsync')}
                       />
-                      <span className="settings-switch-slider" />
+                      
                     </label>
                   </div>
                 </div>
@@ -584,7 +584,7 @@ export function SettingsScreen({
                       checked={settings.postProcessing}
                       onChange={() => handleToggle('postProcessing')}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
@@ -602,7 +602,7 @@ export function SettingsScreen({
                       checked={settings.motionBlur}
                       onChange={() => handleToggle('motionBlur')}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
@@ -620,7 +620,7 @@ export function SettingsScreen({
                       checked={settings.ambientOcclusion}
                       onChange={() => handleToggle('ambientOcclusion')}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
@@ -731,7 +731,7 @@ export function SettingsScreen({
                       checked={settings.voiceChat}
                       onChange={() => handleToggle('voiceChat')}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
               </div>
@@ -779,7 +779,7 @@ export function SettingsScreen({
                       checked={settings.showMinimap}
                       onChange={() => handleToggle('showMinimap')}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
@@ -797,7 +797,7 @@ export function SettingsScreen({
                       checked={settings.showDamageNumbers}
                       onChange={() => handleToggle('showDamageNumbers')}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
@@ -834,7 +834,7 @@ export function SettingsScreen({
                       checked={settings.interactionPrompts}
                       onChange={() => handleToggle('interactionPrompts')}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
@@ -909,7 +909,7 @@ export function SettingsScreen({
                         setShowQuantities(e.target.checked)
                       }}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
@@ -930,7 +930,7 @@ export function SettingsScreen({
                         setMotion(e.target.checked)
                       }}
                     />
-                    <span className="settings-switch-slider" />
+                    
                   </label>
                 </div>
 
