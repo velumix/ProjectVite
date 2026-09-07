@@ -65,6 +65,42 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
   const [motion, setMotion] = useState(true)
   const [draggedItem, setDraggedItem] = useState<DragPayload | null>(null)
   const [dragOverTarget, setDragOverTarget] = useState<string | null>(null)
+  const [characterRotation, setCharacterRotation] = useState(0)
+  const [isRotating, setIsRotating] = useState(false)
+  const [dragStart, setDragStart] = useState<{ x: number; rot: number } | null>(null)
+  const [zoomLevel, setZoomLevel] = useState(1)
+
+  function handleViewportPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.button !== 0) return
+    if ((event.target as HTMLElement).closest('.city-viewport-controls')) return
+    event.currentTarget.setPointerCapture?.(event.pointerId)
+    setIsRotating(true)
+    setDragStart({ x: event.clientX, rot: characterRotation })
+  }
+
+  function handleViewportPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (!isRotating || !dragStart) return
+    const deltaX = event.clientX - dragStart.x
+    const nextRot = (dragStart.rot + deltaX * 0.75) % 360
+    setCharacterRotation(nextRot < 0 ? nextRot + 360 : nextRot)
+  }
+
+  function handleViewportPointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    if (!isRotating) return
+    setIsRotating(false)
+    setDragStart(null)
+    try {
+      event.currentTarget.releasePointerCapture?.(event.pointerId)
+    } catch {
+      // ignore
+    }
+  }
+
+  const normalizedYaw = ((characterRotation % 360) + 360) % 360
+  const isFrontFacing = normalizedYaw > 90 && normalizedYaw < 270
+  const visualTilt = isFrontFacing
+    ? (normalizedYaw - 180) * 0.35
+    : (normalizedYaw > 180 ? normalizedYaw - 360 : normalizedYaw) * 0.35
 
   const dialog = useRef<HTMLDivElement>(null)
   const open = menuPanelNames.has(panel)
@@ -166,10 +202,10 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
   return (
     <div ref={dialog} role="dialog" aria-modal="true" aria-label={`${panel} menu`} tabIndex={-1}
       data-roblox-name={`${panel}PanelModal`} className={`city-menu${motion ? '' : ' city-menu-still'}`}
-      style={{ '--city-scene': `url("${assetRoot}city-character.png")`, '--city-panel-opacity': panelOpacity / 100 } as CSSProperties} onKeyDown={handleKeyDown}>
+      style={{ '--city-scene': `url("${assetRoot}city-backdrop.jpg")`, '--city-panel-opacity': panelOpacity / 100 } as CSSProperties} onKeyDown={handleKeyDown}>
       <div className="city-menu-backdrop" />
       <header className="city-menu-header">
-        <div className="city-brand"><strong>SUN CITY</strong><span>LOS SANTOS INSPIRED</span></div>
+        <div className="city-brand"><strong>SUN CITY</strong></div>
         <nav className="city-tabs" aria-label="Game menu">
           {tabs.map(tab => <button type="button" key={tab} aria-current={panel === tab ? 'page' : undefined} onClick={() => onPanelChange(tab)}>{tab.toUpperCase()}</button>)}
         </nav>
@@ -228,6 +264,83 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
               )
             })}
           </div>
+
+          <div
+            className={`city-viewport-frame${isRotating ? ' is-interacting' : ''}`}
+            data-roblox-class="ViewportFrame"
+            data-roblox-name="CharacterViewport"
+            role="region"
+            aria-label="Character ViewportFrame"
+            onPointerDown={handleViewportPointerDown}
+            onPointerMove={handleViewportPointerMove}
+            onPointerUp={handleViewportPointerUp}
+            onPointerCancel={handleViewportPointerUp}
+          >
+            <div className="city-viewport-badge">
+              <span className="city-viewport-tag">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+                ViewportFrame
+              </span>
+              <div className="city-viewport-controls">
+                <button
+                  type="button"
+                  className="city-viewport-btn"
+                  aria-label="Rotate left"
+                  title="Rotate left"
+                  onClick={(e) => { e.stopPropagation(); setCharacterRotation((rot) => ((rot - 45) % 360 + 360) % 360) }}
+                >
+                  ↺
+                </button>
+                <button
+                  type="button"
+                  className="city-viewport-btn"
+                  aria-label="Reset camera"
+                  title="Reset camera view"
+                  onClick={(e) => { e.stopPropagation(); setCharacterRotation(0); setZoomLevel(1) }}
+                >
+                  ⌖
+                </button>
+                <button
+                  type="button"
+                  className="city-viewport-btn"
+                  aria-label="Rotate right"
+                  title="Rotate right"
+                  onClick={(e) => { e.stopPropagation(); setCharacterRotation((rot) => (rot + 45) % 360) }}
+                >
+                  ↻
+                </button>
+              </div>
+            </div>
+
+            <div
+              className="city-viewport-stage"
+              style={{ transform: `scale(${zoomLevel})` }}
+            >
+              <div className="city-viewport-pedestal" />
+              <div
+                className="city-viewport-model"
+                style={{
+                  transform: `perspective(700px) rotateY(${visualTilt}deg)`,
+                }}
+              >
+                <img
+                  src={`${assetRoot}${isFrontFacing ? 'character-front.png' : 'character-back.png'}`}
+                  alt="Player character 3D preview"
+                  className="city-viewport-character-img"
+                  draggable={false}
+                />
+              </div>
+            </div>
+
+            <div className="city-viewport-hint">
+              <span>Drag to rotate • {Math.round(normalizedYaw)}°</span>
+            </div>
+          </div>
+
           <div className="city-player-card"><strong>{String(bindings.get('Player.Name') ?? 'Player1')}</strong><span>Level {Number(bindings.get('Player.Level') ?? 42)}</span><div className="city-xp-track"><i /></div><small><b>12,450</b> / 25,000 XP</small></div>
         </aside>
 

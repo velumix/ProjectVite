@@ -59,6 +59,7 @@ const RENDERABLE_CLASSES = new Set([
   'ImageLabel',
   'ImageButton',
   'ScrollingFrame',
+  'ViewportFrame',
 ])
 
 const UI_COMPONENT_CLASS_NAMES = new Set([

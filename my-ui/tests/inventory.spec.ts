@@ -131,3 +131,14 @@ test('drag and drop enables assigning to quick slots, reordering quick slots, mo
   await grid.getByRole('button', { name: 'Water bottle, 3', exact: true }).dragTo(dropButton)
   await expect(grid.getByRole('button', { name: 'Water bottle, 3', exact: true })).toHaveCount(0)
 })
+
+test('character equipment displays ViewportFrame and branding does not include Los Santos', async ({ page }) => {
+  await openInventory(page)
+  const viewport = page.locator('[data-roblox-class="ViewportFrame"][data-roblox-name="CharacterViewport"]')
+  await expect(viewport).toBeVisible()
+  await expect(page.getByText(/LOS SANTOS INSPIRED/i)).toHaveCount(0)
+  const rotateRightBtn = viewport.getByRole('button', { name: 'Rotate right' })
+  await expect(rotateRightBtn).toBeVisible()
+  await rotateRightBtn.click()
+  await expect(viewport.getByText(/45°/)).toBeVisible()
+})
