@@ -111,15 +111,26 @@ function App() {
   }, [currentActivePanel])
 
   useEffect(() => {
-    const openInventory = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey || event.altKey || event.repeat || event.code !== 'KeyI') return
-      if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [role="dialog"]')) return
-      event.preventDefault()
-      void actions.run('TogglePanel', { Panel: 'Inventory' }).promise
+    const handleHotkeys = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return
+      if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select')) return
+      if (event.code === 'KeyI') {
+        if (event.target instanceof HTMLElement && event.target.closest('[role="dialog"]')) return
+        event.preventDefault()
+        void actions.run('TogglePanel', { Panel: 'Inventory' }).promise
+      } else if (event.code === 'KeyP') {
+        event.preventDefault()
+        const current = String(bindingStore.get('UI.ActivePanel') ?? 'None')
+        if (current === 'Phone') {
+          void actions.run('ClosePanel', {}).promise
+        } else {
+          bindingStore.set('UI.ActivePanel', 'Phone')
+        }
+      }
     }
-    window.addEventListener('keydown', openInventory)
-    return () => window.removeEventListener('keydown', openInventory)
-  }, [actions])
+    window.addEventListener('keydown', handleHotkeys)
+    return () => window.removeEventListener('keydown', handleHotkeys)
+  }, [actions, bindingStore])
 
   useEffect(() => {
     scenarioRunner.start(activeScenario)
@@ -256,6 +267,23 @@ function App() {
               <path d="M3 3v5h5" />
             </svg>
             <span>Reset</span>
+          </button>
+
+          <button
+            type="button"
+            className={`ag-btn-secondary py-1 text-xs ${currentActivePanel === 'Phone' ? 'active text-blue-300 border-blue-500/50' : ''}`}
+            onClick={() => {
+              if (currentActivePanel === 'Phone') {
+                void actions.run('ClosePanel', {}).promise
+              } else {
+                bindingStore.set('UI.ActivePanel', 'Phone')
+              }
+            }}
+            title="Toggle SunPhone (Press P)"
+          >
+            <span className="text-xs">📱</span>
+            <span>Phone</span>
+            <kbd className="text-[9px] font-mono bg-slate-800/80 px-1 py-0.5 rounded text-slate-300 border border-slate-700">P</kbd>
           </button>
 
           <button
