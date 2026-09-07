@@ -78,3 +78,68 @@ test('dynamic island responds to calls and home indicator navigates to springboa
   await expect(page.locator('.phone-springboard')).toBeVisible()
   await expect(page.locator('.phone-springboard-widget-row')).toBeVisible()
 })
+
+test('calculator utility app performs calculations and preserves history', async ({ page }) => {
+  await openPhone(page)
+  // Navigate to Springboard then launch Calculator
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await page.getByRole('button', { name: 'Open Calculator' }).click()
+  await expect(page.locator('.calc-container')).toBeVisible()
+
+  // 7 + 8 = 15
+  await page.locator('.calc-btn:has-text("7")').click()
+  await page.locator('.calc-btn-op:has-text("+")').click()
+  await page.locator('.calc-btn:has-text("8")').click()
+  await page.locator('.calc-btn-equals').click()
+  await expect(page.locator('.calc-result')).toHaveText('15')
+
+  // Open history
+  await page.getByRole('button', { name: 'Calculation history' }).click()
+  await expect(page.locator('.calc-history-drawer')).toBeVisible()
+  await expect(page.locator('.calc-history-row')).toContainText('7 + 8')
+})
+
+test('clock utility app tracks stopwatch laps and displays world cities', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await page.getByRole('button', { name: 'Open Clock' }).click()
+  await expect(page.locator('.clock-app-container')).toBeVisible()
+
+  // Verify World Clock tab cities
+  await expect(page.locator('.clock-city-name:has-text("Sun City")')).toBeVisible()
+  await expect(page.locator('.clock-city-name:has-text("Tokyo")')).toBeVisible()
+
+  // Switch to Stopwatch tab
+  await page.getByRole('button', { name: 'Stopwatch' }).click()
+  await expect(page.locator('.clock-stopwatch-display')).toBeVisible()
+  await page.getByRole('button', { name: 'Start' }).click()
+  await page.waitForTimeout(100)
+  await page.getByRole('button', { name: 'Lap' }).click()
+  await expect(page.locator('.clock-lap-row')).toBeVisible()
+  await page.getByRole('button', { name: 'Stop' }).click()
+})
+
+test('weather and notes utility apps render forecasts and manage notes', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  
+  // Weather
+  await page.getByRole('button', { name: 'Open Weather' }).click()
+  await expect(page.locator('.weather-container')).toBeVisible()
+  await expect(page.locator('.weather-city-name')).toHaveText('Sun City')
+  await expect(page.locator('.weather-hourly-card')).toBeVisible()
+
+  // Return to Springboard & open Notes
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await page.getByRole('button', { name: 'Open Notes' }).click()
+  await expect(page.locator('.notes-app-container')).toBeVisible()
+  await expect(page.locator('.notes-item-card:has-text("Garage Access Codes")')).toBeVisible()
+
+  // Create a note
+  await page.getByRole('button', { name: 'Create note' }).click()
+  await expect(page.locator('.notes-editor-view')).toBeVisible()
+  await page.locator('.notes-title-input').fill('Emergency Meeting')
+  await page.locator('.notes-body-input').fill('Meet at Del Perro pier at midnight.')
+  await page.locator('.notes-back-btn').click()
+  await expect(page.locator('.notes-item-card:has-text("Emergency Meeting")')).toBeVisible()
+})

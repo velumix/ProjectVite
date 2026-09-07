@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { NervePreviewAdapter } from '../nerve/contracts.ts'
 import { type PhoneContact, type PhoneMessage, type PhoneSettings, type PhoneState, type PreviewPhoneService } from '../nerve/preview.ts'
+import { CalculatorApp } from './apps/CalculatorApp.tsx'
+import { ClockApp } from './apps/ClockApp.tsx'
+import { NotesApp } from './apps/NotesApp.tsx'
+import { WeatherApp } from './apps/WeatherApp.tsx'
 import { DOCK_PHONE_APPS, INSTALLED_PHONE_APPS, PHONE_APPS } from './phone-apps.ts'
 import { PhoneControlCenter } from './PhoneControlCenter.tsx'
 import { PhoneDynamicIsland } from './PhoneDynamicIsland.tsx'
@@ -227,10 +231,18 @@ export function PhoneScreen({ nerve }: Props) {
                 onChange={updateSetting}
               />
             )}
+            {activeApp === 'calculator' && <CalculatorApp />}
+            {activeApp === 'clock' && <ClockApp />}
+            {activeApp === 'weather' && <WeatherApp />}
+            {activeApp === 'notes' && <NotesApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
-              activeApp !== 'settings' && <CatalogApp app={activeApp} />}
+              activeApp !== 'settings' &&
+              activeApp !== 'calculator' &&
+              activeApp !== 'clock' &&
+              activeApp !== 'weather' &&
+              activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}
 

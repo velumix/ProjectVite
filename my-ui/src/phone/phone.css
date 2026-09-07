@@ -206,6 +206,138 @@
 .phone-lockscreen-swipe-prompt:hover { color: #fff; }
 .phone-home-indicator-pill { width: 120px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.6); margin-top: .4em; }
 
+/* -------------------------------------------------------------
+   UTILITY APPS: Calculator, Clock, Weather, Notes
+   ------------------------------------------------------------- */
+
+/* Calculator */
+.calc-container { height: calc(100% - 3.4em); display: flex; flex-direction: column; justify-content: flex-end; padding: .8em 1.2em 1em; background: #000; color: #fff; position: relative; }
+.calc-top-bar { display: flex; justify-content: space-between; align-items: center; padding: .2em 0; }
+.calc-icon-btn { border: 0; background: none; color: #f59e0b; font-size: 1.3em; cursor: pointer; }
+.calc-title { font-size: .85em; color: #71717a; }
+.calc-display-panel { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; margin-bottom: .8em; overflow: hidden; }
+.calc-expression { font-size: 1.1em; color: #a1a1aa; min-height: 1.4em; }
+.calc-result { font-size: 3.2em; font-weight: 260; line-height: 1.1; letter-spacing: -1px; word-break: break-all; }
+.calc-keypad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6em; }
+.calc-btn { aspect-ratio: 1; border-radius: 50%; border: 0; background: #27272a; color: #fff; font-size: 1.4em; cursor: pointer; display: grid; place-items: center; transition: all .15s; }
+.calc-btn:hover { filter: brightness(1.2); }
+.calc-btn:active { transform: scale(.95); }
+.calc-btn-utility { background: #52525b; color: #fff; }
+.calc-btn-op { background: #f59e0b; color: #fff; }
+.calc-btn-op.is-active { background: #fff; color: #f59e0b; }
+.calc-btn-zero { grid-column: span 2; aspect-ratio: auto; border-radius: 35px; padding-left: 20px; justify-content: flex-start; }
+.calc-history-drawer { position: absolute; inset: 0; background: rgba(18, 18, 20, 0.95); backdrop-filter: blur(16px); padding: 1.2em; display: flex; flex-direction: column; z-index: 25; }
+.calc-history-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3f3f46; padding-bottom: .6em; }
+.calc-history-clear { border: 0; background: none; color: #ef4444; cursor: pointer; }
+.calc-history-close { border: 0; background: none; color: #a1a1aa; font-size: 1.5em; cursor: pointer; }
+.calc-history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: .8em; margin-top: 1em; }
+.calc-history-row { background: #27272a; border-radius: 8px; padding: .6em .8em; display: flex; flex-direction: column; cursor: pointer; }
+.calc-history-row small { color: #a1a1aa; }
+.calc-history-row strong { font-size: 1.1em; color: #f59e0b; }
+.calc-history-empty { text-align: center; color: #71717a; margin-top: 2em; }
+
+/* Clock */
+.clock-app-container { height: calc(100% - 3.4em); display: flex; flex-direction: column; background: #0c1218; color: #fff; }
+.clock-tabs { display: flex; justify-content: space-around; background: #111a24; border-bottom: 1px solid #ffffff12; }
+.clock-tab-btn { border: 0; background: none; color: #94a3b8; padding: .75em .5em; font-size: .8em; font-weight: 500; cursor: pointer; }
+.clock-tab-btn.is-active { color: #f59e0b; border-bottom: 2px solid #f59e0b; }
+.clock-content { flex: 1; overflow-y: auto; padding: 1.2em; }
+.clock-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em; }
+.clock-section-header h3 { margin: 0; font-size: 1.1em; }
+.clock-action-btn { border: 0; background: none; color: #f59e0b; font-size: .95em; cursor: pointer; font-weight: 600; }
+.clock-city-list, .clock-alarm-list { display: flex; flex-direction: column; gap: .7em; }
+.clock-city-card, .clock-alarm-card { background: #16222f; border: 1px solid #ffffff10; border-radius: 12px; padding: .9em 1.1em; display: flex; justify-content: space-between; align-items: center; }
+.clock-city-region { display: block; font-size: .7em; color: #94a3b8; }
+.clock-city-name { font-size: 1.1em; }
+.clock-city-time { font-size: 1.6em; font-weight: 300; }
+.clock-alarm-card.is-disabled { opacity: .5; }
+.clock-alarm-time { font-size: 1.6em; font-weight: 300; display: block; }
+.clock-alarm-label { font-size: .75em; color: #94a3b8; }
+.clock-toggle-switch { position: relative; width: 44px; height: 26px; }
+.clock-toggle-switch input { opacity: 0; width: 0; height: 0; }
+.clock-toggle-slider { position: absolute; inset: 0; cursor: pointer; background: #334155; border-radius: 26px; transition: .2s; }
+.clock-toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+.clock-toggle-switch input:checked + .clock-toggle-slider { background: #10b981; }
+.clock-toggle-switch input:checked + .clock-toggle-slider:before { transform: translateX(18px); }
+.clock-stopwatch-display { text-align: center; margin: 1.5em 0; }
+.clock-stopwatch-display span { font-size: 3.2em; font-weight: 200; font-family: monospace; letter-spacing: -1px; }
+.clock-stopwatch-controls { display: flex; justify-content: space-around; margin-bottom: 1.5em; }
+.clock-round-btn { width: 68px; height: 68px; border-radius: 50%; border: 1px solid transparent; font-size: .88em; font-weight: 600; cursor: pointer; display: grid; place-items: center; }
+.clock-round-btn.is-secondary { background: #243444; color: #cbd5e1; }
+.clock-round-btn.is-start { background: #064e3b; border-color: #059669; color: #34d399; }
+.clock-round-btn.is-stop, .clock-round-btn.is-pause { background: #7f1d1d; border-color: #dc2626; color: #f87171; }
+.clock-laps-table { border-top: 1px solid #ffffff12; padding-top: .8em; display: flex; flex-direction: column; gap: .4em; font-family: monospace; font-size: .82em; }
+.clock-lap-row { display: flex; justify-content: space-between; padding: .4em 0; border-bottom: 1px solid #ffffff08; }
+.clock-lap-header { color: #94a3b8; font-weight: bold; }
+.clock-timer-circle { width: 190px; height: 190px; border-radius: 50%; border: 4px solid #f59e0b; margin: 1em auto 2em; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.clock-timer-countdown { font-size: 2.5em; font-weight: 200; font-family: monospace; }
+.clock-timer-sub { color: #f59e0b; font-size: .75em; text-transform: uppercase; }
+.clock-timer-pickers { display: flex; justify-content: center; gap: 1em; margin: 2em 0; }
+.clock-picker-column { display: flex; flex-direction: column; align-items: center; gap: .3em; }
+.clock-picker-column input { width: 60px; height: 50px; background: #16222f; border: 1px solid #ffffff18; border-radius: 8px; color: #fff; text-align: center; font-size: 1.4em; }
+.clock-picker-column span { font-size: .75em; color: #94a3b8; }
+.clock-modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 30; }
+.clock-modal-card { background: #131c26; border: 1px solid #ffffff18; border-radius: 14px; padding: 1.2em; width: 85%; max-width: 320px; }
+.clock-modal-card h4 { margin: 0 0 1em; }
+.clock-modal-form { display: flex; flex-direction: column; gap: .5em; }
+.clock-modal-form label { font-size: .75em; color: #94a3b8; }
+.clock-modal-form input { background: #1c2b3a; border: 1px solid #ffffff12; border-radius: 6px; padding: .6em; color: #fff; }
+.clock-modal-actions { display: flex; justify-content: flex-end; gap: .8em; margin-top: 1.2em; }
+.clock-modal-actions button { border: 0; background: none; color: #94a3b8; cursor: pointer; padding: .4em .8em; }
+.clock-modal-actions button.is-save { background: #f59e0b; color: #000; border-radius: 6px; font-weight: 600; }
+
+/* Weather */
+.weather-container { height: calc(100% - 3.4em); overflow-y: auto; padding: 1.2em; background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%); color: #fff; }
+.weather-hero { text-align: center; padding: .5em 0 1.5em; }
+.weather-city-name { margin: 0; font-size: 1.4em; font-weight: 500; }
+.weather-temp-display { font-size: 4em; font-weight: 200; line-height: 1; margin: .1em 0; }
+.weather-condition-label { margin: 0; font-size: 1em; color: #cbd5e1; }
+.weather-hi-lo { font-size: .8em; color: #94a3b8; }
+.weather-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 1em; margin-bottom: 1em; }
+.weather-card-caption { margin: 0 0 .8em; font-size: .68em; color: #94a3b8; letter-spacing: .08em; font-weight: 600; }
+.weather-hourly-list { display: flex; gap: 1.2em; overflow-x: auto; padding-bottom: .4em; }
+.weather-hourly-col { display: flex; flex-direction: column; align-items: center; gap: .35em; font-size: .8em; }
+.weather-hourly-time { color: #94a3b8; font-size: .8em; }
+.weather-hourly-icon { font-size: 1.2em; }
+.weather-daily-list { display: flex; flex-direction: column; gap: .6em; }
+.weather-daily-row { display: flex; align-items: center; justify-content: space-between; font-size: .85em; }
+.weather-daily-name { width: 45px; }
+.weather-daily-bar-container { flex: 1; display: flex; align-items: center; gap: .6em; margin-left: 1em; }
+.weather-daily-low, .weather-daily-high { font-size: .8em; color: #94a3b8; width: 26px; text-align: right; }
+.weather-daily-bar { flex: 1; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.15); position: relative; }
+.weather-daily-bar-fill { position: absolute; height: 100%; border-radius: 2px; background: linear-gradient(90deg, #38bdf8, #f59e0b); }
+.weather-details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8em; }
+.weather-metric-card { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: .8em; display: flex; flex-direction: column; gap: .2em; }
+.weather-metric-card small { font-size: .65em; color: #94a3b8; letter-spacing: .05em; }
+.weather-metric-card strong { font-size: 1.2em; }
+.weather-metric-card span { font-size: .7em; color: #cbd5e1; }
+
+/* Notes */
+.notes-app-container { height: calc(100% - 3.4em); display: flex; flex-direction: column; background: #090e14; color: #fff; padding: 1.2em; }
+.notes-header { display: flex; justify-content: space-between; align-items: center; }
+.notes-heading { margin: 0; font-size: 1.4em; }
+.notes-create-btn { border: 0; background: none; font-size: 1.2em; cursor: pointer; }
+.notes-search-bar input { width: 100%; background: #141e28; border: 1px solid #ffffff15; border-radius: 8px; padding: .55em .8em; color: #fff; margin: .8em 0; font-size: .85em; }
+.notes-list-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1em; }
+.notes-group-label { font-size: .68em; color: #94a3b8; font-weight: 600; letter-spacing: .08em; }
+.notes-card-list { display: flex; flex-direction: column; gap: .6em; margin-top: .4em; }
+.notes-item-card { background: #131d27; border: 1px solid #ffffff10; border-radius: 10px; padding: .8em .9em; cursor: pointer; transition: background .15s; }
+.notes-item-card:hover { background: #1a2836; }
+.notes-item-header { display: flex; justify-content: space-between; align-items: center; }
+.notes-item-header strong { font-size: .9em; }
+.notes-pin-badge { font-size: .8em; }
+.notes-item-preview { margin: .3em 0; font-size: .78em; color: #94a3b8; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.notes-item-date { font-size: .68em; color: #64748b; }
+.notes-empty-state { text-align: center; color: #64748b; font-size: .82em; margin-top: 1.5em; }
+.notes-editor-toolbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffffff12; padding-bottom: .6em; margin-bottom: .8em; }
+.notes-back-btn { border: 0; background: none; color: #f59e0b; font-size: .95em; cursor: pointer; font-weight: 600; }
+.notes-editor-actions { display: flex; gap: .6em; }
+.notes-tool-btn { border: 0; background: none; font-size: 1.1em; cursor: pointer; }
+.notes-tool-btn.is-pinned { opacity: 1; }
+.notes-title-input { width: 100%; background: transparent; border: 0; color: #fff; font-size: 1.4em; font-weight: bold; margin-bottom: .2em; outline: none; }
+.notes-editor-meta { font-size: .7em; color: #64748b; margin-bottom: 1em; }
+.notes-body-input { flex: 1; width: 100%; background: transparent; border: 0; color: #cbd5e1; font-size: .9em; line-height: 1.6; resize: none; outline: none; }
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {
