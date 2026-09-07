@@ -7132,6 +7132,245 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "SkyRideService": {
+      "GetRideStatus": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "activeRide": {
+                  "kind": "optional",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "driverName": {
+                        "kind": "string"
+                      },
+                      "vehicleModel": {
+                        "kind": "string"
+                      },
+                      "licensePlate": {
+                        "kind": "string"
+                      },
+                      "pickup": {
+                        "kind": "string"
+                      },
+                      "destination": {
+                        "kind": "string"
+                      },
+                      "fare": {
+                        "kind": "float64"
+                      },
+                      "status": {
+                        "kind": "string"
+                      },
+                      "etaMinutes": {
+                        "kind": "float64"
+                      },
+                      "driverRating": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                },
+                "history": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": {
+                        "kind": "string"
+                      },
+                      "destination": {
+                        "kind": "string"
+                      },
+                      "date": {
+                        "kind": "string"
+                      },
+                      "fare": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "RequestRide": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "pickup": {
+              "kind": "string"
+            },
+            "destination": {
+              "kind": "string"
+            },
+            "tier": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "driverName": {
+                    "kind": "string"
+                  },
+                  "vehicleModel": {
+                    "kind": "string"
+                  },
+                  "licensePlate": {
+                    "kind": "string"
+                  },
+                  "pickup": {
+                    "kind": "string"
+                  },
+                  "destination": {
+                    "kind": "string"
+                  },
+                  "fare": {
+                    "kind": "float64"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "etaMinutes": {
+                    "kind": "float64"
+                  },
+                  "driverRating": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CancelRide": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "RideStatusChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "driverName": {
+                  "kind": "string"
+                },
+                "vehicleModel": {
+                  "kind": "string"
+                },
+                "licensePlate": {
+                  "kind": "string"
+                },
+                "pickup": {
+                  "kind": "string"
+                },
+                "destination": {
+                  "kind": "string"
+                },
+                "fare": {
+                  "kind": "float64"
+                },
+                "status": {
+                  "kind": "string"
+                },
+                "etaMinutes": {
+                  "kind": "float64"
+                },
+                "driverRating": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "RideUpdated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "status": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest
