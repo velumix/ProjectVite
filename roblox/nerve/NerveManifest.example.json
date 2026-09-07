@@ -3299,6 +3299,266 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "HouseService": {
+      "GetProperties": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "label": {
+                    "kind": "string"
+                  },
+                  "address": {
+                    "kind": "string"
+                  },
+                  "tier": {
+                    "kind": "string"
+                  },
+                  "isLocked": {
+                    "kind": "bool"
+                  },
+                  "alarmActive": {
+                    "kind": "bool"
+                  },
+                  "hasStash": {
+                    "kind": "bool"
+                  },
+                  "garageSlots": {
+                    "kind": "float64"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  },
+                  "keys": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "keyId": {
+                          "kind": "string"
+                        },
+                        "holderName": {
+                          "kind": "string"
+                        },
+                        "issuedAt": {
+                          "kind": "float64"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ToggleLock": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "propertyId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleAlarm": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "propertyId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ShareKey": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "propertyId": {
+              "kind": "string"
+            },
+            "recipientName": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "keyId": {
+                    "kind": "string"
+                  },
+                  "holderName": {
+                    "kind": "string"
+                  },
+                  "issuedAt": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "RevokeKey": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "propertyId": {
+              "kind": "string"
+            },
+            "keyId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "PropertyUpdated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "label": {
+                  "kind": "string"
+                },
+                "address": {
+                  "kind": "string"
+                },
+                "tier": {
+                  "kind": "string"
+                },
+                "isLocked": {
+                  "kind": "bool"
+                },
+                "alarmActive": {
+                  "kind": "bool"
+                },
+                "hasStash": {
+                  "kind": "bool"
+                },
+                "garageSlots": {
+                  "kind": "float64"
+                },
+                "x": {
+                  "kind": "float64"
+                },
+                "y": {
+                  "kind": "float64"
+                },
+                "keys": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "keyId": {
+                        "kind": "string"
+                      },
+                      "holderName": {
+                        "kind": "string"
+                      },
+                      "issuedAt": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

@@ -730,6 +730,36 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type PropertyKey = {
+  keyId: string
+  holderName: string
+  issuedAt: number
+}
+
+export type HousingProperty = {
+  id: string
+  label: string
+  address: string
+  tier: string
+  isLocked: boolean
+  alarmActive: boolean
+  hasStash: boolean
+  garageSlots: number
+  x: number
+  y: number
+  keys: PropertyKey[]
+}
+
+export type PreviewHouseService = {
+  GetProperties: NerveMethod<Record<string, never> | undefined, [HousingProperty[]]>
+  ToggleLock: NerveMethod<{ propertyId: string }, [boolean, boolean, string?]>
+  ToggleAlarm: NerveMethod<{ propertyId: string }, [boolean, boolean, string?]>
+  ShareKey: NerveMethod<{ propertyId: string; recipientName: string }, [boolean, PropertyKey?, string?]>
+  RevokeKey: NerveMethod<{ propertyId: string; keyId: string }, [boolean, string?]>
+  PropertyUpdated: NerveSignal<[HousingProperty]>
+}
+
 export type CryptoHolding = {
   coin: string
   name: string
@@ -944,6 +974,56 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
 
   
   
+  
+  const housingProperties: HousingProperty[] = [
+    {
+      id: 'prop-1',
+      label: 'Eclipse Towers Penthouse 3',
+      address: 'South Boulevard Del Perro, Rockford Hills',
+      tier: 'Luxury Penthouse',
+      isLocked: true,
+      alarmActive: true,
+      hasStash: true,
+      garageSlots: 10,
+      x: -775,
+      y: 312,
+      keys: [
+        { keyId: 'key-1', holderName: 'Alex Mercer', issuedAt: Date.now() - 86400000 * 30 },
+        { keyId: 'key-2', holderName: 'Jordan Hayes', issuedAt: Date.now() - 86400000 * 5 },
+      ],
+    },
+    {
+      id: 'prop-2',
+      label: 'Vinewood Hills Stilt House',
+      address: '2044 North Conker Avenue, Vinewood',
+      tier: 'Designer Villa',
+      isLocked: false,
+      alarmActive: false,
+      hasStash: true,
+      garageSlots: 6,
+      x: -260,
+      y: 1320,
+      keys: [
+        { keyId: 'key-3', holderName: 'Alex Mercer', issuedAt: Date.now() - 86400000 * 14 },
+      ],
+    },
+    {
+      id: 'prop-3',
+      label: 'Vespucci Canals Waterfront',
+      address: 'Canal Walkway 4B, Vespucci',
+      tier: 'Beach Townhome',
+      isLocked: true,
+      alarmActive: true,
+      hasStash: false,
+      garageSlots: 2,
+      x: -1150,
+      y: -1420,
+      keys: [
+        { keyId: 'key-4', holderName: 'Alex Mercer', issuedAt: Date.now() - 86400000 * 60 },
+      ],
+    },
+  ]
+
   const cryptoHoldings: Record<string, number> = {
     BTC: 0.045,
     ETH: 0.85,
@@ -980,7 +1060,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto'
+    'health', 'citywarn', 'crypto', 'house'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -1506,6 +1586,54 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         return [true, undefined]
       },
       
+      
+      'HouseService.GetProperties': () => {
+        return [housingProperties.map((p) => ({ ...p, keys: [...p.keys] }))]
+      },
+      'HouseService.ToggleLock': (payload) => {
+        if (!isRecord(payload) || typeof payload.propertyId !== 'string') return [false, false, 'Invalid property ID']
+        const prop = housingProperties.find((p) => p.id === payload.propertyId)
+        if (!prop) return [false, false, 'Property not found']
+        prop.isLocked = !prop.isLocked
+        adapter.emitSignal('HouseService', 'PropertyUpdated', { ...prop, keys: [...prop.keys] })
+        return [true, prop.isLocked, undefined]
+      },
+      'HouseService.ToggleAlarm': (payload) => {
+        if (!isRecord(payload) || typeof payload.propertyId !== 'string') return [false, false, 'Invalid property ID']
+        const prop = housingProperties.find((p) => p.id === payload.propertyId)
+        if (!prop) return [false, false, 'Property not found']
+        prop.alarmActive = !prop.alarmActive
+        adapter.emitSignal('HouseService', 'PropertyUpdated', { ...prop, keys: [...prop.keys] })
+        return [true, prop.alarmActive, undefined]
+      },
+      'HouseService.ShareKey': (payload) => {
+        if (!isRecord(payload) || typeof payload.propertyId !== 'string' || typeof payload.recipientName !== 'string') {
+          return [false, undefined, 'Invalid share payload']
+        }
+        const prop = housingProperties.find((p) => p.id === payload.propertyId)
+        if (!prop) return [false, undefined, 'Property not found']
+        const newKey: PropertyKey = {
+          keyId: 'key-' + Date.now(),
+          holderName: payload.recipientName.trim(),
+          issuedAt: Date.now(),
+        }
+        prop.keys.push(newKey)
+        adapter.emitSignal('HouseService', 'PropertyUpdated', { ...prop, keys: [...prop.keys] })
+        return [true, newKey, undefined]
+      },
+      'HouseService.RevokeKey': (payload) => {
+        if (!isRecord(payload) || typeof payload.propertyId !== 'string' || typeof payload.keyId !== 'string') {
+          return [false, 'Invalid revoke payload']
+        }
+        const prop = housingProperties.find((p) => p.id === payload.propertyId)
+        if (!prop) return [false, 'Property not found']
+        const idx = prop.keys.findIndex((k) => k.keyId === payload.keyId)
+        if (idx === -1) return [false, 'Key not found']
+        prop.keys.splice(idx, 1)
+        adapter.emitSignal('HouseService', 'PropertyUpdated', { ...prop, keys: [...prop.keys] })
+        return [true, undefined]
+      },
+
       'CryptoService.GetPortfolio': () => {
         let totalVal = 0
         const list: CryptoHolding[] = []
@@ -1682,3 +1810,4 @@ export const GarageService = nervePreview.GetService<PreviewGarageService>('Gara
 export const SocialService = nervePreview.GetService<PreviewSocialService>('SocialService')
 export const AppStoreService = nervePreview.GetService<PreviewAppStoreService>('AppStoreService')
 export const CryptoService = nervePreview.GetService<PreviewCryptoService>('CryptoService')
+export const HouseService = nervePreview.GetService<PreviewHouseService>('HouseService')

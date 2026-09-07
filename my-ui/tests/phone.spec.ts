@@ -595,3 +595,53 @@ test('crypto app displays portfolio, switches tabs, executes coin trade and logs
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('house app displays properties, toggles door locks and security alarms, and manages guest keys via Roblox HouseService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch House
+  await page.getByRole('button', { name: 'Open House' }).click()
+  await expect(page.locator('.house-app-root')).toBeVisible()
+  await expect(page.locator('.house-branding h3')).toHaveText('Dynasty 8')
+
+  // Verify properties loaded
+  const houseCards = page.locator('.house-card')
+  await expect(houseCards).toHaveCount(3)
+  await expect(page.locator('.house-title').first()).toHaveText('Eclipse Towers Penthouse 3')
+
+  // Toggle lock
+  const firstCard = houseCards.first()
+  const lockBtn = firstCard.locator('.house-fob-btn.locked')
+  await expect(lockBtn).toBeVisible()
+  await lockBtn.click()
+
+  // Verify toast and unlocked state
+  await expect(page.locator('.house-toast')).toContainText('Unlocked 🔓')
+  await expect(firstCard.locator('.house-fob-btn.unlocked')).toBeVisible()
+
+  // Toggle alarm
+  const alarmBtn = firstCard.locator('.house-fob-btn.armed')
+  await expect(alarmBtn).toBeVisible()
+  await alarmBtn.click()
+  await expect(page.locator('.house-toast')).toContainText('Disarmed 🛡️')
+
+  // Open Keys modal
+  await firstCard.locator('.house-fob-btn.keys').click()
+  await expect(page.locator('.house-keys-modal')).toBeVisible()
+  await expect(page.locator('.house-key-card')).toHaveCount(2)
+
+  // Issue new key
+  await page.locator('.house-issue-key-form input').fill('Samantha Cole')
+  await page.getByRole('button', { name: '+ Grant Key' }).click()
+  await expect(page.locator('.house-toast')).toContainText('Key issued to Samantha Cole')
+  await expect(page.locator('.house-key-card')).toHaveCount(3)
+
+  // Close modal
+  await page.locator('.house-close-modal').click()
+  await expect(page.locator('.house-keys-modal')).toBeHidden()
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

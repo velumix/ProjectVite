@@ -3386,6 +3386,274 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "HouseService",
+      "Methods": [
+        {
+          "Name": "GetProperties",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "label": {
+                      "kind": "string"
+                    },
+                    "address": {
+                      "kind": "string"
+                    },
+                    "tier": {
+                      "kind": "string"
+                    },
+                    "isLocked": {
+                      "kind": "bool"
+                    },
+                    "alarmActive": {
+                      "kind": "bool"
+                    },
+                    "hasStash": {
+                      "kind": "bool"
+                    },
+                    "garageSlots": {
+                      "kind": "float64"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "keys": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "struct",
+                        "fields": {
+                          "keyId": {
+                            "kind": "string"
+                          },
+                          "holderName": {
+                            "kind": "string"
+                          },
+                          "issuedAt": {
+                            "kind": "float64"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleLock",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "propertyId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ToggleAlarm",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "propertyId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ShareKey",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "propertyId": {
+                "kind": "string"
+              },
+              "recipientName": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "keyId": {
+                      "kind": "string"
+                    },
+                    "holderName": {
+                      "kind": "string"
+                    },
+                    "issuedAt": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "RevokeKey",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "propertyId": {
+                "kind": "string"
+              },
+              "keyId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "PropertyUpdated",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "label": {
+                    "kind": "string"
+                  },
+                  "address": {
+                    "kind": "string"
+                  },
+                  "tier": {
+                    "kind": "string"
+                  },
+                  "isLocked": {
+                    "kind": "bool"
+                  },
+                  "alarmActive": {
+                    "kind": "bool"
+                  },
+                  "hasStash": {
+                    "kind": "bool"
+                  },
+                  "garageSlots": {
+                    "kind": "float64"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  },
+                  "keys": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "keyId": {
+                          "kind": "string"
+                        },
+                        "holderName": {
+                          "kind": "string"
+                        },
+                        "issuedAt": {
+                          "kind": "float64"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -3503,6 +3771,16 @@
       "Name": "CryptoController",
       "ServiceDependencies": [
         "CryptoService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "HouseController",
+      "ServiceDependencies": [
+        "HouseService"
       ],
       "Lifecycle": {
         "NerveInit": true,
