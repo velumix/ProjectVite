@@ -1,0 +1,133 @@
+import { test, expect, type Page } from '@playwright/test'
+
+async function openInventory(page: Page) {
+  await page.goto('/')
+  await expect(page.locator('[data-roblox-name="LoadingScreen"]')).toBeHidden()
+  await page.locator('[data-roblox-name="SideInventoryButton"]').click()
+  await expect(page.getByRole('dialog', { name: 'Inventory menu' })).toBeVisible()
+}
+
+test('inventory search, selection, split, drop, undo and quick assignment', async ({ page }) => {
+  await openInventory(page)
+  const grid = page.getByLabel('Inventory slots')
+  const details = page.getByLabel('Item details')
+  await expect(grid.locator('button')).toHaveCount(15)
+  await page.getByLabel('Search inventory').fill('water')
+  await expect(grid.locator('button')).toHaveCount(1)
+  await grid.getByRole('button', { name: 'Water bottle, 3', exact: true }).click()
+  await expect(details.getByRole('heading')).toHaveText('Water bottle')
+  await page.getByRole('button', { name: 'Split', exact: true }).click()
+  await page.getByLabel('Split quantity').fill('1')
+  await page.getByRole('button', { name: 'Split stack', exact: true }).click()
+  await expect(grid.getByRole('button', { name: 'Water bottle, 2', exact: true })).toBeVisible()
+  await expect(grid.getByRole('button', { name: 'Water bottle, 1', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Quick slot 5: empty', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Quick slot 5: Water bottle', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Drop', exact: true }).click()
+  await expect(grid.getByRole('button', { name: 'Water bottle, 2', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Quick slot 5: empty', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Undo drop', exact: true }).click()
+  await expect(grid.getByRole('button', { name: 'Water bottle, 2', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Quick slot 5: Water bottle', exact: true })).toBeVisible()
+  await grid.getByRole('button', { name: 'Water bottle, 2', exact: true }).click()
+  await page.getByRole('button', { name: 'Use item', exact: true }).click()
+  await expect(grid.getByRole('button', { name: 'Water bottle, 1', exact: true })).toHaveCount(2)
+  await page.getByLabel('Search inventory').fill('nonexistent')
+  await expect(page.getByText('No items found.', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Clear search', exact: true }).last().click()
+  await expect(grid.locator('button')).toHaveCount(16)
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await page.locator('[data-roblox-name="SideInventoryButton"]').click()
+  await expect(grid.locator('button')).toHaveCount(16)
+})
+
+test('consumables update player health and menu tabs share state', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('[data-roblox-name="LoadingScreen"]')).toBeHidden()
+  await page.getByRole('button', { name: /Take Damage/ }).click()
+  await page.locator('[data-roblox-name="SideInventoryButton"]').click()
+  await page.getByLabel('Inventory slots').getByRole('button', { name: 'Toasted sandwich, 2', exact: true }).click()
+  await page.getByRole('button', { name: 'Use item', exact: true }).click()
+  await page.getByRole('navigation', { name: 'Game menu' }).getByRole('button', { name: 'STATS', exact: true }).click()
+  await expect(page.getByText('60%', { exact: true })).toBeVisible()
+  await page.getByRole('navigation').getByRole('button', { name: 'SETTINGS', exact: true }).click()
+  await page.getByRole('switch', { name: 'Item quantities' }).uncheck()
+  await page.getByRole('navigation').getByRole('button', { name: 'INVENTORY', exact: true }).click()
+  await expect(page.locator('.city-item-quantity')).toHaveCount(0)
+  await page.getByRole('navigation').getByRole('button', { name: 'MAP', exact: true }).click()
+  await page.getByRole('button', { name: 'Central garage', exact: true }).click()
+  await page.getByRole('button', { name: 'Set waypoint', exact: true }).click()
+  await expect(page.getByText('Waypoint: Central garage', { exact: true })).toBeVisible()
+  await page.getByRole('navigation').getByRole('button', { name: 'PHONE', exact: true }).click()
+  await page.locator('.city-message-list').getByRole('button', { name: /City Services/ }).click()
+  await expect(page.locator('.city-conversation h2')).toHaveText('City Services')
+})
+
+test('keyboard opens and closes the menu, confines focus, and reset restores items', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('[data-roblox-name="LoadingScreen"]')).toBeHidden()
+  await page.keyboard.press('i')
+  const menu = page.getByRole('dialog', { name: 'Inventory menu' })
+  await expect(menu).toBeVisible()
+  await page.keyboard.press('Shift+Tab')
+  await expect(menu.getByRole('button', { name: 'ESC Close', exact: true })).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(menu.getByRole('button', { name: 'INVENTORY', exact: true })).toBeFocused()
+  await page.keyboard.press('4')
+  await expect(page.getByLabel('Item details').getByRole('heading')).toHaveText('Water bottle')
+  await page.keyboard.press('r')
+  await expect(page.getByLabel('Split quantity')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByLabel('Split quantity')).toBeHidden()
+  await expect(menu).toBeVisible()
+  await page.getByRole('button', { name: 'Drop', exact: true }).click()
+  await page.keyboard.press('Escape')
+  await expect(menu).toBeHidden()
+  await page.getByRole('button', { name: 'Reset', exact: true }).click()
+  await expect(page.locator('[data-roblox-name="LoadingScreen"]')).toBeHidden()
+  await page.locator('[data-roblox-name="SideInventoryButton"]').click()
+  await expect(page.getByLabel('Inventory slots').getByRole('button', { name: 'Water bottle, 3', exact: true })).toBeVisible()
+})
+
+test('inventory remains clickable in portrait and landscape previews', async ({ page }) => {
+  await openInventory(page)
+  await page.getByRole('button', { name: 'Expand preview' }).click()
+  for (const device of ['PhonePortrait', 'PhoneLandscape', 'Desktop']) {
+    await page.getByLabel('Viewport device mode').selectOption(device)
+    await page.getByLabel('Inventory slots').getByRole('button', { name: 'Water bottle, 3', exact: true }).click()
+    await expect(page.getByLabel('Item details').getByRole('heading')).toHaveText('Water bottle')
+    await expect(async () => {
+      const bounds = await page.locator('.city-content').boundingBox()
+      const menu = await page.locator('.city-menu').boundingBox()
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(menu!.x + menu!.width + 1)
+      expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(menu!.y + menu!.height + 1)
+    }).toPass()
+  }
+})
+
+test('drag and drop enables assigning to quick slots, reordering quick slots, moving, and dropping items', async ({ page }) => {
+  await openInventory(page)
+  const grid = page.getByLabel('Inventory slots')
+
+  // 1. Drag an item to empty quick slot 5 to assign it
+  const waterSlot = grid.getByRole('button', { name: 'Water bottle, 3', exact: true })
+  const quickSlot5 = page.getByRole('button', { name: 'Quick slot 5: empty', exact: true })
+  await waterSlot.dragTo(quickSlot5)
+  await expect(page.getByRole('button', { name: 'Quick slot 5: Water bottle', exact: true })).toBeVisible()
+
+  // 2. Drag quick slot 5 onto quick slot 4 to swap them
+  const quickSlot4 = page.getByRole('button', { name: /Quick slot 4:/, exact: true })
+  await page.getByRole('button', { name: 'Quick slot 5: Water bottle', exact: true }).dragTo(quickSlot4)
+  await expect(page.getByRole('button', { name: 'Quick slot 4: Water bottle', exact: true })).toBeVisible()
+
+  // 3. Drag item to empty grid slot to move it
+  const emptySlot = grid.locator('.city-item-slot.is-empty').first()
+  await waterSlot.dragTo(emptySlot)
+  await expect(grid.getByRole('button', { name: 'Water bottle, 3', exact: true })).toBeVisible()
+
+  // 4. Drag item onto the Drop button to drop it
+  const dropButton = page.getByRole('button', { name: 'Drop', exact: true })
+  await grid.getByRole('button', { name: 'Water bottle, 3', exact: true }).dragTo(dropButton)
+  await expect(grid.getByRole('button', { name: 'Water bottle, 3', exact: true })).toHaveCount(0)
+})

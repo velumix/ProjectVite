@@ -17,6 +17,7 @@ import { createRobloxRealm } from './realm/roblox-realm.ts'
 import { ScenarioInspector } from './scenarios/ScenarioInspector.tsx'
 import { ScenarioParameters } from './scenarios/ScenarioParameters.tsx'
 import { RobloxViewportPreview } from './viewport/RobloxViewportPreview.tsx'
+import { InventoryScreen } from './inventory/InventoryScreen.tsx'
 
 function App() {
   const bindingStore = useMemo(() => createReactiveBindingStore(), [])
@@ -81,10 +82,29 @@ function App() {
   const [effectPatches, setEffectPatches] = useState(effectPlayer.getPatches())
   const [parameters, setParameters] = useState<Record<string, unknown>>({})
   const [, setBindingVersion] = useState(0)
-  const [inspectorOpen, setInspectorOpen] = useState(true)
+  const [inspectorOpen, setInspectorOpen] = useState(false)
+  const [menuRevision, setMenuRevision] = useState(0)
 
   const renderedTree = applyEffectPatches(applyBindings(compiledTree, bindingStore), effectPatches)
+  // The browser menu replaces these legacy panels; their Roblox export templates remain available.
+  const browserTree = {
+    ...renderedTree,
+    Children: renderedTree.Children?.map(child => child.Name === 'GameModalsContainer' ? {
+      ...child, Children: child.Children?.filter(panel => !['InventoryPanelModal', 'StatsPanelModal', 'SettingsPanelModal'].includes(panel.Name ?? '')),
+    } : child),
+  }
   const traceEvents = scenarioRunner.getTrace().events()
+
+  useEffect(() => {
+    const openInventory = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey || event.repeat || event.code !== 'KeyI') return
+      if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [role="dialog"]')) return
+      event.preventDefault()
+      void actions.run('TogglePanel', { Panel: 'Inventory' }).promise
+    }
+    window.addEventListener('keydown', openInventory)
+    return () => window.removeEventListener('keydown', openInventory)
+  }, [actions])
 
   useEffect(() => {
     scenarioRunner.start(activeScenario)
@@ -212,6 +232,7 @@ function App() {
             onClick={() => {
               actions.cancel()
               scenarioRunner.restart()
+              setMenuRevision(version => version + 1)
             }}
             title="Restart Scenario"
           >
@@ -245,10 +266,13 @@ function App() {
           {/* Viewport Canvas Area */}
           <RobloxViewportPreview runtime={runtime} device={parameters.Device}>
             <RobloxRenderer
-              tree={renderedTree}
+              tree={browserTree}
               Handlers={previewHandlers}
               eventAdapter={previewEventAdapter}
             />
+            <InventoryScreen key={`${scenarioId}-${menuRevision}`} panel={String(bindingStore.get('UI.ActivePanel') ?? 'None')} bindings={bindingStore}
+              onPanelChange={panel => bindingStore.set('UI.ActivePanel', panel)}
+              onClose={() => { void actions.run('ClosePanel', {}).promise }} />
           </RobloxViewportPreview>
 
           {/* Bottom Deck: Transport Controls & Parameters */}

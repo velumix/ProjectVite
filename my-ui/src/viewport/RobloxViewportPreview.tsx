@@ -15,19 +15,21 @@ type Props = {
 export function RobloxViewportPreview({ runtime, device, children }: Props) {
   const stageRef = useRef<HTMLDivElement>(null)
   const [stage, setStage] = useState({ width: 0, height: 0 })
-  const [mode, setMode] = useState<RobloxViewportMode>(
-    () => parameterDeviceToViewportMode(device) ?? 'Runtime',
+  const parameterMode = parameterDeviceToViewportMode(device)
+  const [selection, setSelection] = useState<{ parameterMode?: RobloxViewportMode; mode: RobloxViewportMode }>(
+    () => ({ parameterMode, mode: parameterMode ?? 'Runtime' }),
   )
   const [custom, setCustom] = useState<RobloxViewportSize>({ X: 1280, Y: 720 })
   const [pixelPerfect, setPixelPerfect] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [showSafeArea, setShowSafeArea] = useState(false)
 
-  const parameterMode = parameterDeviceToViewportMode(device)
-  const effectiveMode = parameterMode ?? mode
+  const effectiveMode = selection.parameterMode === parameterMode ? selection.mode : parameterMode ?? 'Runtime'
   const viewport = resolveRobloxViewport(runtime, effectiveMode, custom)
 
   const fitScale =
     stage.width && stage.height
-      ? Math.min(1, (stage.width - 32) / viewport.size.X, (stage.height - 32) / viewport.size.Y)
+      ? Math.max(.01, Math.min(stage.width / viewport.size.X, stage.height / viewport.size.Y))
       : 1
   const scale = pixelPerfect ? 1 : fitScale
 
@@ -54,7 +56,7 @@ export function RobloxViewportPreview({ runtime, device, children }: Props) {
   }, [])
 
   return (
-    <section className="ag-viewport-section">
+    <section className={`ag-viewport-section${expanded ? ' ag-viewport-expanded' : ''}`}>
       {/* Sub-toolbar: Device & Canvas Controls */}
       <div className="ag-viewport-toolbar">
         <div className="flex items-center gap-2">
@@ -64,7 +66,7 @@ export function RobloxViewportPreview({ runtime, device, children }: Props) {
             <select
               className="ag-select-field"
               value={effectiveMode}
-              onChange={(e) => setMode(e.target.value as RobloxViewportMode)}
+              onChange={(e) => setSelection({ parameterMode, mode: e.target.value as RobloxViewportMode })}
               aria-label="Viewport device mode"
             >
               <option value="Runtime">Runtime Viewport</option>
@@ -121,25 +123,34 @@ export function RobloxViewportPreview({ runtime, device, children }: Props) {
           <span className="ag-scale-indicator font-mono">
             {Math.round(scale * 100)}%
           </span>
+          <label className="ag-toggle-label">
+            <input type="checkbox" className="ag-checkbox" checked={showSafeArea} onChange={event => setShowSafeArea(event.target.checked)} />
+            <span>Safe area</span>
+          </label>
+          <button type="button" className="ag-btn-secondary" onClick={() => setExpanded(value => !value)}>
+            {expanded ? 'Exit preview' : 'Expand preview'}
+          </button>
         </div>
       </div>
 
       {/* Canvas Stage */}
       <div ref={stageRef} className="ag-canvas-stage">
-        <div
-          className="ag-canvas-frame"
-          style={{
-            width: viewport.size.X,
-            height: viewport.size.Y,
-            transform: `scale(${scale})`,
-          }}
-        >
-          {children}
+        <div className="ag-canvas-size" style={{ width: viewport.size.X * scale, height: viewport.size.Y * scale }}>
           <div
-            className="pointer-events-none absolute border border-dashed border-blue-500/60"
-            style={insetStyle}
-            title="Roblox Safe Area Boundary"
-          />
+            className="ag-canvas-frame"
+            style={{
+              width: viewport.size.X,
+              height: viewport.size.Y,
+              transform: `scale(${scale})`,
+            }}
+          >
+            {children}
+            {showSafeArea && <div
+              className="pointer-events-none absolute border border-dashed border-blue-500/60"
+              style={insetStyle}
+              title="Roblox Safe Area Boundary"
+            />}
+          </div>
         </div>
       </div>
     </section>

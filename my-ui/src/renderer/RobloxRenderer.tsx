@@ -282,6 +282,7 @@ function applyComponentStyles(children: RobloxInstanceJson[], style: CSSProperti
       const transparency = inverseTransparency(read<number>(child, 'Transparency'))
       const thickness = read<number>(child, 'Thickness') ?? 1
       style.border = `${thickness}px solid ${color3ToCss(color, transparency)}`
+      ;(style as CustomCSSProperties)['--roblox-stroke-color'] = color3ToCss(color, transparency)
     }
 
     if (child.ClassName === 'UIGradient') {
@@ -355,6 +356,11 @@ function buildStyle(instance: RobloxInstanceJson, parentLayout: ListLayoutInfo |
   const style: CSSProperties = {
     boxSizing: 'border-box',
     position: parentLayout ? 'relative' : 'absolute',
+    flexShrink: 0,
+    // Empty GUI layers must not consume clicks meant for their siblings.
+    pointerEvents: instance.ClassName === 'ScreenGui' ||
+      (instance.ClassName === 'Frame' && read<number>(instance, 'BackgroundTransparency') === 1 && !read<boolean>(instance, 'Active'))
+      ? 'none' : 'auto',
   }
 
   if (parentLayout?.SortOrder === 'LayoutOrder') {
@@ -393,7 +399,6 @@ function buildStyle(instance: RobloxInstanceJson, parentLayout: ListLayoutInfo |
   const rotation = read<number>(instance, 'Rotation')
   if (rotation) appendTransform(style, `rotate(${rotation}deg)`)
 
-  if (read<boolean>(instance, 'Visible') === false) style.display = 'none'
   const clipsDescendants = read<boolean>(instance, 'ClipsDescendants')
   if (clipsDescendants) style.overflow = 'hidden'
 
@@ -423,7 +428,7 @@ function buildStyle(instance: RobloxInstanceJson, parentLayout: ListLayoutInfo |
     style.flexDirection = 'column'
     style.textAlign = textXAlignment === 'Right' ? 'right' : textXAlignment === 'Center' ? 'center' : 'left'
     style.alignItems = alignmentToCss(textXAlignment, 'horizontal')
-    style.justifyContent = alignmentToCss(textYAlignment, 'vertical')
+    style.justifyContent = alignmentToCss(textYAlignment ?? 'Center', 'vertical')
   }
 
   if (instance.ClassName === 'ScreenGui') {
@@ -459,7 +464,7 @@ function sortChildren(children: RobloxInstanceJson[], layout?: ListLayoutInfo): 
 function renderText(instance: RobloxInstanceJson): ReactNode {
   const text = read<string>(instance, 'Text') ?? ''
   if (!read<boolean>(instance, 'RichText')) return text
-  return <span dangerouslySetInnerHTML={{ __html: text }} />
+  return <span style={{ display: 'block', width: '100%' }} dangerouslySetInnerHTML={{ __html: text }} />
 }
 
 function renderInstance(instance: RobloxInstanceJson, context: RenderContext, key: string): ReactNode {
@@ -470,6 +475,8 @@ function renderInstance(instance: RobloxInstanceJson, context: RenderContext, ke
   const visualChildren = children.filter((child) => !UI_COMPONENT_CLASS_NAMES.has(child.ClassName))
   const style = buildStyle(instance, context.parentLayout, context.assetResolver)
   const listLayout = applyComponentStyles(componentChildren, style)
+  // Visibility wins over text alignment and list layout display rules.
+  if (read<boolean>(instance, 'Visible') === false || read<boolean>(instance, 'Enabled') === false) style.display = 'none'
   const sortedChildren = sortChildren(visualChildren, listLayout)
   const childContext: RenderContext = { ...context, parentLayout: listLayout }
   const renderedChildren = sortedChildren.map((child, index) =>
@@ -521,7 +528,11 @@ function renderInstance(instance: RobloxInstanceJson, context: RenderContext, ke
         {...commonProps}
         key={key}
         type="button"
-        onClick={() => context.onInstanceActivated?.(instance)}
+        onClick={(event) => {
+          event.stopPropagation()
+          commonProps.onClick?.()
+          context.onInstanceActivated?.(instance)
+        }}
       >
         {renderText(instance)}
         {renderedChildren}
@@ -542,7 +553,11 @@ function renderInstance(instance: RobloxInstanceJson, context: RenderContext, ke
   if (className === 'ImageButton') {
     const image = read<string>(instance, 'Image')
     return (
-      <button {...commonProps} key={key} type="button" onClick={() => context.onInstanceActivated?.(instance)}>
+      <button {...commonProps} key={key} type="button" onClick={(event) => {
+        event.stopPropagation()
+        commonProps.onClick?.()
+        context.onInstanceActivated?.(instance)
+      }}>
         {image ? <RobloxAssetImage reference={image} resolver={context.assetResolver} alt={instance.Name ?? ''} /> : null}
         {renderedChildren}
       </button>

@@ -1,0 +1,23 @@
+# Sun City menu preview
+
+Open **Items** on the HUD or press **I**. **Escape** closes the menu and returns focus to the HUD. The Inventory, Map, Phone, Stats, and Settings tabs share the full-screen menu shell.
+
+The inventory starts with a deterministic sample matching the design reference. Selecting, searching, consuming, equipping, splitting, dropping/undoing, and assigning quick slots work locally. Closing and reopening preserves changes; resetting or changing the scenario restores the sample. Consumables update the existing player health binding. Account balance and player identity come from the existing scenario bindings. Map locations and phone messages are local sample content. Settings control panel opacity, stack quantity visibility, and interface animations.
+
+`inventory-state.ts` owns the sample item catalog and inventory transitions. `InventoryScreen.tsx` renders the menu, with viewport-relative styles in `inventory.css`. The screen sits inside the existing scaled preview canvas. Pointer, focus, keyboard, and state-changing interactions are covered by `npm run test:preview`.
+
+This is the **browser preview implementation**. The original native Roblox panel templates remain in `renderer/preview-tree.ts` for export; App filters those legacy panels only for browser rendering. The new menu and artwork are not automatically converted into a native Studio inventory or connected to live game services.
+
+## Artwork
+
+Generated with the built-in **imagegen** tool from the user-provided inventory screenshot as a style reference. Runtime assets are saved in the workspace:
+
+- `public/assets/inventory/city-character.png`: full-frame night street and character backdrop.
+- `public/assets/inventory/items-atlas.png`: 24 item illustrations. The browser uses individual SVG viewports and clipping rectangles to display the corresponding atlas regions, with CSS compositing against the dark tiles.
+
+Prompt set:
+
+1. **Character scene:** “Create a production background image asset for an interactive game inventory UI, using the attached inventory screenshot only as visual style and character reference. Output landscape 1536x1024. No user interface, panels, text, logos, icons, or overlays. A realistic 3D open-world urban game character, adult man seen from behind at a three-quarter angle, wearing a plain black baseball cap, heavyweight black hoodie, dark subtly stitched jeans and clean light-gray sneakers, standing on a dark Los Angeles city street at night. Full body including shoes. Character occupies only the left 23 percent. The remaining right 74 percent is an extremely dark, blurred city street with subdued gray-blue and distant warm amber bokeh. Cinematic low-key lighting, fine realistic material textures, gentle warm rim light at left and cool rim at right. Right side empty and nearly black to allow readable HTML interface overlays.”
+2. **Character placement refinement:** “Preserve the entire full-frame blurred night street background and the same adult male character clothing, rear three-quarter pose, cap, jeans and white sneakers. Reduce the character to 85% of his current size and place him slightly left and lower so the top of his cap is at y=155 pixels, his shoe soles are at y=820 pixels, and his entire silhouette fits between x=135 and x=350 pixels. Keep the background filling every edge, no borders, blank bands, duplicate character, text, or UI.”
+3. **Item atlas:** “Production game inventory item sprite atlas, landscape 1536x1024, six columns by four rows. No grid lines, labels, or UI tiles. Realistic detailed 3D object rendering from a slight three-quarter front view, consistent soft cool studio light and subtle warm highlights, dark urban roleplay game aesthetic. Row 1: black smartphone, brown leather wallet, car key fob, banknote stack, red lighter, water bottle. Row 2: red cola can, toasted sandwich, cigarette pack, white disposable cup, duct tape roll, black duffel bag. Row 3: compact pistol as an inventory collectible, pistol magazine, ammunition box, wooden bat, black cap, sunglasses. Row 4: black hoodie, dark jeans, white sneakers, black backpack, gray shield, herbal tonic bottle.”
+4. **Final atlas background:** “Replace the entire background with a perfectly uniform opaque very dark charcoal, RGB(12,16,20), hex #0c1014. No checkerboard, transparency, gradient, halos, environmental shadows, color cast, or light spill. Preserve the exact 24 item shapes, positions, sizes, six by four layout, and 1536x1024 resolution. Replace only the background behind and between all objects, including holes inside their silhouettes.”
