@@ -618,29 +618,31 @@ export function InventoryScreen({ panel, bindings, onPanelChange, onClose }: Pro
           </>
         )}
       </div>
-      <footer className="city-menu-footer">
-        <div role="status" className="city-notice" key={inventory.notice}>
-          {panel === 'Stats' || panel === 'Settings' ? (
-            <span className="city-stats-footer-tagline">SUN CITY &bull; A BRIGHTER TOMORROW IN SUN CITY</span>
-          ) : (
-            <>
-              {inventory.notice}
-              {inventory.dropped && <button type="button" onClick={() => dispatch({ type: 'undo-drop' })}>Undo drop</button>}
-            </>
-          )}
-        </div>
-        {(panel === 'Stats' || panel === 'Settings') && (
-          <div className="city-stats-footer-motto">
-            <span>PEOPLE</span>
-            <span>CARS</span>
-            <span>OPPORTUNITY</span>
-            <span>TROUBLE</span>
+      {panel !== 'Settings' && (
+        <footer className="city-menu-footer">
+          <div role="status" className="city-notice" key={inventory.notice}>
+            {panel === 'Stats' ? (
+              <span className="city-stats-footer-tagline">SUN CITY • A BRIGHTER TOMORROW IN SUN CITY</span>
+            ) : (
+              <>
+                {inventory.notice}
+                {inventory.dropped && <button type="button" onClick={() => dispatch({ type: 'undo-drop' })}>Undo drop</button>}
+              </>
+            )}
           </div>
-        )}
-        <button type="button" className="city-close" data-roblox-name={`Close${panel}Button`} onClick={onClose}>
-          <kbd>ESC</kbd><span>Close</span>
-        </button>
-      </footer>
+          {panel === 'Stats' && (
+            <div className="city-stats-footer-motto">
+              <span>PEOPLE</span>
+              <span>CARS</span>
+              <span>OPPORTUNITY</span>
+              <span>TROUBLE</span>
+            </div>
+          )}
+          <button type="button" className="city-close" data-roblox-name={`Close${panel}Button`} onClick={onClose}>
+            <kbd>ESC</kbd><span>Close</span>
+          </button>
+        </footer>
+      )}
     </div>
   )
 }
