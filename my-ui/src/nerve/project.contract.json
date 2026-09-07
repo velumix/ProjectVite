@@ -85,6 +85,119 @@
         { "Name": "PhoneSettingsChanged", "Arguments": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "airplaneMode": { "kind": "bool" }, "wifiEnabled": { "kind": "bool" }, "bluetoothEnabled": { "kind": "bool" }, "darkMode": { "kind": "bool" }, "ringtone": { "kind": "string" } } }] }, "Direction": "server" }
       ],
       "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    },
+    {
+      "Name": "BankingService",
+      "Methods": [
+        {
+          "Name": "GetBankingOverview",
+          "Request": { "kind": "tuple", "items": [] },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "bank": { "kind": "float64" },
+                  "cash": { "kind": "float64" },
+                  "currency": { "kind": "string" },
+                  "playerId": { "kind": "int32" },
+                  "playerName": { "kind": "string" },
+                  "transactions": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "struct",
+                      "fields": {
+                        "id": { "kind": "string" },
+                        "kind": { "kind": "string" },
+                        "amount": { "kind": "float64" },
+                        "label": { "kind": "string" },
+                        "reference": { "kind": "string" },
+                        "createdAt": { "kind": "float64" }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "TransferMoney",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "amount": { "kind": "float64" },
+              "phoneNumber": { "kind": "string" },
+              "note": { "kind": "optional", "value": { "kind": "string" } }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              { "kind": "bool" },
+              { "kind": "optional", "value": { "kind": "string" } }
+            ]
+          },
+          "RateLimit": { "Requests": 10, "Window": 1 }
+        },
+        {
+          "Name": "DepositMoney",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "amount": { "kind": "float64" }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              { "kind": "bool" },
+              { "kind": "optional", "value": { "kind": "string" } }
+            ]
+          },
+          "RateLimit": { "Requests": 10, "Window": 1 }
+        },
+        {
+          "Name": "WithdrawMoney",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "amount": { "kind": "float64" }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              { "kind": "bool" },
+              { "kind": "optional", "value": { "kind": "string" } }
+            ]
+          },
+          "RateLimit": { "Requests": 10, "Window": 1 }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "BankingChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "kind": { "kind": "string" },
+                  "amount": { "kind": "float64" },
+                  "currency": { "kind": "string" },
+                  "sender": { "kind": "optional", "value": { "kind": "string" } },
+                  "label": { "kind": "optional", "value": { "kind": "string" } }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
     }
   ],
   "Controllers": [
@@ -101,6 +214,11 @@
     {
       "Name": "PhoneController",
       "ServiceDependencies": ["PhoneService"],
+      "Lifecycle": { "NerveInit": true, "NerveStart": true }
+    },
+    {
+      "Name": "BankingController",
+      "ServiceDependencies": ["BankingService"],
       "Lifecycle": { "NerveInit": true, "NerveStart": true }
     }
   ]

@@ -23,6 +23,114 @@
       "MessageReceived": { "kind": "signal", "arguments": { "kind": "tuple", "items": [{ "kind": "string" }, { "kind": "string" }] }, "direction": "server", "reliability": "reliable" },
       "CallStateChanged": { "kind": "signal", "arguments": { "kind": "tuple", "items": [{ "kind": "string" }, { "kind": "string" }] }, "direction": "server", "reliability": "reliable" },
       "PhoneSettingsChanged": { "kind": "signal", "arguments": { "kind": "tuple", "items": [{ "kind": "struct", "fields": { "airplaneMode": { "kind": "bool" }, "wifiEnabled": { "kind": "bool" }, "bluetoothEnabled": { "kind": "bool" }, "darkMode": { "kind": "bool" }, "ringtone": { "kind": "string" } } }] }, "direction": "server", "reliability": "reliable" }
+    },
+    "BankingService": {
+      "GetBankingOverview": {
+        "kind": "method",
+        "request": { "kind": "tuple", "items": [] },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "bank": { "kind": "float64" },
+                "cash": { "kind": "float64" },
+                "currency": { "kind": "string" },
+                "playerId": { "kind": "int32" },
+                "playerName": { "kind": "string" },
+                "transactions": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "struct",
+                    "fields": {
+                      "id": { "kind": "string" },
+                      "kind": { "kind": "string" },
+                      "amount": { "kind": "float64" },
+                      "label": { "kind": "string" },
+                      "reference": { "kind": "string" },
+                      "createdAt": { "kind": "float64" }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "TransferMoney": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "amount": { "kind": "float64" },
+            "phoneNumber": { "kind": "string" },
+            "note": { "kind": "optional", "value": { "kind": "string" } }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            { "kind": "bool" },
+            { "kind": "optional", "value": { "kind": "string" } }
+          ]
+        },
+        "rateLimit": { "requests": 10, "window": 1 }
+      },
+      "DepositMoney": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "amount": { "kind": "float64" }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            { "kind": "bool" },
+            { "kind": "optional", "value": { "kind": "string" } }
+          ]
+        },
+        "rateLimit": { "requests": 10, "window": 1 }
+      },
+      "WithdrawMoney": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "amount": { "kind": "float64" }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            { "kind": "bool" },
+            { "kind": "optional", "value": { "kind": "string" } }
+          ]
+        },
+        "rateLimit": { "requests": 10, "window": 1 }
+      },
+      "BankingChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "kind": { "kind": "string" },
+                "amount": { "kind": "float64" },
+                "currency": { "kind": "string" },
+                "sender": { "kind": "optional", "value": { "kind": "string" } },
+                "label": { "kind": "optional", "value": { "kind": "string" } }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }
