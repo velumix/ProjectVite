@@ -1,0 +1,15 @@
+[
+  {
+    "name": "ShopPurchaseSuccess",
+    "scenarioId": "join-rich",
+    "timeMs": 1250,
+    "viewport": "PhonePortrait",
+    "parameters": {
+      "Money": 500,
+      "Health": 1,
+      "Device": "Mobile",
+      "PurchaseSucceeds": true
+    },
+    "tolerance": 0
+  }
+]

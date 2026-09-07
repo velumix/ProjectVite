@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:roblox": "node --experimental-strip-types ../scripts/build-roblox.mjs",
+    "test:roblox-build": "node --experimental-strip-types ../scripts/test-roblox-build.mjs",
     "generate:roblox-api": "node ../scripts/generate-roblox-api.mjs",
     "generate:nerve": "node ../scripts/generate-nerve-metadata.mjs ../roblox/nerve/NerveManifest.example.json src/generated/nerve-manifest.ts",
     "generate:nerve-luau": "node ../scripts/nerve-contract-codegen.mjs generate src/nerve/project.contract.json ../roblox/nerve/generated",
@@ -26,6 +28,9 @@
     "test:realm": "node --experimental-strip-types ../scripts/test-realm.mjs",
     "test:trace": "node --experimental-strip-types ../scripts/test-trace.mjs",
     "test:scenario-parameters": "node --experimental-strip-types ../scripts/test-scenario-parameters.mjs",
+    "test:viewport": "node --experimental-strip-types ../scripts/test-viewport.mjs",
+    "visual:test": "node --experimental-strip-types ../scripts/run-visual-snapshots.mjs",
+    "visual:update": "node --experimental-strip-types ../scripts/run-visual-snapshots.mjs --update",
     "lint": "oxlint",
     "preview": "vite preview"
   },

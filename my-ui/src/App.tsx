@@ -16,6 +16,7 @@ import { createRobloxPersistence } from './persistence/roblox-persistence.ts'
 import { createRobloxRealm } from './realm/roblox-realm.ts'
 import { ScenarioInspector } from './scenarios/ScenarioInspector.tsx'
 import { ScenarioParameters } from './scenarios/ScenarioParameters.tsx'
+import { RobloxViewportPreview } from './viewport/RobloxViewportPreview.tsx'
 
 function App() {
   const bindingStore = useMemo(() => createReactiveBindingStore(), [])
@@ -92,7 +93,9 @@ function App() {
         effectPatches={effectPatches}
         persistenceSnapshot={persistence.snapshot()}
       />
-      <RobloxRenderer tree={renderedTree} Handlers={previewHandlers} eventAdapter={previewEventAdapter} />
+      <RobloxViewportPreview runtime={runtime} device={parameters.Device}>
+        <RobloxRenderer tree={renderedTree} Handlers={previewHandlers} eventAdapter={previewEventAdapter} />
+      </RobloxViewportPreview>
     </main>
   )
 }
