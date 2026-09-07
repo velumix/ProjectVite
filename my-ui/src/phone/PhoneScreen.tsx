@@ -8,6 +8,7 @@ import { ClockApp } from './apps/ClockApp.tsx'
 import { MailApp } from './apps/MailApp.tsx'
 import { MapApp } from './apps/MapApp.tsx'
 import { AppStoreApp } from './apps/AppStoreApp.tsx'
+import { CryptoApp } from './apps/CryptoApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -310,6 +311,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'garage' && <GarageApp />}
             {activeApp === 'feather' && <FeatherApp />}
             {activeApp === 'app-store' && <AppStoreApp onLaunchApp={launch} />}
+            {activeApp === 'crypto' && <CryptoApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -326,6 +328,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'garage' &&
               activeApp !== 'feather' &&
               activeApp !== 'app-store' &&
+              activeApp !== 'crypto' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

@@ -3097,6 +3097,295 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "CryptoService",
+      "Methods": [
+        {
+          "Name": "GetPortfolio",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "coin": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "symbol": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "valueUsd": {
+                      "kind": "float64"
+                    },
+                    "change24h": {
+                      "kind": "float64"
+                    },
+                    "priceUsd": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "float64"
+              },
+              {
+                "kind": "string"
+              },
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "coin": {
+                      "kind": "string"
+                    },
+                    "side": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "totalUsd": {
+                      "kind": "float64"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "recipient": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "TradeCoin",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "coin": {
+                "kind": "string"
+              },
+              "side": {
+                "kind": "string"
+              },
+              "amount": {
+                "kind": "float64"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "coin": {
+                      "kind": "string"
+                    },
+                    "side": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "totalUsd": {
+                      "kind": "float64"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "recipient": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "TransferCoin",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "coin": {
+                "kind": "string"
+              },
+              "amount": {
+                "kind": "float64"
+              },
+              "toAddress": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "coin": {
+                      "kind": "string"
+                    },
+                    "side": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "totalUsd": {
+                      "kind": "float64"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "recipient": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "PortfolioUpdated",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "coin": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "symbol": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "valueUsd": {
+                      "kind": "float64"
+                    },
+                    "change24h": {
+                      "kind": "float64"
+                    },
+                    "priceUsd": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "float64"
+              },
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "coin": {
+                      "kind": "string"
+                    },
+                    "side": {
+                      "kind": "string"
+                    },
+                    "amount": {
+                      "kind": "float64"
+                    },
+                    "totalUsd": {
+                      "kind": "float64"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "recipient": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -3204,6 +3493,16 @@
       "Name": "AppStoreController",
       "ServiceDependencies": [
         "AppStoreService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "CryptoController",
+      "ServiceDependencies": [
+        "CryptoService"
       ],
       "Lifecycle": {
         "NerveInit": true,

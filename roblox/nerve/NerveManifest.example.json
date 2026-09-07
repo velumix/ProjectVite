@@ -3018,6 +3018,287 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "CryptoService": {
+      "GetPortfolio": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "coin": {
+                    "kind": "string"
+                  },
+                  "name": {
+                    "kind": "string"
+                  },
+                  "symbol": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "valueUsd": {
+                    "kind": "float64"
+                  },
+                  "change24h": {
+                    "kind": "float64"
+                  },
+                  "priceUsd": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "float64"
+            },
+            {
+              "kind": "string"
+            },
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "coin": {
+                    "kind": "string"
+                  },
+                  "side": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "totalUsd": {
+                    "kind": "float64"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "recipient": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "TradeCoin": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "coin": {
+              "kind": "string"
+            },
+            "side": {
+              "kind": "string"
+            },
+            "amount": {
+              "kind": "float64"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "coin": {
+                    "kind": "string"
+                  },
+                  "side": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "totalUsd": {
+                    "kind": "float64"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "recipient": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "TransferCoin": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "coin": {
+              "kind": "string"
+            },
+            "amount": {
+              "kind": "float64"
+            },
+            "toAddress": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "coin": {
+                    "kind": "string"
+                  },
+                  "side": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "totalUsd": {
+                    "kind": "float64"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "recipient": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PortfolioUpdated": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "coin": {
+                    "kind": "string"
+                  },
+                  "name": {
+                    "kind": "string"
+                  },
+                  "symbol": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "valueUsd": {
+                    "kind": "float64"
+                  },
+                  "change24h": {
+                    "kind": "float64"
+                  },
+                  "priceUsd": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "float64"
+            },
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "coin": {
+                    "kind": "string"
+                  },
+                  "side": {
+                    "kind": "string"
+                  },
+                  "amount": {
+                    "kind": "float64"
+                  },
+                  "totalUsd": {
+                    "kind": "float64"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "recipient": {
+                    "kind": "optional",
+                    "value": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

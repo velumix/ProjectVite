@@ -729,6 +729,34 @@ const INITIAL_POSTS: SocialPost[] = [
 ]
 
 
+
+export type CryptoHolding = {
+  coin: string
+  name: string
+  symbol: string
+  amount: number
+  valueUsd: number
+  change24h: number
+  priceUsd: number
+}
+
+export type CryptoTransaction = {
+  id: string
+  coin: string
+  side: string
+  amount: number
+  totalUsd: number
+  timestamp: number
+  recipient?: string
+}
+
+export type PreviewCryptoService = {
+  GetPortfolio: NerveMethod<Record<string, never> | undefined, [CryptoHolding[], number, string, CryptoTransaction[]]>
+  TradeCoin: NerveMethod<{ coin: string; side: string; amount: number }, [boolean, string?, CryptoTransaction?]>
+  TransferCoin: NerveMethod<{ coin: string; amount: number; toAddress: string }, [boolean, string?, CryptoTransaction?]>
+  PortfolioUpdated: NerveSignal<[CryptoHolding[], number, CryptoTransaction[]]>
+}
+
 export type StoreAppItem = {
   id: string
   name: string
@@ -915,11 +943,44 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   const musicTracks: MusicTrack[] = [...INITIAL_MUSIC_TRACKS]
 
   
+  
+  const cryptoHoldings: Record<string, number> = {
+    BTC: 0.045,
+    ETH: 0.85,
+    SUN: 120,
+    SHIB: 2500000,
+  }
+  const cryptoPrices: Record<string, { name: string; symbol: string; priceUsd: number; change24h: number }> = {
+    BTC: { name: 'Bitcoin', symbol: 'BTC', priceUsd: 64250, change24h: 3.4 },
+    ETH: { name: 'Ethereum', symbol: 'ETH', priceUsd: 3450, change24h: -1.2 },
+    SUN: { name: 'SunCoin', symbol: 'SUN', priceUsd: 12.80, change24h: 8.7 },
+    SHIB: { name: 'Shiba Sun', symbol: 'SHIB', priceUsd: 0.000028, change24h: 14.2 },
+  }
+  const cryptoTransactions: CryptoTransaction[] = [
+    {
+      id: 'tx-1',
+      coin: 'BTC',
+      side: 'buy',
+      amount: 0.045,
+      totalUsd: 2891.25,
+      timestamp: Date.now() - 86400000,
+    },
+    {
+      id: 'tx-2',
+      coin: 'SUN',
+      side: 'buy',
+      amount: 120,
+      totalUsd: 1536.00,
+      timestamp: Date.now() - 3600000,
+    },
+  ]
+  const cryptoWalletAddress = '0x4f8b...9c12'
+
   const installedAppIds: string[] = [
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn'
+    'health', 'citywarn', 'crypto'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -1444,6 +1505,116 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         feedPosts.splice(idx, 1)
         return [true, undefined]
       },
+      
+      'CryptoService.GetPortfolio': () => {
+        let totalVal = 0
+        const list: CryptoHolding[] = []
+        for (const [coin, info] of Object.entries(cryptoPrices)) {
+          const amt = cryptoHoldings[coin] ?? 0
+          const val = amt * info.priceUsd
+          totalVal += val
+          list.push({
+            coin,
+            name: info.name,
+            symbol: info.symbol,
+            amount: amt,
+            valueUsd: val,
+            change24h: info.change24h,
+            priceUsd: info.priceUsd,
+          })
+        }
+        return [list, totalVal, cryptoWalletAddress, [...cryptoTransactions]]
+      },
+      'CryptoService.TradeCoin': (payload) => {
+        if (!isRecord(payload) || typeof payload.coin !== 'string' || typeof payload.side !== 'string' || typeof payload.amount !== 'number') {
+          return [false, 'Invalid trade payload', undefined]
+        }
+        const info = cryptoPrices[payload.coin]
+        if (!info) return [false, 'Unsupported cryptocurrency', undefined]
+        if (payload.amount <= 0) return [false, 'Amount must be positive', undefined]
+
+        const coinCost = payload.amount * info.priceUsd
+        if (payload.side === 'buy') {
+          cryptoHoldings[payload.coin] = (cryptoHoldings[payload.coin] ?? 0) + payload.amount
+        } else if (payload.side === 'sell') {
+          const cur = cryptoHoldings[payload.coin] ?? 0
+          if (cur < payload.amount) return [false, 'Insufficient crypto balance', undefined]
+          cryptoHoldings[payload.coin] = cur - payload.amount
+        } else {
+          return [false, 'Invalid side', undefined]
+        }
+
+        const tx: CryptoTransaction = {
+          id: 'tx-' + Date.now(),
+          coin: payload.coin,
+          side: payload.side,
+          amount: payload.amount,
+          totalUsd: coinCost,
+          timestamp: Date.now(),
+        }
+        cryptoTransactions.unshift(tx)
+
+        let totalVal = 0
+        const list: CryptoHolding[] = []
+        for (const [coin, coinInfo] of Object.entries(cryptoPrices)) {
+          const amt = cryptoHoldings[coin] ?? 0
+          const val = amt * coinInfo.priceUsd
+          totalVal += val
+          list.push({
+            coin,
+            name: coinInfo.name,
+            symbol: coinInfo.symbol,
+            amount: amt,
+            valueUsd: val,
+            change24h: coinInfo.change24h,
+            priceUsd: coinInfo.priceUsd,
+          })
+        }
+        adapter.emitSignal('CryptoService', 'PortfolioUpdated', list, totalVal, [...cryptoTransactions])
+        return [true, undefined, tx]
+      },
+      'CryptoService.TransferCoin': (payload) => {
+        if (!isRecord(payload) || typeof payload.coin !== 'string' || typeof payload.amount !== 'number' || typeof payload.toAddress !== 'string') {
+          return [false, 'Invalid transfer payload', undefined]
+        }
+        const info = cryptoPrices[payload.coin]
+        if (!info) return [false, 'Unsupported cryptocurrency', undefined]
+        if (payload.amount <= 0) return [false, 'Amount must be positive', undefined]
+        const cur = cryptoHoldings[payload.coin] ?? 0
+        if (cur < payload.amount) return [false, 'Insufficient balance', undefined]
+
+        cryptoHoldings[payload.coin] = cur - payload.amount
+        const tx: CryptoTransaction = {
+          id: 'tx-' + Date.now(),
+          coin: payload.coin,
+          side: 'transfer',
+          amount: payload.amount,
+          totalUsd: payload.amount * info.priceUsd,
+          timestamp: Date.now(),
+          recipient: payload.toAddress,
+        }
+        cryptoTransactions.unshift(tx)
+
+        let totalVal = 0
+        const list: CryptoHolding[] = []
+        for (const [coin, coinInfo] of Object.entries(cryptoPrices)) {
+          const amt = cryptoHoldings[coin] ?? 0
+          const val = amt * coinInfo.priceUsd
+          totalVal += val
+          list.push({
+            coin,
+            name: coinInfo.name,
+            symbol: coinInfo.symbol,
+            amount: amt,
+            valueUsd: val,
+            change24h: coinInfo.change24h,
+            priceUsd: coinInfo.priceUsd,
+          })
+        }
+        adapter.emitSignal('CryptoService', 'PortfolioUpdated', list, totalVal, [...cryptoTransactions])
+        return [true, undefined, tx]
+      },
+
       'AppStoreService.GetStoreCatalog': () => {
         return [STORE_CATALOG_ITEMS]
       },
@@ -1510,3 +1681,4 @@ export const MusicService = nervePreview.GetService<PreviewMusicService>('MusicS
 export const GarageService = nervePreview.GetService<PreviewGarageService>('GarageService')
 export const SocialService = nervePreview.GetService<PreviewSocialService>('SocialService')
 export const AppStoreService = nervePreview.GetService<PreviewAppStoreService>('AppStoreService')
+export const CryptoService = nervePreview.GetService<PreviewCryptoService>('CryptoService')

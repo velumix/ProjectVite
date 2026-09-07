@@ -556,3 +556,42 @@ test('app store loads catalog, filters categories, installs snake game, and adds
   await snakeIconBtn.click()
   await expect(page.locator('.phone-appbar strong')).toHaveText('Snake')
 })
+
+test('crypto app displays portfolio, switches tabs, executes coin trade and logs history via Roblox CryptoService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Crypto
+  await page.getByRole('button', { name: 'Open Crypto' }).click()
+  await expect(page.locator('.crypto-app-root')).toBeVisible()
+  await expect(page.locator('.crypto-branding h3')).toHaveText('Satoshi Wallet')
+
+  // Portfolio value and holdings
+  await expect(page.locator('.crypto-balance-num')).toContainText('$')
+  const coinCards = page.locator('.crypto-coin-card')
+  await expect(coinCards).toHaveCount(4)
+
+  // Switch to Markets tab
+  await page.getByRole('button', { name: 'Markets' }).click()
+  await expect(page.locator('.crypto-market-row')).toHaveCount(4)
+
+  // Switch to Trade tab
+  await page.getByRole('button', { name: 'Trade' }).click()
+  await expect(page.locator('.crypto-trade-panel')).toBeVisible()
+
+  // Select ETH and buy
+  await page.locator('.crypto-coin-pill', { hasText: 'ETH' }).click()
+  await page.locator('.crypto-amount-input-box input').fill('0.25')
+  await page.getByRole('button', { name: 'BUY ETH NOW' }).click()
+
+  // Check toast
+  await expect(page.locator('.crypto-toast')).toContainText('bought 0.25 ETH')
+
+  // Switch to History tab
+  await page.getByRole('button', { name: 'History' }).click()
+  await expect(page.locator('.crypto-tx-card').first()).toContainText('BUY ETH')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})
