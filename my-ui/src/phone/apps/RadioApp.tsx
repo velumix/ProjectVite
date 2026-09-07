@@ -73,6 +73,7 @@ export function RadioApp() {
 
   const handlePTT = async (talking: boolean) => {
     if (!radioState || !radioState.connected || radioState.micMuted) return
+    setRadioState((prev) => (prev ? { ...prev, isTalking: talking } : prev))
     await RadioService.PushToTalk.request({ isTalking: talking })
   }
 
