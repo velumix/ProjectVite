@@ -1480,6 +1480,211 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "MapService",
+      "Methods": [
+        {
+          "Name": "GetMapData",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "address": {
+                      "kind": "string"
+                    },
+                    "icon": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "playerId": {
+                      "kind": "float64"
+                    },
+                    "name": {
+                      "kind": "string"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "heading": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "label": {
+                      "kind": "string"
+                    },
+                    "distance": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SetWaypoint",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "x": {
+                "kind": "float64"
+              },
+              "y": {
+                "kind": "float64"
+              },
+              "label": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "label": {
+                      "kind": "string"
+                    },
+                    "distance": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "ClearWaypoint",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "WaypointChanged",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    },
+                    "label": {
+                      "kind": "string"
+                    },
+                    "distance": {
+                      "kind": "optional",
+                      "value": {
+                        "kind": "float64"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -1537,6 +1742,16 @@
       "Name": "MailController",
       "ServiceDependencies": [
         "MailService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "MapController",
+      "ServiceDependencies": [
+        "MapService"
       ],
       "Lifecycle": {
         "NerveInit": true,

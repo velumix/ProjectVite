@@ -287,3 +287,55 @@ test('mail app displays folders, reads messages, toggles stars and sends mail vi
   await expect(sentCards).toHaveCount(2) // 1 initial + 1 new
   await expect(sentCards.first()).toContainText('Inquiry about Sultan RS')
 })
+
+test('map app displays interactive map, filters POIs, opens directory drawer, sets and clears GPS waypoints via Roblox MapService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Map App from Springboard
+  await page.getByRole('button', { name: 'Open Map' }).click()
+  await expect(page.locator('.map-app-root')).toBeVisible()
+  await expect(page.locator('.map-vector-canvas')).toBeVisible()
+
+  // Verify initial POI markers on canvas
+  const markers = page.locator('.map-marker')
+  await expect(markers).toHaveCount(7)
+
+  // Open Locations Directory Sheet
+  await page.getByTitle('Toggle Locations Directory').click()
+  await expect(page.locator('.map-locations-sheet')).toBeVisible()
+
+  // Filter in search bar
+  await page.getByPlaceholder('Search places in Sun City...').fill('Benny')
+  const sheetItems = page.locator('.map-sheet-item')
+  await expect(sheetItems).toHaveCount(1)
+  await expect(sheetItems.first()).toContainText("Benny's Original Motor Works")
+
+  // Click GPS button on Benny's
+  await page.locator('.map-sheet-wp-btn').first().click()
+
+  // Verify Directory closes and GPS active banner appears
+  await expect(page.locator('.map-locations-sheet')).toBeHidden()
+  await expect(page.locator('.map-gps-banner')).toBeVisible()
+  await expect(page.locator('.map-gps-destination')).toContainText("Benny's Original Motor Works")
+  await expect(page.locator('.map-gps-distance')).toBeVisible()
+
+  // End navigation / Clear GPS
+  await page.getByRole('button', { name: 'End Navigation Route' }).click()
+  await expect(page.locator('.map-gps-banner')).toBeHidden()
+
+  // Test category filtering on map
+  await page.getByPlaceholder('Search places in Sun City...').fill('')
+  await page.getByRole('button', { name: '🏥 Hospitals' }).click()
+  await expect(page.locator('.map-marker')).toHaveCount(1)
+
+  // Click hospital marker on map to open detail card
+  await page.locator('.map-marker').first().click()
+  await expect(page.locator('.map-poi-card')).toBeVisible()
+  await expect(page.locator('.map-poi-title-col h4')).toHaveText('Pillbox Hill Medical Center')
+
+  // Set waypoint from card
+  await page.getByRole('button', { name: '📍 Set GPS Waypoint' }).click()
+  await expect(page.locator('.map-gps-banner')).toBeVisible()
+  await expect(page.locator('.map-gps-destination')).toContainText('Pillbox Hill Medical Center')
+})

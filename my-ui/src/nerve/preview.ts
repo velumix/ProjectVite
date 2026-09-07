@@ -319,6 +319,107 @@ const INITIAL_MAIL_ITEMS: MailItem[] = [
   },
 ]
 
+
+export type PoiCategory = 'police' | 'hospital' | 'bank' | 'mechanic' | 'store' | 'gas' | 'garage'
+
+export type MapPoi = {
+  id: string
+  name: string
+  category: PoiCategory
+  x: number
+  y: number
+  address: string
+  icon: string
+}
+
+export type MapWaypoint = {
+  x: number
+  y: number
+  label: string
+  distance?: number
+}
+
+export type PlayerBlip = {
+  playerId: number
+  name: string
+  x: number
+  y: number
+  heading: number
+}
+
+export type PreviewMapService = {
+  GetMapData: NerveMethod<undefined, [MapPoi[], PlayerBlip[], MapWaypoint?]>
+  SetWaypoint: NerveMethod<{ x: number; y: number; label: string }, [boolean, MapWaypoint?, string?]>
+  ClearWaypoint: NerveMethod<undefined, [boolean, string?]>
+  WaypointChanged: NerveSignal<[MapWaypoint?]>
+}
+
+const INITIAL_MAP_POIS: MapPoi[] = [
+  {
+    id: 'poi-hosp-1',
+    name: 'Pillbox Hill Medical Center',
+    category: 'hospital',
+    x: 310,
+    y: -140,
+    address: 'Strawberry Ave & Elgin Way',
+    icon: '+',
+  },
+  {
+    id: 'poi-pd-1',
+    name: 'Mission Row Police Dept',
+    category: 'police',
+    x: 425,
+    y: -980,
+    address: 'Sinner St & Atwater Ave',
+    icon: 'badge',
+  },
+  {
+    id: 'poi-bank-1',
+    name: 'Legion Square Central Bank',
+    category: 'bank',
+    x: 150,
+    y: -1040,
+    address: 'San Andreas Ave',
+    icon: 'bank',
+  },
+  {
+    id: 'poi-mech-1',
+    name: "Benny's Original Motor Works",
+    category: 'mechanic',
+    x: -205,
+    y: -1310,
+    address: 'Olympic Fwy, Strawberry',
+    icon: 'wrench',
+  },
+  {
+    id: 'poi-dealer-1',
+    name: 'Premium Deluxe Motorsport',
+    category: 'garage',
+    x: -45,
+    y: -1095,
+    address: "Power St & Adam's Apple Blvd",
+    icon: 'car',
+  },
+  {
+    id: 'poi-store-1',
+    name: 'Davis 24/7 Supermarket',
+    category: 'store',
+    x: 25,
+    y: -1345,
+    address: 'Innocence Blvd',
+    icon: 'cart',
+  },
+  {
+    id: 'poi-gas-1',
+    name: 'Ron Alternates Gas Station',
+    category: 'gas',
+    x: 180,
+    y: -1560,
+    address: 'El Rancho Blvd',
+    icon: 'gas',
+  },
+]
+
 export function createNervePreview(options: NervePreviewOptions = {}) {
   const playerKey = options.playerKey ?? SETTINGS_DATASTORE_KEY
   let cachedSettings = { ...INITIAL_SETTINGS_STATE }
@@ -331,6 +432,13 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   }
   let mediaItems: MediaItem[] = [...INITIAL_MEDIA_ITEMS]
   let mailItems: MailItem[] = [...INITIAL_MAIL_ITEMS]
+
+  let worldPois: MapPoi[] = [...INITIAL_MAP_POIS]
+  let activeWaypoint: MapWaypoint | null = null
+  const playerBlips: PlayerBlip[] = [
+    { playerId: 1, name: 'You', x: 0, y: -1000, heading: 45 }
+  ]
+
   let adapter: ReturnType<typeof createNerveBrowserAdapter>
 
   const readSettings = async (): Promise<StreamlinedSettingsState> => {
@@ -627,6 +735,29 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         adapter.emitSignal('MailService', 'MailChanged', 'delete')
         return [true, undefined]
       },
+      'MapService.GetMapData': () => {
+        return [worldPois, playerBlips, activeWaypoint ?? undefined]
+      },
+      'MapService.SetWaypoint': (payload) => {
+        if (!isRecord(payload) || typeof payload.x !== 'number' || typeof payload.y !== 'number' || typeof payload.label !== 'string') {
+          return [false, undefined, 'Invalid waypoint payload']
+        }
+        const wp: MapWaypoint = {
+          x: payload.x,
+          y: payload.y,
+          label: payload.label,
+          distance: Math.floor(Math.sqrt(Math.pow(payload.x - 0, 2) + Math.pow(payload.y - (-1000), 2))),
+        }
+        activeWaypoint = wp
+        adapter.emitSignal('MapService', 'WaypointChanged', wp)
+        return [true, wp, undefined]
+      },
+      'MapService.ClearWaypoint': () => {
+        activeWaypoint = null
+        adapter.emitSignal('MapService', 'WaypointChanged', undefined)
+        return [true, undefined]
+      },
+
 
     },
   })
@@ -648,3 +779,4 @@ export const InventoryService = nervePreview.GetService<PreviewInventoryService>
 export const BankingService = nervePreview.GetService<PreviewBankingService>('BankingService')
 export const MediaService = nervePreview.GetService<PreviewMediaService>('MediaService')
 export const MailService = nervePreview.GetService<PreviewMailService>('MailService')
+export const MapService = nervePreview.GetService<PreviewMapService>('MapService')
