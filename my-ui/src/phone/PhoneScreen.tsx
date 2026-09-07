@@ -23,6 +23,7 @@ import { FlipTokApp } from './apps/FlipTokApp.tsx'
 import { PicstagramApp } from './apps/PicstagramApp.tsx'
 import { RadioApp } from './apps/RadioApp.tsx'
 import { CalendarApp } from './apps/CalendarApp.tsx'
+import { MemosApp } from './apps/MemosApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -340,6 +341,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'picstagram' && <PicstagramApp />}
             {activeApp === 'radio' && <RadioApp />}
             {activeApp === 'calendar' && <CalendarApp />}
+            {activeApp === 'memos' && <MemosApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -371,6 +373,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'picstagram' &&
               activeApp !== 'radio' &&
               activeApp !== 'calendar' &&
+              activeApp !== 'memos' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

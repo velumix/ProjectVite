@@ -6944,6 +6944,194 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "MemosService": {
+      "GetMemos": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "durationSec": {
+                    "kind": "float64"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "waveform": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "float64"
+                    }
+                  },
+                  "notes": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "SaveMemo": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "title": {
+              "kind": "string"
+            },
+            "durationSec": {
+              "kind": "float64"
+            },
+            "notes": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "durationSec": {
+                    "kind": "float64"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "waveform": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "float64"
+                    }
+                  },
+                  "notes": {
+                    "kind": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "DeleteMemo": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "id": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "MemoSaved": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "title": {
+                  "kind": "string"
+                },
+                "durationSec": {
+                  "kind": "float64"
+                },
+                "date": {
+                  "kind": "string"
+                },
+                "waveform": {
+                  "kind": "array",
+                  "value": {
+                    "kind": "float64"
+                  }
+                },
+                "notes": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "MemoDeleted": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

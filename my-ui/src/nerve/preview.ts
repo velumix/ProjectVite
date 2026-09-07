@@ -744,6 +744,24 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type VoiceMemo = {
+  id: string
+  title: string
+  durationSec: number
+  date: string
+  waveform: number[]
+  notes: string
+}
+
+export type PreviewMemosService = {
+  GetMemos: NerveMethod<Record<string, never> | undefined, [VoiceMemo[]]>
+  SaveMemo: NerveMethod<{ title: string; durationSec: number; notes: string }, [boolean, string?, VoiceMemo?]>
+  DeleteMemo: NerveMethod<{ id: string }, [boolean, string?, string?]>
+  MemoSaved: NerveSignal<[VoiceMemo]>
+  MemoDeleted: NerveSignal<[{ id: string }]>
+}
+
 export type CalendarEvent = {
   id: string
   title: string
@@ -1411,6 +1429,26 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const memosData: VoiceMemo[] = [
+    {
+      id: 'memo-1',
+      title: 'Undercover Wiretap - Port of LS',
+      durationSec: 42,
+      date: 'Yesterday',
+      waveform: [0.2, 0.5, 0.8, 0.4, 0.9, 0.3, 0.7, 0.6, 0.8, 0.5, 0.2, 0.4, 0.6, 0.7],
+      notes: 'Intercepted shipment drop coordinates at Terminal 4.',
+    },
+    {
+      id: 'memo-2',
+      title: 'Engine Sound Diagnostics - Sultan RS',
+      durationSec: 18,
+      date: '3 days ago',
+      waveform: [0.1, 0.3, 0.6, 0.9, 0.95, 0.8, 0.6, 0.4, 0.2, 0.5, 0.7, 0.3],
+      notes: 'Wastegate rattle at 4500 RPM on boost pull.',
+    },
+  ]
+
   const calendarEventsData: CalendarEvent[] = [
     {
       id: 'cal-1',
@@ -2030,7 +2068,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news', 'flare', 'fliptok', 'picstagram', 'radio', 'calendar', 'memos'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2570,6 +2608,35 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'MemosService.GetMemos': () => {
+        return [memosData.map((m) => ({ ...m, waveform: [...m.waveform] }))]
+      },
+      'MemosService.SaveMemo': (payload) => {
+        if (!isRecord(payload) || typeof payload.title !== 'string' || !payload.title) {
+          return [false, 'Title required', undefined]
+        }
+        const item: VoiceMemo = {
+          id: 'memo-' + Date.now(),
+          title: payload.title,
+          durationSec: typeof payload.durationSec === 'number' ? payload.durationSec : 15,
+          date: 'Today',
+          waveform: [0.3, 0.6, 0.8, 0.9, 0.7, 0.5, 0.8, 0.6, 0.4, 0.7, 0.5, 0.3],
+          notes: typeof payload.notes === 'string' ? payload.notes : '',
+        }
+        memosData.unshift(item)
+        adapter.emitSignal('MemosService', 'MemoSaved', { ...item })
+        return [true, undefined, { ...item }]
+      },
+      'MemosService.DeleteMemo': (payload) => {
+        if (!isRecord(payload) || typeof payload.id !== 'string') return [false, 'Invalid payload', undefined]
+        const idx = memosData.findIndex((m) => m.id === payload.id)
+        if (idx === -1) return [false, 'Memo not found', undefined]
+        memosData.splice(idx, 1)
+        adapter.emitSignal('MemosService', 'MemoDeleted', { id: payload.id })
+        return [true, undefined, payload.id]
+      },
+
       'CalendarService.GetEvents': () => {
         return [calendarEventsData.map((e) => ({ ...e }))]
       },
@@ -3327,3 +3394,4 @@ export const FlipTokService = nervePreview.GetService<PreviewFlipTokService>('Fl
 export const PicstagramService = nervePreview.GetService<PreviewPicstagramService>('PicstagramService')
 export const RadioService = nervePreview.GetService<PreviewRadioService>('RadioService')
 export const CalendarService = nervePreview.GetService<PreviewCalendarService>('CalendarService')
+export const MemosService = nervePreview.GetService<PreviewMemosService>('MemosService')

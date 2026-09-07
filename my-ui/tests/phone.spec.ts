@@ -1234,3 +1234,52 @@ test('calendar app views monthly schedule, toggles reminder alarms, schedules ne
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('memos app plays voice recordings, visualizes waveforms, records new audio memos, and manages voice logs via Roblox MemosService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Memos
+  await page.getByRole('button', { name: 'Open Memos' }).click()
+  await expect(page.locator('.memos-app-root')).toBeVisible()
+  await expect(page.locator('.memos-title')).toHaveText('Voice Memos')
+
+  // Memos list
+  const cards = page.locator('.memos-card')
+  await expect(cards).toHaveCount(2)
+  await expect(page.locator('.memos-card-title').first()).toHaveText('Undercover Wiretap - Port of LS')
+
+  // Toggle playback
+  const playBtn = page.locator('.memos-play-btn').first()
+  await expect(playBtn).toHaveText('▶️')
+  await playBtn.click()
+  await expect(playBtn).toHaveText('⏸️')
+  await playBtn.click()
+  await expect(playBtn).toHaveText('▶️')
+
+  // Record new memo
+  await page.getByRole('button', { name: 'Record Audio' }).click()
+  await expect(page.locator('.memos-recording-active')).toBeVisible()
+  await page.getByRole('button', { name: 'STOP RECORDING' }).click()
+
+  // Save memo modal
+  await expect(page.locator('.memos-modal-backdrop')).toBeVisible()
+  await page.locator('input[placeholder*="Memo title"]').fill('Stash House Surveillance Tape')
+  await page.locator('textarea[placeholder*="Notes"]').fill('Recorded 3 vehicles entering garage.')
+  await page.getByRole('button', { name: 'SAVE MEMO' }).click()
+
+  // Verify toast and new memo
+  await expect(page.locator('.memos-toast')).toContainText('Voice memo saved')
+  await expect(cards).toHaveCount(3)
+  await expect(page.locator('.memos-card-title').first()).toHaveText('Stash House Surveillance Tape')
+
+  // Delete memo
+  const deleteBtn = page.locator('.memos-delete-btn').last()
+  await deleteBtn.click()
+  await expect(page.locator('.memos-toast')).toContainText('Voice memo deleted')
+  await expect(cards).toHaveCount(2)
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

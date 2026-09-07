@@ -7127,6 +7127,201 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "MemosService",
+      "Methods": [
+        {
+          "Name": "GetMemos",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "durationSec": {
+                      "kind": "float64"
+                    },
+                    "date": {
+                      "kind": "string"
+                    },
+                    "waveform": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "float64"
+                      }
+                    },
+                    "notes": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "SaveMemo",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "title": {
+                "kind": "string"
+              },
+              "durationSec": {
+                "kind": "float64"
+              },
+              "notes": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "durationSec": {
+                      "kind": "float64"
+                    },
+                    "date": {
+                      "kind": "string"
+                    },
+                    "waveform": {
+                      "kind": "array",
+                      "value": {
+                        "kind": "float64"
+                      }
+                    },
+                    "notes": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "DeleteMemo",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "id": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "MemoSaved",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "durationSec": {
+                    "kind": "float64"
+                  },
+                  "date": {
+                    "kind": "string"
+                  },
+                  "waveform": {
+                    "kind": "array",
+                    "value": {
+                      "kind": "float64"
+                    }
+                  },
+                  "notes": {
+                    "kind": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "MemoDeleted",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -7384,6 +7579,16 @@
       "Name": "CalendarController",
       "ServiceDependencies": [
         "CalendarService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "MemosController",
+      "ServiceDependencies": [
+        "MemosService"
       ],
       "Lifecycle": {
         "NerveInit": true,
