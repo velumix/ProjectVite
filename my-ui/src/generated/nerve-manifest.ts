@@ -2158,6 +2158,306 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "GarageService": {
+      "GetVehicles": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "plate": {
+                    "kind": "string"
+                  },
+                  "model": {
+                    "kind": "string"
+                  },
+                  "label": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "garage": {
+                    "kind": "string"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "fuel": {
+                    "kind": "float64"
+                  },
+                  "engineHealth": {
+                    "kind": "float64"
+                  },
+                  "bodyHealth": {
+                    "kind": "float64"
+                  },
+                  "isLocked": {
+                    "kind": "bool"
+                  },
+                  "engineOn": {
+                    "kind": "bool"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ToggleLock": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "plate": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "ToggleEngine": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "plate": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "bool"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "RequestValet": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "plate": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "plate": {
+                    "kind": "string"
+                  },
+                  "model": {
+                    "kind": "string"
+                  },
+                  "label": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "garage": {
+                    "kind": "string"
+                  },
+                  "status": {
+                    "kind": "string"
+                  },
+                  "fuel": {
+                    "kind": "float64"
+                  },
+                  "engineHealth": {
+                    "kind": "float64"
+                  },
+                  "bodyHealth": {
+                    "kind": "float64"
+                  },
+                  "isLocked": {
+                    "kind": "bool"
+                  },
+                  "engineOn": {
+                    "kind": "bool"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "TrackVehicle": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "plate": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  },
+                  "label": {
+                    "kind": "string"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      },
+      "VehicleStateChanged": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "plate": {
+                  "kind": "string"
+                },
+                "model": {
+                  "kind": "string"
+                },
+                "label": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "garage": {
+                  "kind": "string"
+                },
+                "status": {
+                  "kind": "string"
+                },
+                "fuel": {
+                  "kind": "float64"
+                },
+                "engineHealth": {
+                  "kind": "float64"
+                },
+                "bodyHealth": {
+                  "kind": "float64"
+                },
+                "isLocked": {
+                  "kind": "bool"
+                },
+                "engineOn": {
+                  "kind": "bool"
+                },
+                "x": {
+                  "kind": "float64"
+                },
+                "y": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

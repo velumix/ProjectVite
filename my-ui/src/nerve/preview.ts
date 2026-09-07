@@ -508,6 +508,119 @@ const INITIAL_MUSIC_TRACKS: MusicTrack[] = [
   },
 ]
 
+
+export type VehicleCategory = 'sports' | 'super' | 'suv' | 'sedan' | 'motorcycle' | 'compact'
+export type VehicleStatus = 'stored' | 'out' | 'impounded'
+
+export type VehicleItem = {
+  id: string
+  plate: string
+  model: string
+  label: string
+  category: VehicleCategory
+  garage: string
+  status: VehicleStatus
+  fuel: number
+  engineHealth: number
+  bodyHealth: number
+  isLocked: boolean
+  engineOn: boolean
+  x: number
+  y: number
+}
+
+export type PreviewGarageService = {
+  GetVehicles: NerveMethod<undefined, [VehicleItem[]]>
+  ToggleLock: NerveMethod<{ plate: string }, [boolean, boolean?, string?]>
+  ToggleEngine: NerveMethod<{ plate: string }, [boolean, boolean?, string?]>
+  RequestValet: NerveMethod<{ plate: string }, [boolean, VehicleItem?, string?]>
+  TrackVehicle: NerveMethod<{ plate: string }, [boolean, { x: number; y: number; label: string }?, string?]>
+  VehicleStateChanged: NerveSignal<[VehicleItem]>
+}
+
+const INITIAL_VEHICLES: VehicleItem[] = [
+  {
+    id: 'veh-1',
+    plate: 'SUN-042',
+    model: 'ninef2',
+    label: 'Obey 9F Cabrio',
+    category: 'sports',
+    garage: 'Legion Square',
+    status: 'out',
+    fuel: 85,
+    engineHealth: 92,
+    bodyHealth: 95,
+    isLocked: false,
+    engineOn: false,
+    x: 180,
+    y: -1020,
+  },
+  {
+    id: 'veh-2',
+    plate: 'FAST-77',
+    model: 'zentorno',
+    label: 'Pegassi Zentorno',
+    category: 'super',
+    garage: 'Pillbox Hill Garage',
+    status: 'stored',
+    fuel: 68,
+    engineHealth: 98,
+    bodyHealth: 100,
+    isLocked: true,
+    engineOn: false,
+    x: 310,
+    y: -140,
+  },
+  {
+    id: 'veh-3',
+    plate: 'VIP-881',
+    model: 'schafter3',
+    label: 'Benefactor Schafter V12',
+    category: 'sedan',
+    garage: 'Central Park Underground',
+    status: 'stored',
+    fuel: 94,
+    engineHealth: 100,
+    bodyHealth: 98,
+    isLocked: true,
+    engineOn: false,
+    x: 50,
+    y: -800,
+  },
+  {
+    id: 'veh-4',
+    plate: 'DRIFT-9',
+    model: 'sultanrs',
+    label: 'Karin Sultan RS',
+    category: 'sports',
+    garage: "Benny's Workshop",
+    status: 'stored',
+    fuel: 48,
+    engineHealth: 75,
+    bodyHealth: 82,
+    isLocked: true,
+    engineOn: false,
+    x: -205,
+    y: -1310,
+  },
+  {
+    id: 'veh-5',
+    plate: 'COP-301',
+    model: 'gresley',
+    label: 'Bravado Gresley SUV',
+    category: 'suv',
+    garage: 'Davis Impound Lot',
+    status: 'impounded',
+    fuel: 100,
+    engineHealth: 100,
+    bodyHealth: 100,
+    isLocked: true,
+    engineOn: false,
+    x: 400,
+    y: -1600,
+  },
+]
+
 export function createNervePreview(options: NervePreviewOptions = {}) {
   const playerKey = options.playerKey ?? SETTINGS_DATASTORE_KEY
   let cachedSettings = { ...INITIAL_SETTINGS_STATE }
@@ -524,6 +637,9 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   let worldPois: MapPoi[] = [...INITIAL_MAP_POIS]
 
   const musicTracks: MusicTrack[] = [...INITIAL_MUSIC_TRACKS]
+
+  let vehicles: VehicleItem[] = INITIAL_VEHICLES.map((v) => ({ ...v }))
+
   let playbackState: PlaybackState = {
     track: musicTracks[0],
     isPlaying: false,
@@ -915,6 +1031,44 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
         adapter.emitSignal('MusicService', 'PlaybackChanged', playbackState)
         return [true, undefined]
       },
+      'GarageService.GetVehicles': () => {
+        return [vehicles]
+      },
+      'GarageService.ToggleLock': (payload) => {
+        if (!isRecord(payload) || typeof payload.plate !== 'string') return [false, undefined, 'Invalid plate']
+        const target = vehicles.find((v) => v.plate === payload.plate)
+        if (!target) return [false, undefined, 'Vehicle not found']
+        target.isLocked = !target.isLocked
+        adapter.emitSignal('GarageService', 'VehicleStateChanged', { ...target })
+        return [true, target.isLocked, undefined]
+      },
+      'GarageService.ToggleEngine': (payload) => {
+        if (!isRecord(payload) || typeof payload.plate !== 'string') return [false, undefined, 'Invalid plate']
+        const target = vehicles.find((v) => v.plate === payload.plate)
+        if (!target) return [false, undefined, 'Vehicle not found']
+        if (target.status !== 'out') return [false, undefined, 'Vehicle must be out of garage to start engine']
+        target.engineOn = !target.engineOn
+        adapter.emitSignal('GarageService', 'VehicleStateChanged', { ...target })
+        return [true, target.engineOn, undefined]
+      },
+      'GarageService.RequestValet': (payload) => {
+        if (!isRecord(payload) || typeof payload.plate !== 'string') return [false, undefined, 'Invalid plate']
+        const target = vehicles.find((v) => v.plate === payload.plate)
+        if (!target) return [false, undefined, 'Vehicle not found']
+        if (target.status === 'impounded') return [false, undefined, 'Vehicle is impounded']
+        target.status = 'out'
+        target.garage = 'Delivered to Player'
+        target.isLocked = false
+        adapter.emitSignal('GarageService', 'VehicleStateChanged', { ...target })
+        return [true, { ...target }, undefined]
+      },
+      'GarageService.TrackVehicle': (payload) => {
+        if (!isRecord(payload) || typeof payload.plate !== 'string') return [false, undefined, 'Invalid plate']
+        const target = vehicles.find((v) => v.plate === payload.plate)
+        if (!target) return [false, undefined, 'Vehicle not found']
+        return [true, { x: target.x, y: target.y, label: `${target.label} (${target.plate})` }, undefined]
+      },
+
       'MusicService.SeekTrack': (payload) => {
         if (!isRecord(payload) || typeof payload.position !== 'number') return [false, 'Invalid position']
         playbackState = {
@@ -949,3 +1103,4 @@ export const MediaService = nervePreview.GetService<PreviewMediaService>('MediaS
 export const MailService = nervePreview.GetService<PreviewMailService>('MailService')
 export const MapService = nervePreview.GetService<PreviewMapService>('MapService')
 export const MusicService = nervePreview.GetService<PreviewMusicService>('MusicService')
+export const GarageService = nervePreview.GetService<PreviewGarageService>('GarageService')

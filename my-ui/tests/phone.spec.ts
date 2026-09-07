@@ -394,3 +394,60 @@ test('music app plays tracks, switches radio stations, skips songs and synchroni
   await expect(page.locator('.phone-island-music-pill')).toBeVisible()
   await expect(page.locator('.phone-island-music-pill small')).toContainText('Still D.R.E.')
 })
+
+test('garage app lists owned vehicles, filters by status, opens remote key fob, toggles locks and requests valet via Roblox GarageService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Garage App from Springboard
+  await page.getByRole('button', { name: 'Open Garage' }).click()
+  await expect(page.locator('.garage-app-root')).toBeVisible()
+
+  // Verify initial vehicle cards
+  const cards = page.locator('.garage-card')
+  await expect(cards).toHaveCount(5)
+
+  // Filter by Out in World
+  await page.getByRole('button', { name: 'Out in World' }).click()
+  await expect(page.locator('.garage-card')).toHaveCount(1)
+  await expect(page.locator('.garage-card-name')).toHaveText('Obey 9F Cabrio')
+
+  // Switch back to All
+  await page.getByRole('button', { name: 'All' }).click()
+  await expect(page.locator('.garage-card')).toHaveCount(5)
+
+  // Search by model
+  await page.getByPlaceholder('Search by model or plate...').fill('Zentorno')
+  await expect(page.locator('.garage-card')).toHaveCount(1)
+  await expect(page.locator('.garage-card-name')).toHaveText('Pegassi Zentorno')
+
+  // Open Remote Key FOB sheet
+  await page.locator('.garage-fob-link-btn').first().click()
+  await expect(page.locator('.garage-fob-sheet')).toBeVisible()
+  await expect(page.locator('.garage-fob-sheet h4')).toHaveText('Pegassi Zentorno')
+  await expect(page.locator('.garage-fob-plate')).toHaveText('FAST-77')
+
+  // Toggle doors lock via FOB
+  const lockFobBtn = page.locator('.garage-fob-button').filter({ hasText: /Doors/ })
+  await expect(lockFobBtn).toContainText('Unlock Doors')
+  await lockFobBtn.click()
+  await expect(lockFobBtn).toContainText('Lock Doors')
+  await expect(page.locator('.garage-fob-notice')).toBeVisible()
+
+  // Request Valet
+  const valetBtn = page.locator('.garage-fob-button').filter({ hasText: 'Call Valet' })
+  await valetBtn.click()
+  await expect(page.locator('.garage-fob-notice')).toContainText('Valet has delivered')
+
+  // Set GPS Route
+  const gpsBtn = page.locator('.garage-fob-button').filter({ hasText: 'GPS Route' })
+  await gpsBtn.click()
+  await expect(page.locator('.garage-fob-notice')).toContainText('GPS Route set')
+
+  // Close FOB sheet
+  await page.locator('.garage-fob-close').click()
+  await expect(page.locator('.garage-fob-sheet')).toBeHidden()
+
+  // Verify updated status on card is Out in World
+  await expect(page.locator('.garage-status-badge')).toHaveText('Out in World')
+})

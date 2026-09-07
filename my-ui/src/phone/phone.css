@@ -2862,6 +2862,481 @@
   padding: 0.2em;
 }
 
+
+/* -------------------------------------------------------------
+   GARAGE & VEHICLE APP
+   ------------------------------------------------------------- */
+.garage-app-root {
+  height: calc(100% - 3.4em);
+  display: flex;
+  flex-direction: column;
+  background: #090d14;
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.garage-header {
+  padding: 0.7em 0.8em 0.5em;
+  background: #0e1522;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  flex-shrink: 0;
+}
+
+.garage-header-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.garage-header-title-row h3 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #fff;
+  font-weight: 700;
+}
+
+.garage-count-badge {
+  font-size: 0.72em;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 2px 7px;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  font-weight: 600;
+}
+
+.garage-search-wrapper {
+  display: flex;
+  align-items: center;
+  background: #141e2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.35em 0.65em;
+  gap: 0.4em;
+}
+
+.garage-search-icon {
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.garage-search-wrapper input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 0.8em;
+  outline: none;
+}
+
+.garage-clear-search {
+  border: 0;
+  background: none;
+  color: #94a3b8;
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+.garage-filter-pills {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.garage-filter-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.garage-pill {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #141e2e;
+  color: #94a3b8;
+  border-radius: 12px;
+  padding: 0.25em 0.65em;
+  font-size: 0.7em;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.garage-pill:hover {
+  color: #fff;
+}
+
+.garage-pill.active {
+  background: #0284c7;
+  color: #fff;
+  border-color: #38bdf8;
+}
+
+/* Fob notice banner */
+.garage-fob-notice {
+  position: absolute;
+  top: 96px;
+  left: 12px;
+  right: 12px;
+  z-index: 30;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #38bdf8;
+  border-radius: 10px;
+  padding: 0.45em 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.2s ease-out;
+}
+
+.garage-fob-notice small {
+  color: #f1f5f9;
+  font-size: 0.76em;
+  font-weight: 600;
+}
+
+/* Vehicles List */
+.garage-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.7em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.garage-empty-state {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.8em;
+  padding: 3em 1em;
+}
+
+.garage-card {
+  background: #0e1624;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 0.7em 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.garage-card:hover {
+  background: #141f32;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.garage-card.is-out {
+  border-left: 3px solid #10b981;
+}
+
+.garage-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.garage-card-icon {
+  font-size: 1.4em;
+  width: 32px;
+  text-align: center;
+}
+
+.garage-card-title-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.garage-card-name {
+  display: block;
+  font-size: 0.86em;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.garage-card-location {
+  display: block;
+  font-size: 0.7em;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.garage-status-badge {
+  font-size: 0.66em;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 8px;
+  letter-spacing: 0.02em;
+}
+
+.garage-card-metrics {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.3em 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.garage-plate-badge {
+  font-family: monospace;
+  background: #facc15;
+  color: #1e293b;
+  font-weight: 800;
+  font-size: 0.72em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+}
+
+.garage-metric-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.7em;
+  color: #cbd5e1;
+}
+
+.garage-metric-icon {
+  font-size: 0.9em;
+}
+
+.garage-card-actions {
+  display: flex;
+  gap: 0.4em;
+}
+
+.garage-card-btn {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #152236;
+  color: #f1f5f9;
+  border-radius: 7px;
+  padding: 0.35em 0.4em;
+  font-size: 0.7em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.garage-card-btn:hover {
+  background: #1e314f;
+  color: #fff;
+}
+
+.garage-card-btn.is-locked {
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.garage-card-btn.is-unlocked {
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+.garage-fob-link-btn {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #fff;
+  flex: 0 0 auto;
+  padding: 0.35em 0.8em;
+}
+
+/* FOB Detailed Drawer / Sheet */
+.garage-fob-sheet {
+  position: absolute;
+  inset: 54px 8px 8px;
+  z-index: 40;
+  background: rgba(11, 17, 27, 0.97);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+  animation: slideUp 0.2s ease-out;
+}
+
+.garage-fob-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8em 1em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.garage-fob-header h4 {
+  margin: 0;
+  font-size: 0.95em;
+  color: #fff;
+}
+
+.garage-fob-plate {
+  display: inline-block;
+  margin-top: 3px;
+  font-family: monospace;
+  background: #facc15;
+  color: #1e293b;
+  font-weight: 800;
+  font-size: 0.7em;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.garage-fob-close {
+  border: 0;
+  background: none;
+  color: #94a3b8;
+  font-size: 0.9em;
+  cursor: pointer;
+  padding: 0.2em;
+}
+
+.garage-fob-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8em 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.garage-gauges-row {
+  display: flex;
+  gap: 0.5em;
+}
+
+.garage-gauge-card {
+  flex: 1;
+  background: #141e2e;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.garage-gauge-label {
+  font-size: 0.65em;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.garage-gauge-val {
+  font-size: 0.95em;
+  color: #fff;
+}
+
+.garage-gauge-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.garage-gauge-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Remote Key FOB Pad */
+.garage-fob-pad {
+  background: #111a28;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+}
+
+.garage-fob-pad-title {
+  margin: 0;
+  font-size: 0.72em;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.garage-fob-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6em;
+}
+
+.garage-fob-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #182538;
+  color: #f1f5f9;
+  border-radius: 12px;
+  padding: 0.8em 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.garage-fob-button:hover:not(:disabled) {
+  background: #21324c;
+  transform: translateY(-1px);
+}
+
+.garage-fob-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.garage-fob-btn-icon {
+  font-size: 1.4em;
+}
+
+.garage-fob-btn-text {
+  font-size: 0.72em;
+  font-weight: 700;
+}
+
+.garage-fob-button.is-locked {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+}
+
+.garage-fob-button.is-unlocked {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+}
+
+.garage-fob-button.engine-on {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @container (max-width: 768px) {
