@@ -5218,6 +5218,188 @@ export const nerveManifest = {
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "NewsService": {
+      "GetArticles": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "headline": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "content": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "views": {
+                    "kind": "float64"
+                  },
+                  "isBreaking": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "PublishArticle": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "headline": {
+              "kind": "string"
+            },
+            "category": {
+              "kind": "string"
+            },
+            "content": {
+              "kind": "string"
+            },
+            "isBreaking": {
+              "kind": "bool"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "headline": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "content": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "views": {
+                    "kind": "float64"
+                  },
+                  "isBreaking": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "IncrementView": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "articleId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "ArticlePublished": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "headline": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "string"
+                },
+                "content": {
+                  "kind": "string"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "views": {
+                  "kind": "float64"
+                },
+                "isBreaking": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 } as const satisfies NerveNetworkManifest

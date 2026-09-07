@@ -17,6 +17,7 @@ import { CompaniesApp } from './apps/CompaniesApp.tsx'
 import { CrewLinkApp } from './apps/CrewLinkApp.tsx'
 import { HealthApp } from './apps/HealthApp.tsx'
 import { LocalPagesApp } from './apps/LocalPagesApp.tsx'
+import { WeazelNewsApp } from './apps/WeazelNewsApp.tsx'
 import { FeatherApp } from './apps/FeatherApp.tsx'
 import { GarageApp } from './apps/GarageApp.tsx'
 import { MusicApp } from './apps/MusicApp.tsx'
@@ -328,6 +329,7 @@ export function PhoneScreen({ nerve }: Props) {
             {activeApp === 'crewlink' && <CrewLinkApp onOpenMap={() => launch('map')} />}
             {activeApp === 'health' && <HealthApp />}
             {activeApp === 'local-pages' && <LocalPagesApp onOpenMap={() => launch('map')} onCall={() => launch('phone')} />}
+            {activeApp === 'weazel-news' && <WeazelNewsApp />}
             {activeApp !== 'messages' &&
               activeApp !== 'contacts' &&
               activeApp !== 'phone' &&
@@ -353,6 +355,7 @@ export function PhoneScreen({ nerve }: Props) {
               activeApp !== 'crewlink' &&
               activeApp !== 'health' &&
               activeApp !== 'local-pages' &&
+              activeApp !== 'weazel-news' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
           </>
         )}

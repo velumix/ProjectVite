@@ -738,6 +738,25 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type NewsArticle = {
+  id: string
+  headline: string
+  category: string
+  author: string
+  content: string
+  timestamp: number
+  views: number
+  isBreaking: boolean
+}
+
+export type PreviewNewsService = {
+  GetArticles: NerveMethod<Record<string, never> | undefined, [NewsArticle[]]>
+  PublishArticle: NerveMethod<{ headline: string; category: string; content: string; isBreaking: boolean }, [boolean, string?, NewsArticle?]>
+  IncrementView: NerveMethod<{ articleId: string }, [boolean, string?, number?]>
+  ArticlePublished: NerveSignal<[NewsArticle]>
+}
+
 export type LocalPost = {
   id: string
   title: string
@@ -1213,6 +1232,40 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const newsArticlesData: NewsArticle[] = [
+    {
+      id: 'art-1',
+      headline: 'Downtown Vault Breach: Suspects Evade State Police in High-Speed Pursuit',
+      category: 'crime',
+      author: 'Jack Howitzer',
+      content: 'A coordinated heist at Union Depository triggered a citywide alert early this morning. Multiple black armored SUVs were spotted fleeing northbound on Del Perro Freeway. SAPD tactical units remain deployed.',
+      timestamp: Date.now() - 1800000,
+      views: 1420,
+      isBreaking: true,
+    },
+    {
+      id: 'art-2',
+      headline: 'City Council Passes Historic Infrastructure Bill for Elysian Island',
+      category: 'politics',
+      author: 'Dana Sterling',
+      content: 'Mayor and City Council members voted 8-1 to approve the $400M port expansion and transit overhaul project aimed at modernizing container docks and railway terminals.',
+      timestamp: Date.now() - 7200000,
+      views: 680,
+      isBreaking: false,
+    },
+    {
+      id: 'art-3',
+      headline: 'Vinewood Bowl Unveils Stellar Summer Lineup Featuring Top Artists',
+      category: 'entertainment',
+      author: 'Chloe Vance',
+      content: 'Tickets for the 2026 Vinewood Summer Concert Series go live on Dynasty Ticketmaster this Friday. Expect performances from top hip-hop, synthwave, and indie headliners.',
+      timestamp: Date.now() - 18000000,
+      views: 930,
+      isBreaking: false,
+    },
+  ]
+
   const localPostsData: LocalPost[] = [
     {
       id: 'post-1',
@@ -1619,7 +1672,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages', 'weazel-news'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2153,6 +2206,36 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'NewsService.GetArticles': () => {
+        return [newsArticlesData.map((a) => ({ ...a }))]
+      },
+      'NewsService.PublishArticle': (payload) => {
+        if (!isRecord(payload) || typeof payload.headline !== 'string' || !payload.headline) {
+          return [false, 'Headline required', undefined]
+        }
+        const art: NewsArticle = {
+          id: 'art-' + Date.now(),
+          headline: String(payload.headline),
+          category: String(payload.category || 'general'),
+          author: 'Alex Mercer',
+          content: String(payload.content || ''),
+          timestamp: Date.now(),
+          views: 1,
+          isBreaking: Boolean(payload.isBreaking),
+        }
+        newsArticlesData.unshift(art)
+        adapter.emitSignal('NewsService', 'ArticlePublished', { ...art })
+        return [true, undefined, { ...art }]
+      },
+      'NewsService.IncrementView': (payload) => {
+        if (!isRecord(payload) || typeof payload.articleId !== 'string') return [false, 'Invalid payload', undefined]
+        const a = newsArticlesData.find((x) => x.id === payload.articleId)
+        if (!a) return [false, 'Article not found', undefined]
+        a.views += 1
+        return [true, undefined, a.views]
+      },
+
       'LocalPagesService.GetPosts': () => {
         return [localPostsData.map((p) => ({ ...p }))]
       },
@@ -2627,3 +2710,4 @@ export const CompanyService = nervePreview.GetService<PreviewCompanyService>('Co
 export const CrewService = nervePreview.GetService<PreviewCrewService>('CrewService')
 export const HealthService = nervePreview.GetService<PreviewHealthService>('HealthService')
 export const LocalPagesService = nervePreview.GetService<PreviewLocalPagesService>('LocalPagesService')
+export const NewsService = nervePreview.GetService<PreviewNewsService>('NewsService')

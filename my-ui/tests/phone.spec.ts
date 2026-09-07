@@ -946,3 +946,53 @@ test('local-pages app displays yellow pages classifieds, filters by category, li
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('weazel-news app displays headlines, breaking tickers, reads articles, and publishes field reports via Roblox NewsService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Weazel News
+  await page.getByRole('button', { name: 'Open Weazel News' }).click()
+  await expect(page.locator('.weazel-app-root')).toBeVisible()
+  await expect(page.locator('.weazel-branding h3')).toHaveText('WEAZEL NEWS')
+  await expect(page.locator('.weazel-ticker')).toBeVisible()
+
+  // Articles feed count
+  const articles = page.locator('.weazel-card')
+  await expect(articles).toHaveCount(3)
+
+  // Filter Crime
+  await page.getByRole('button', { name: 'CRIME', exact: true }).click()
+  await expect(page.locator('.weazel-card')).toHaveCount(1)
+  await expect(page.locator('.weazel-card-headline')).toContainText('Vault Breach')
+
+  // Open full article
+  await page.locator('.weazel-card').first().click()
+  await expect(page.locator('.weazel-full-article')).toBeVisible()
+  await expect(page.locator('.weazel-detail-views')).toContainText('1421 reads')
+
+  // Back to Headlines
+  await page.getByRole('button', { name: '← Back to Headlines' }).click()
+  await expect(page.locator('.weazel-main-scroll')).toBeVisible()
+
+  // Back to All
+  await page.getByRole('button', { name: 'Top' }).click()
+
+  // Submit new report
+  await page.getByRole('button', { name: '+ Report' }).click()
+  await expect(page.locator('.weazel-modal-backdrop')).toBeVisible()
+
+  await page.locator('input[placeholder="Article Headline..."]').fill('Port of Los Santos Seizes Smuggled Exotic Supercars')
+  await page.locator('textarea[placeholder*="Full article copy"]').fill('Customs border patrol impounded six unreleased European hypercars at Terminal 4.')
+  await page.locator('.weazel-breaking-checkbox-label input').check()
+  await page.getByRole('button', { name: 'TRANSMIT ARTICLE TO WIRE' }).click()
+
+  // Verify toast and new story
+  await expect(page.locator('.weazel-toast')).toContainText('Story published across Weazel News Network')
+  await expect(page.locator('.weazel-card')).toHaveCount(4)
+  await expect(page.locator('.weazel-card-headline').first()).toHaveText('Port of Los Santos Seizes Smuggled Exotic Supercars')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

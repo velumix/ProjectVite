@@ -5360,6 +5360,196 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "NewsService",
+      "Methods": [
+        {
+          "Name": "GetArticles",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "headline": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "content": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "views": {
+                      "kind": "float64"
+                    },
+                    "isBreaking": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "PublishArticle",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "headline": {
+                "kind": "string"
+              },
+              "category": {
+                "kind": "string"
+              },
+              "content": {
+                "kind": "string"
+              },
+              "isBreaking": {
+                "kind": "bool"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "headline": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "content": {
+                      "kind": "string"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "views": {
+                      "kind": "float64"
+                    },
+                    "isBreaking": {
+                      "kind": "bool"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "IncrementView",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "articleId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "ArticlePublished",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "headline": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "content": {
+                    "kind": "string"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "views": {
+                    "kind": "float64"
+                  },
+                  "isBreaking": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -5557,6 +5747,16 @@
       "Name": "LocalPagesController",
       "ServiceDependencies": [
         "LocalPagesService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "NewsController",
+      "ServiceDependencies": [
+        "NewsService"
       ],
       "Lifecycle": {
         "NerveInit": true,
