@@ -737,6 +737,36 @@ const INITIAL_POSTS: SocialPost[] = [
 
 
 
+
+export type LocalPost = {
+  id: string
+  title: string
+  category: string
+  author: string
+  phone: string
+  district: string
+  body: string
+  likes: number
+  isLiked: boolean
+  timestamp: number
+  x: number
+  y: number
+}
+
+export type PostLikeEvent = {
+  postId: string
+  likes: number
+  isLiked: boolean
+}
+
+export type PreviewLocalPagesService = {
+  GetPosts: NerveMethod<Record<string, never> | undefined, [LocalPost[]]>
+  CreatePost: NerveMethod<{ title: string; category: string; district: string; body: string; phone: string }, [boolean, string?, LocalPost?]>
+  LikePost: NerveMethod<{ postId: string }, [boolean, string?, number?]>
+  PostPublished: NerveSignal<[LocalPost]>
+  PostLiked: NerveSignal<[PostLikeEvent]>
+}
+
 export type MedicalId = {
   bloodType: string
   allergies: string
@@ -1182,6 +1212,52 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
   
   
   
+  
+  const localPostsData: LocalPost[] = [
+    {
+      id: 'post-1',
+      title: '24/7 Mobile Locksmith & Key Duplication',
+      category: 'Services',
+      author: 'LockMaster_Dan',
+      phone: '555-0141',
+      district: 'Pillbox Hill',
+      body: 'Locked out of your penthouse or supercar? Rapid mobile response across Los Santos.',
+      likes: 18,
+      isLiked: false,
+      timestamp: Date.now() - 3600000,
+      x: -200,
+      y: -700,
+    },
+    {
+      id: 'post-2',
+      title: 'Custom Lowrider Hydraulics & Neon Kit Tuning',
+      category: 'Automotive',
+      author: 'BennyJunior',
+      phone: '555-0177',
+      district: 'Strawberry',
+      body: 'Airbags, bouncing hydraulics, candy pearl paint coats and custom sound systems.',
+      likes: 34,
+      isLiked: false,
+      timestamp: Date.now() - 7200000,
+      x: 120,
+      y: -1350,
+    },
+    {
+      id: 'post-3',
+      title: 'Executive Armored Chauffeur & VIP Escort',
+      category: 'Services',
+      author: 'ApexShield_LS',
+      phone: '555-0188',
+      district: 'Rockford Hills',
+      body: 'Discreet bullet-resistant transport for high net worth clients and syndicates.',
+      likes: 12,
+      isLiked: false,
+      timestamp: Date.now() - 14400000,
+      x: -750,
+      y: -220,
+    },
+  ]
+
   const healthStatsData: HealthStats = {
     heartRate: 72,
     steps: 8420,
@@ -1543,7 +1619,7 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
     'phone', 'messages', 'calculator', 'camera', 'clock', 'weather',
     'banking', 'mail', 'notes', 'memos', 'photos', 'app-store',
     'settings', 'map', 'music', 'garage', 'feather', 'calendar',
-    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health'
+    'health', 'citywarn', 'crypto', 'house', 'billing', 'darkchat', 'companies', 'crewlink', 'health', 'local-pages'
   ]
   const systemAppIds = new Set(['phone', 'messages', 'settings', 'app-store', 'camera'])
 
@@ -2076,6 +2152,51 @@ export function createNervePreview(options: NervePreviewOptions = {}) {
       
       
       
+      
+      'LocalPagesService.GetPosts': () => {
+        return [localPostsData.map((p) => ({ ...p }))]
+      },
+      'LocalPagesService.CreatePost': (payload) => {
+        if (!isRecord(payload) || typeof payload.title !== 'string' || !payload.title) {
+          return [false, 'Title required', undefined]
+        }
+        const post: LocalPost = {
+          id: 'post-' + Date.now(),
+          title: String(payload.title),
+          category: String(payload.category || 'General'),
+          author: 'Alex Mercer',
+          phone: String(payload.phone || '555-0199'),
+          district: String(payload.district || 'Los Santos'),
+          body: String(payload.body || ''),
+          likes: 0,
+          isLiked: false,
+          timestamp: Date.now(),
+          x: 0,
+          y: 0,
+        }
+        localPostsData.unshift(post)
+        adapter.emitSignal('LocalPagesService', 'PostPublished', { ...post })
+        return [true, undefined, { ...post }]
+      },
+      'LocalPagesService.LikePost': (payload) => {
+        if (!isRecord(payload) || typeof payload.postId !== 'string') return [false, 'Invalid payload', undefined]
+        const p = localPostsData.find((x) => x.id === payload.postId)
+        if (!p) return [false, 'Post not found', undefined]
+        if (p.isLiked) {
+          p.isLiked = false
+          p.likes = Math.max(0, p.likes - 1)
+        } else {
+          p.isLiked = true
+          p.likes += 1
+        }
+        adapter.emitSignal('LocalPagesService', 'PostLiked', {
+          postId: p.id,
+          likes: p.likes,
+          isLiked: p.isLiked,
+        })
+        return [true, undefined, p.likes]
+      },
+
       'HealthService.GetStats': () => {
         return [{
           ...healthStatsData,
@@ -2505,3 +2626,4 @@ export const DarkChatService = nervePreview.GetService<PreviewDarkChatService>('
 export const CompanyService = nervePreview.GetService<PreviewCompanyService>('CompanyService')
 export const CrewService = nervePreview.GetService<PreviewCrewService>('CrewService')
 export const HealthService = nervePreview.GetService<PreviewHealthService>('HealthService')
+export const LocalPagesService = nervePreview.GetService<PreviewLocalPagesService>('LocalPagesService')

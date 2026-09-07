@@ -899,3 +899,50 @@ test('health app tracks vitals, biometrics, updates medical id profile, and disp
   await page.getByRole('button', { name: 'Return to Springboard' }).click()
   await expect(page.locator('.phone-springboard')).toBeVisible()
 })
+
+test('local-pages app displays yellow pages classifieds, filters by category, likes ads, and publishes new community postings via Roblox LocalPagesService', async ({ page }) => {
+  await openPhone(page)
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+
+  // Launch Local Pages
+  await page.getByRole('button', { name: 'Open Local Pages' }).click()
+  await expect(page.locator('.localpages-app-root')).toBeVisible()
+  await expect(page.locator('.localpages-branding h3')).toHaveText('Local Pages')
+
+  // Classifieds feed
+  const ads = page.locator('.localpages-card')
+  await expect(ads).toHaveCount(3)
+  await expect(page.locator('.localpages-ad-title').first()).toContainText('Locksmith')
+
+  // Filter Automotive
+  await page.getByRole('button', { name: 'Automotive' }).click()
+  await expect(page.locator('.localpages-card')).toHaveCount(1)
+  await expect(page.locator('.localpages-ad-title')).toContainText('Lowrider Hydraulics')
+
+  // Like ad
+  const likeBtn = page.locator('.localpages-action-btn.like').first()
+  await expect(likeBtn).toContainText('34')
+  await likeBtn.click()
+  await expect(likeBtn).toContainText('35')
+
+  // Return to All
+  await page.getByRole('button', { name: 'All' }).click()
+
+  // Publish new classified ad
+  await page.getByRole('button', { name: '+ Post Ad' }).click()
+  await expect(page.locator('.localpages-modal-backdrop')).toBeVisible()
+
+  await page.locator('input[placeholder="Listing headline..."]').fill('24/7 Heavy Equipment Towing')
+  await page.locator('input[placeholder*="District"]').fill('Cypress Flats')
+  await page.locator('textarea[placeholder*="Describe your services"]').fill('Flatbed towing and heavy recovery across LS.')
+  await page.getByRole('button', { name: 'PUBLISH CLASSIFIED' }).click()
+
+  // Verify toast and published ad
+  await expect(page.locator('.localpages-toast')).toContainText('Classified ad published')
+  await expect(page.locator('.localpages-card')).toHaveCount(4)
+  await expect(page.locator('.localpages-ad-title').first()).toHaveText('24/7 Heavy Equipment Towing')
+
+  // Return to Springboard
+  await page.getByRole('button', { name: 'Return to Springboard' }).click()
+  await expect(page.locator('.phone-springboard')).toBeVisible()
+})

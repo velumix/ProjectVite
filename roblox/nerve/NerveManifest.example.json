@@ -4970,6 +4970,251 @@
         "direction": "server",
         "reliability": "reliable"
       }
+    },
+    "LocalPagesService": {
+      "GetPosts": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {}
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "array",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "phone": {
+                    "kind": "string"
+                  },
+                  "district": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CreatePost": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "title": {
+              "kind": "string"
+            },
+            "category": {
+              "kind": "string"
+            },
+            "district": {
+              "kind": "string"
+            },
+            "body": {
+              "kind": "string"
+            },
+            "phone": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "phone": {
+                    "kind": "string"
+                  },
+                  "district": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "LikePost": {
+        "kind": "method",
+        "request": {
+          "kind": "struct",
+          "fields": {
+            "postId": {
+              "kind": "string"
+            }
+          }
+        },
+        "response": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "bool"
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "string"
+              }
+            },
+            {
+              "kind": "optional",
+              "value": {
+                "kind": "float64"
+              }
+            }
+          ]
+        }
+      },
+      "PostPublished": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "id": {
+                  "kind": "string"
+                },
+                "title": {
+                  "kind": "string"
+                },
+                "category": {
+                  "kind": "string"
+                },
+                "author": {
+                  "kind": "string"
+                },
+                "phone": {
+                  "kind": "string"
+                },
+                "district": {
+                  "kind": "string"
+                },
+                "body": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "isLiked": {
+                  "kind": "bool"
+                },
+                "timestamp": {
+                  "kind": "float64"
+                },
+                "x": {
+                  "kind": "float64"
+                },
+                "y": {
+                  "kind": "float64"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      },
+      "PostLiked": {
+        "kind": "signal",
+        "arguments": {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "struct",
+              "fields": {
+                "postId": {
+                  "kind": "string"
+                },
+                "likes": {
+                  "kind": "float64"
+                },
+                "isLiked": {
+                  "kind": "bool"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "server",
+        "reliability": "reliable"
+      }
     }
   }
 }

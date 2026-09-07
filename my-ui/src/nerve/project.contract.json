@@ -5108,6 +5108,258 @@
         "NerveInit": true,
         "NerveStart": true
       }
+    },
+    {
+      "Name": "LocalPagesService",
+      "Methods": [
+        {
+          "Name": "GetPosts",
+          "Request": {
+            "kind": "struct",
+            "fields": {}
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "array",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "phone": {
+                      "kind": "string"
+                    },
+                    "district": {
+                      "kind": "string"
+                    },
+                    "body": {
+                      "kind": "string"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    },
+                    "isLiked": {
+                      "kind": "bool"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "CreatePost",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "title": {
+                "kind": "string"
+              },
+              "category": {
+                "kind": "string"
+              },
+              "district": {
+                "kind": "string"
+              },
+              "body": {
+                "kind": "string"
+              },
+              "phone": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "struct",
+                  "fields": {
+                    "id": {
+                      "kind": "string"
+                    },
+                    "title": {
+                      "kind": "string"
+                    },
+                    "category": {
+                      "kind": "string"
+                    },
+                    "author": {
+                      "kind": "string"
+                    },
+                    "phone": {
+                      "kind": "string"
+                    },
+                    "district": {
+                      "kind": "string"
+                    },
+                    "body": {
+                      "kind": "string"
+                    },
+                    "likes": {
+                      "kind": "float64"
+                    },
+                    "isLiked": {
+                      "kind": "bool"
+                    },
+                    "timestamp": {
+                      "kind": "float64"
+                    },
+                    "x": {
+                      "kind": "float64"
+                    },
+                    "y": {
+                      "kind": "float64"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Name": "LikePost",
+          "Request": {
+            "kind": "struct",
+            "fields": {
+              "postId": {
+                "kind": "string"
+              }
+            }
+          },
+          "Response": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "bool"
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "string"
+                }
+              },
+              {
+                "kind": "optional",
+                "value": {
+                  "kind": "float64"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "Signals": [
+        {
+          "Name": "PostPublished",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "id": {
+                    "kind": "string"
+                  },
+                  "title": {
+                    "kind": "string"
+                  },
+                  "category": {
+                    "kind": "string"
+                  },
+                  "author": {
+                    "kind": "string"
+                  },
+                  "phone": {
+                    "kind": "string"
+                  },
+                  "district": {
+                    "kind": "string"
+                  },
+                  "body": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  },
+                  "timestamp": {
+                    "kind": "float64"
+                  },
+                  "x": {
+                    "kind": "float64"
+                  },
+                  "y": {
+                    "kind": "float64"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        },
+        {
+          "Name": "PostLiked",
+          "Arguments": {
+            "kind": "tuple",
+            "items": [
+              {
+                "kind": "struct",
+                "fields": {
+                  "postId": {
+                    "kind": "string"
+                  },
+                  "likes": {
+                    "kind": "float64"
+                  },
+                  "isLiked": {
+                    "kind": "bool"
+                  }
+                }
+              }
+            ]
+          },
+          "Direction": "server"
+        }
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
     }
   ],
   "Controllers": [
@@ -5295,6 +5547,16 @@
       "Name": "HealthController",
       "ServiceDependencies": [
         "HealthService"
+      ],
+      "Lifecycle": {
+        "NerveInit": true,
+        "NerveStart": true
+      }
+    },
+    {
+      "Name": "LocalPagesController",
+      "ServiceDependencies": [
+        "LocalPagesService"
       ],
       "Lifecycle": {
         "NerveInit": true,
