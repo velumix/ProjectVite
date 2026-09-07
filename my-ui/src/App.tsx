@@ -25,17 +25,66 @@ function App() {
   const realm = useMemo(() => createRobloxRealm(persistence), [persistence])
   const featureProject = useMemo(() => compileRobloxProject([PreviewFeature, ShopFeature]), [])
   const compiledTree = featureProject.Tree
-  const effectPlayer = useMemo(() => createEffectPlayer(compiledTree, featureProject.Effects), [compiledTree, featureProject])
+  const effectPlayer = useMemo(
+    () => createEffectPlayer(compiledTree, featureProject.Effects),
+    [compiledTree, featureProject],
+  )
   const [scenarioId, setScenarioId] = useState(featureProject.Scenarios[0].id)
-  const activeScenario = featureProject.Scenarios.find((scenario) => scenario.id === scenarioId) ?? featureProject.Scenarios[0]
-  const scenarioRunner = useMemo(() => createScenarioRunner({ nerve: nervePreview, network: previewNetworkAdapter, effects: effectPlayer, bindings: bindingStore, runtime, persistence, realm }), [bindingStore, effectPlayer, persistence, realm, runtime])
-    const actions = useMemo(() => createPreviewActions({ bindings: bindingStore, effects: effectPlayer, nerve: nervePreview, network: previewNetworkAdapter, persistence, getTimeMs: () => scenarioRunner.getState().timeMs, getTrace: scenarioRunner.getTrace }, featureProject.Actions), [bindingStore, effectPlayer, featureProject.Actions, persistence, scenarioRunner])
-  const previewHandlers = useMemo(() => createPreviewHandlers(actions, featureProject.ActionBindings, featureProject.EffectHooks, effectPlayer, () => scenarioRunner.getState().timeMs), [actions, effectPlayer, featureProject.ActionBindings, featureProject.EffectHooks, scenarioRunner])
+  const activeScenario =
+    featureProject.Scenarios.find((scenario) => scenario.id === scenarioId) ??
+    featureProject.Scenarios[0]
+
+  const scenarioRunner = useMemo(
+    () =>
+      createScenarioRunner({
+        nerve: nervePreview,
+        network: previewNetworkAdapter,
+        effects: effectPlayer,
+        bindings: bindingStore,
+        runtime,
+        persistence,
+        realm,
+      }),
+    [bindingStore, effectPlayer, persistence, realm, runtime],
+  )
+
+  const actions = useMemo(
+    () =>
+      createPreviewActions(
+        {
+          bindings: bindingStore,
+          effects: effectPlayer,
+          nerve: nervePreview,
+          network: previewNetworkAdapter,
+          persistence,
+          getTimeMs: () => scenarioRunner.getState().timeMs,
+          getTrace: scenarioRunner.getTrace,
+        },
+        featureProject.Actions,
+      ),
+    [bindingStore, effectPlayer, featureProject.Actions, persistence, scenarioRunner],
+  )
+
+  const previewHandlers = useMemo(
+    () =>
+      createPreviewHandlers(
+        actions,
+        featureProject.ActionBindings,
+        featureProject.EffectHooks,
+        effectPlayer,
+        () => scenarioRunner.getState().timeMs,
+      ),
+    [actions, effectPlayer, featureProject.ActionBindings, featureProject.EffectHooks, scenarioRunner],
+  )
+
   const [playback, setPlayback] = useState<ScenarioPlaybackState>(scenarioRunner.getState())
   const [effectPatches, setEffectPatches] = useState(effectPlayer.getPatches())
   const [parameters, setParameters] = useState<Record<string, unknown>>({})
   const [, setBindingVersion] = useState(0)
+  const [inspectorOpen, setInspectorOpen] = useState(true)
+
   const renderedTree = applyEffectPatches(applyBindings(compiledTree, bindingStore), effectPatches)
+  const traceEvents = scenarioRunner.getTrace().events()
 
   useEffect(() => {
     scenarioRunner.start(activeScenario)
@@ -43,7 +92,9 @@ function App() {
       setPlayback(state)
       setEffectPatches(effectPlayer.getPatches())
     })
-    const bindingConnection = bindingStore.subscribe(() => setBindingVersion((version) => version + 1))
+    const bindingConnection = bindingStore.subscribe(() =>
+      setBindingVersion((version) => version + 1),
+    )
     const moneyConnection = previewNetworkAdapter.Network.MoneyChanged.connect((payload) => {
       console.info('Network.MoneyChanged.connect', payload.Amount)
     })
@@ -61,42 +112,277 @@ function App() {
     }
   }, [actions, activeScenario, bindingStore, effectPlayer, featureProject, scenarioId, scenarioRunner])
 
+  const handleScenarioChange = (nextId: string) => {
+    setScenarioId(nextId)
+    const nextScenario = featureProject.Scenarios.find((scenario) => scenario.id === nextId)
+    setParameters(
+      Object.fromEntries(
+        Object.entries(nextScenario?.parameters ?? {}).map(([name, definition]) => [
+          name,
+          definition.default,
+        ]),
+      ),
+    )
+  }
+
+  const timelinePercent = playback.durationMs > 0 ? (playback.timeMs / playback.durationMs) * 100 : 0
+
   return (
-    <main className="workbench">
-      <section className="workbench-toolbar">
-        <div className="workbench-toolbar-row">
-        <select className="ui-input workbench-select" value={scenarioId} onChange={(event) => { const nextId = event.target.value; setScenarioId(nextId); const nextScenario = featureProject.Scenarios.find((scenario) => scenario.id === nextId); setParameters(Object.fromEntries(Object.entries(nextScenario?.parameters ?? {}).map(([name, definition]) => [name, definition.default]))) }} aria-label="Scenario">
-          {featureProject.Scenarios.map((scenario) => <option key={scenario.id} value={scenario.id}>{scenario.name}</option>)}
-        </select>
-          <button className="ui-button ui-button-primary workbench-control" onClick={() => scenarioRunner.play()}>Play</button>
-          <button className="ui-button ui-button-secondary workbench-control" onClick={() => scenarioRunner.pause()}>Pause</button>
-          <button className="ui-button ui-button-secondary workbench-control" onClick={() => { actions.cancel(); scenarioRunner.restart() }}>Restart</button>
-          <button className="ui-button ui-button-secondary workbench-control" onClick={() => scenarioRunner.stepForward()}>Step</button>
-          <select className="ui-input workbench-select workbench-speed" value={playback.speed} onChange={(event) => scenarioRunner.setSpeed(Number(event.target.value) as PlaybackSpeed)} aria-label="Playback speed">
-            {[0.25, 0.5, 1, 2].map((speed) => <option key={speed} value={speed}>{speed}x</option>)}
-          </select>
-          <span className="workbench-readout">{Math.round(playback.timeMs)}ms / {playback.durationMs}ms</span>
-          <span className="workbench-step">{playback.currentStep ?? 'Ready'}</span>
-          {featureProject.Scenarios.find((scenario) => scenario.id === scenarioId)?.triggers?.map((trigger) => (
-            <button key={trigger.id} className="ui-button ui-button-secondary workbench-control" onClick={() => scenarioRunner.trigger(trigger.id)}>{trigger.label}</button>
-          ))}
+    <div className="ag-app-root">
+      {/* Top Application Bar - Google Antigravity Style */}
+      <header className="ag-top-bar">
+        {/* Left: Antigravity Brand & Scenario Switcher */}
+        <div className="flex items-center gap-3">
+          <div className="ag-brand">
+            <svg
+              className="ag-logo-glyph"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 2L2 19.5H22L12 2Z"
+                fill="url(#agGrad)"
+                stroke="#60a5fa"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M12 8L6.5 17.5H17.5L12 8Z"
+                fill="#0f172a"
+                stroke="#93c5fd"
+                strokeWidth="1.2"
+                strokeLinejoin="round"
+              />
+              <defs>
+                <linearGradient id="agGrad" x1="12" y1="2" x2="12" y2="20" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#3b82f6" />
+                  <stop offset="1" stopColor="#1d4ed8" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="ag-brand-title">Antigravity</span>
+            <span className="ag-pill-badge text-[10px]">Studio</span>
+          </div>
+
+          <div className="ag-header-divider" />
+
+          {/* Scenario Selector */}
+          <div className="ag-select-wrapper">
+            <select
+              className="ag-select-field font-medium text-xs text-ag-text"
+              value={scenarioId}
+              onChange={(e) => handleScenarioChange(e.target.value)}
+              aria-label="Scenario"
+            >
+              {featureProject.Scenarios.map((scenario) => (
+                <option key={scenario.id} value={scenario.id}>
+                  {scenario.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        <ScenarioParameters definitions={activeScenario.parameters ?? {}} values={parameters} onChange={(name, value) => { scenarioRunner.setParameter(name, value); setParameters(scenarioRunner.getParameters()) }} />
-        <input className="workbench-timeline" type="range" min="0" max={playback.durationMs} step="1" value={playback.timeMs} onChange={(event) => { actions.cancel(); scenarioRunner.scrub(Number(event.target.value)) }} aria-label="Scenario timeline" />
-      </section>
-      <ScenarioInspector
-        scenarioName={featureProject.Scenarios.find((scenario) => scenario.id === scenarioId)?.name}
-        playback={playback}
-        events={scenarioRunner.getTrace().events()}
-        bindings={bindingStore}
-        realm={realm}
-        effectPatches={effectPatches}
-        persistenceSnapshot={persistence.snapshot()}
-      />
-      <RobloxViewportPreview runtime={runtime} device={parameters.Device}>
-        <RobloxRenderer tree={renderedTree} Handlers={previewHandlers} eventAdapter={previewEventAdapter} />
-      </RobloxViewportPreview>
-    </main>
+
+        {/* Center: Live Status Readout */}
+        <div className="ag-status-capsule hidden md:flex items-center gap-2">
+          <span
+            className={`ag-status-dot ${playback.playing ? 'dot-online animate-pulse' : 'dot-idle'}`}
+          />
+          <span className="ag-status-text font-semibold">
+            {playback.playing ? 'SIMULATING' : 'PAUSED'}
+          </span>
+          <span className="text-ag-border">•</span>
+          <span className="ag-status-step font-mono text-ag-text-muted">
+            {playback.currentStep ?? 'Ready'}
+          </span>
+          <span className="text-ag-border">•</span>
+          <span className="ag-status-time font-mono tabular-nums">
+            {Math.round(playback.timeMs)}ms / {playback.durationMs}ms
+          </span>
+        </div>
+
+        {/* Right: Actions & Inspector Toggle */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="ag-btn-secondary py-1 text-xs"
+            onClick={() => {
+              actions.cancel()
+              scenarioRunner.restart()
+            }}
+            title="Restart Scenario"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+            <span>Reset</span>
+          </button>
+
+          <button
+            type="button"
+            className={`ag-btn-secondary py-1 text-xs ${inspectorOpen ? 'active' : ''}`}
+            onClick={() => setInspectorOpen((prev) => !prev)}
+            title="Toggle Scenario Inspector"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="15" y1="3" x2="15" y2="21" />
+            </svg>
+            <span>Inspector</span>
+            <span className="ag-pill-badge">{traceEvents.length}</span>
+          </button>
+        </div>
+      </header>
+
+      {/* Main Workspace: Canvas Dock + Inspector Dock */}
+      <main className="ag-main-workspace">
+        {/* Center Workspace Column */}
+        <div className="ag-center-workspace">
+          {/* Viewport Canvas Area */}
+          <RobloxViewportPreview runtime={runtime} device={parameters.Device}>
+            <RobloxRenderer
+              tree={renderedTree}
+              Handlers={previewHandlers}
+              eventAdapter={previewEventAdapter}
+            />
+          </RobloxViewportPreview>
+
+          {/* Bottom Deck: Transport Controls & Parameters */}
+          <div className="ag-transport-dock">
+            {/* Playback Controls Row */}
+            <div className="ag-transport-row">
+              {/* Play / Pause / Step Controls */}
+              <div className="flex items-center gap-1.5">
+                {playback.playing ? (
+                  <button
+                    type="button"
+                    className="ag-btn-primary"
+                    onClick={() => scenarioRunner.pause()}
+                    title="Pause"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="6" y="4" width="4" height="16" rx="1" />
+                      <rect x="14" y="4" width="4" height="16" rx="1" />
+                    </svg>
+                    <span>Pause</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="ag-btn-primary"
+                    onClick={() => scenarioRunner.play()}
+                    title="Play"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    <span>Play</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  className="ag-btn-secondary"
+                  onClick={() => scenarioRunner.stepForward()}
+                  title="Step forward"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="5 4 15 12 5 20 5 4" />
+                    <line x1="19" y1="5" x2="19" y2="19" />
+                  </svg>
+                  <span>Step</span>
+                </button>
+
+                {/* Playback Speed Pills */}
+                <div className="ag-speed-group">
+                  {([0.25, 0.5, 1, 2] as PlaybackSpeed[]).map((speed) => (
+                    <button
+                      key={speed}
+                      type="button"
+                      className={`ag-speed-pill ${playback.speed === speed ? 'active' : ''}`}
+                      onClick={() => scenarioRunner.setSpeed(speed)}
+                    >
+                      {speed}x
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Timeline Scrubber */}
+              <div className="ag-timeline-wrapper">
+                <div className="flex items-center justify-between text-[11px] text-ag-text-muted mb-1 font-mono">
+                  <span className="text-ag-text tabular-nums">{Math.round(playback.timeMs)}ms</span>
+                  <span className="ag-pill-badge text-[10px]">{playback.currentStep ?? 'Ready'}</span>
+                  <span className="tabular-nums">{playback.durationMs}ms</span>
+                </div>
+                <div className="ag-slider-track-container">
+                  <input
+                    className="ag-timeline-range"
+                    type="range"
+                    min="0"
+                    max={playback.durationMs}
+                    step="1"
+                    value={playback.timeMs}
+                    style={{
+                      background: `linear-gradient(to right, #3b82f6 ${timelinePercent}%, rgba(255, 255, 255, 0.1) ${timelinePercent}%)`,
+                    }}
+                    onChange={(event) => {
+                      actions.cancel()
+                      scenarioRunner.scrub(Number(event.target.value))
+                    }}
+                    aria-label="Scenario timeline"
+                  />
+                </div>
+              </div>
+
+              {/* Scenario Triggers */}
+              {activeScenario.triggers && activeScenario.triggers.length > 0 && (
+                <div className="ag-triggers-group">
+                  {activeScenario.triggers.map((trigger) => (
+                    <button
+                      key={trigger.id}
+                      type="button"
+                      className="ag-btn-secondary text-xs"
+                      onClick={() => scenarioRunner.trigger(trigger.id)}
+                    >
+                      <span className="ag-trigger-dot" />
+                      <span>{trigger.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Scenario Parameters Tray */}
+            <ScenarioParameters
+              definitions={activeScenario.parameters ?? {}}
+              values={parameters}
+              onChange={(name, value) => {
+                scenarioRunner.setParameter(name, value)
+                setParameters(scenarioRunner.getParameters())
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Right Dock: Inspector */}
+        <ScenarioInspector
+          scenarioName={activeScenario.name}
+          playback={playback}
+          events={traceEvents}
+          bindings={bindingStore}
+          realm={realm}
+          effectPatches={effectPatches}
+          persistenceSnapshot={persistence.snapshot()}
+          isOpen={inspectorOpen}
+          onClose={() => setInspectorOpen(false)}
+        />
+      </main>
+    </div>
   )
 }
 
