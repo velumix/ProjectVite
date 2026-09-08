@@ -86,7 +86,7 @@ type Props = { nerve: NervePreviewAdapter }
 export function PhoneScreen({ nerve }: Props) {
   const phone = nerve.GetService<PreviewPhoneService>('PhoneService')
   const [state, setState] = useState<PhoneState>(emptyState)
-  const [activeApp, setActiveApp] = useState<PhoneApp>('messages')
+  const [activeApp, setActiveApp] = useState<PhoneApp>('home')
   const [activeContactId, setActiveContactId] = useState('alex')
   const [thread, setThread] = useState<PhoneMessage[]>([])
   const [draft, setDraft] = useState('')

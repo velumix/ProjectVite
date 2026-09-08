@@ -1,4 +1,11 @@
 {
+  "name": "project-vite-root",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix my-ui",
+    "build": "npm run build --prefix my-ui",
+    "test": "npm run test:preview --prefix my-ui"
+  },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "tailwindcss": "^4.3.3"

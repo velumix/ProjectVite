@@ -8,6 +8,7 @@ const paths = {
   party: '<circle cx="16" cy="9" r="4"/><circle cx="6" cy="12" r="3"/><circle cx="26" cy="12" r="3"/><path d="M9 26v-6c0-8 14-8 14 0v6ZM1 25v-5c0-4 4-5 7-3l-1 8Zm24 0-1-8c3-2 7-1 7 3v5Z"/>',
   settings: '<path d="m13 2-1 4-3 1-4-1-3 5 3 3v4l-3 3 3 5 4-1 3 1 1 4h6l1-4 3-1 4 1 3-5-3-3v-4l3-3-3-5-4 1-3-1-1-4Zm3 8a6 6 0 1 1 0 12 6 6 0 0 1 0-12" fill-rule="evenodd"/>',
   backpack: '<path d="M12 7V5c0-4 8-4 8 0v2" fill="none" stroke="#a2e7ff" stroke-width="2"/><rect x="5" y="7" width="22" height="23" rx="4" fill="#3bc6ff"/><rect x="8" y="9" width="16" height="10" rx="2" fill="#96e5ff"/><path d="M3 18v10m26-10v10M9 21v4m14-4v4" stroke="#079ded" stroke-width="3"/>',
+  phone: '<rect x="8" y="3" width="16" height="26" rx="4" fill="none" stroke="#d7e1f4" stroke-width="2.5"/><circle cx="16" cy="24" r="1.5" fill="#d7e1f4"/><line x1="13" y1="6" x2="19" y2="6" stroke="#d7e1f4" stroke-width="2" stroke-linecap="round"/>',
   quests: '<rect x="5" y="2" width="22" height="28" rx="3"/><path d="M10 9h12M10 15h12M10 21h8" stroke="#29364b" stroke-width="2.5"/>',
   stats: '<rect x="3" y="18" width="6" height="12" rx="3"/><rect x="13" y="3" width="6" height="27" rx="3"/><rect x="23" y="11" width="6" height="19" rx="3"/>',
   shop: '<path d="M2 3h5l6 20h15M9 7h22l-4 12H12" stroke="#d7e1f4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="15" cy="28" r="2.5"/><circle cx="26" cy="28" r="2.5"/>',

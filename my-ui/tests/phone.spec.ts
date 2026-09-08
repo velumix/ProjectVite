@@ -11,6 +11,7 @@ async function openPhone(page: Page) {
 
 test('phone messages use the PhoneService method and message signal path', async ({ page }) => {
   await openPhone(page)
+  await page.locator('.phone-dock').getByRole('button', { name: /Messages/ }).click()
   await expect(page.locator('.city-message-list')).toBeVisible()
   await page.getByLabel('Message').fill('I am on my way.')
   await page.locator('.phone-thread form button').click()

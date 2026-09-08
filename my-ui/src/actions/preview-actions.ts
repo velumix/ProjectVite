@@ -141,6 +141,11 @@ export function createPreviewHandlers(
         void actions.run('TogglePanel', { Panel: 'Inventory' }).promise
       },
     },
+    SidePhoneButton: {
+      Activated: () => {
+        void actions.run('TogglePanel', { Panel: 'Phone' }).promise
+      },
+    },
     SideQuestsButton: {
       Activated: () => {
         void actions.run('TogglePanel', { Panel: 'Quests' }).promise
