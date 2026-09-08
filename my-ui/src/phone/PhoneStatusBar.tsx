@@ -14,7 +14,6 @@ type Props = {
 }
 
 export function PhoneStatusBar({
-  carrier = 'SUN CITY',
   battery = 87,
   charging = false,
   wifiEnabled = true,
@@ -38,7 +37,7 @@ export function PhoneStatusBar({
 
   return (
     <header className="phone-statusbar" aria-label="Phone status bar">
-      {/* Left section: Time and Carrier, click to lock */}
+      {/* Left section: Time and optional airplane mode tag, click to lock */}
       <div className="phone-statusbar-left">
         <button
           type="button"
@@ -50,15 +49,13 @@ export function PhoneStatusBar({
           <time className="phone-statusbar-time">{time}</time>
           <LockIcon size={11} className="phone-statusbar-lock-hint" />
         </button>
-        <span className="phone-statusbar-carrier">
-          {airplaneMode ? 'AIRPLANE MODE' : carrier}
-        </span>
+        {airplaneMode && (
+          <span className="phone-statusbar-carrier">AIRPLANE MODE</span>
+        )}
       </div>
 
-      {/* Center section: Dynamic Island */}
-      <div className="phone-statusbar-center">
-        {children}
-      </div>
+      {/* Dynamic Island center slot if passed */}
+      {children}
 
       {/* Right section: Indicators, click to toggle Control Center */}
       <button

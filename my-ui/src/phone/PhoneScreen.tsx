@@ -297,15 +297,9 @@ export function PhoneScreen({ nerve, onClose }: Props) {
         }}
       />
 
-      {/* OS Status Bar with Dynamic Island */}
-      <PhoneStatusBar
-        carrier={state.settings.airplaneMode ? 'AIRPLANE MODE' : 'SUN CITY'}
-        battery={state.battery || 87}
-        airplaneMode={state.settings.airplaneMode}
-        wifiEnabled={state.settings.wifiEnabled}
-        onOpenControlCenter={() => setControlCenterOpen(true)}
-        onLockPhone={() => setLocked(true)}
-      >
+      {/* Main Screen Viewport (Clipped display panel) */}
+      <div className={`phone-screen ${state.settings.darkMode ? 'phone-screen--dark' : 'phone-screen--light'}`}>
+        {/* Dynamic Island sits at top center of display */}
         <PhoneDynamicIsland
           activeCall={call}
           onEndCall={endCall}
@@ -315,17 +309,26 @@ export function PhoneScreen({ nerve, onClose }: Props) {
           flashlightActive={flashlightActive}
           onToggleFlashlight={() => setFlashlightActive(!flashlightActive)}
         />
-      </PhoneStatusBar>
 
-      {/* Main Screen Viewport */}
-      <div className="phone-screen">
+        {/* OS Status Bar with Time and Indicators */}
+        <PhoneStatusBar
+          carrier={state.settings.airplaneMode ? 'AIRPLANE MODE' : 'SUN CITY'}
+          battery={state.battery || 87}
+          airplaneMode={state.settings.airplaneMode}
+          wifiEnabled={state.settings.wifiEnabled}
+          onOpenControlCenter={() => setControlCenterOpen(true)}
+          onLockPhone={() => setLocked(true)}
+        />
+
+        {/* Screen Content: Home Springboard or Active App View */}
         {activeApp === 'home' ? (
           <PhoneSpringboard
             onLaunch={launch}
             installedApps={dynamicInstalledApps}
+            dockApps={DOCK_PHONE_APPS}
           />
         ) : (
-          <>
+          <div className="phone-app-container">
             <div className="phone-appbar">
               <button type="button" onClick={() => launch('home')} aria-label="Home">
                 Home
@@ -462,7 +465,7 @@ export function PhoneScreen({ nerve, onClose }: Props) {
               activeApp !== 'sky-flappy' &&
               activeApp !== 'neon-drop' &&
               activeApp !== 'notes' && <CatalogApp app={activeApp} />}
-          </>
+          </div>
         )}
 
         {notice && (
@@ -506,22 +509,10 @@ export function PhoneScreen({ nerve, onClose }: Props) {
             launch('camera')
           }}
         />
+
+        {/* Home Indicator (Swipe/click bar at bottom) */}
+        <PhoneHomeIndicator onHome={() => launch('home')} interactive={true} />
       </div>
-
-      {/* Dock (visible when not on lockscreen) */}
-      {!locked && (
-        <nav className="phone-dock" aria-label="Phone navigation">
-          {DOCK_PHONE_APPS.map((app) => (
-            <button type="button" key={app.id} onClick={() => launch(app.id)}>
-              <img src={app.icon} alt="" />
-              <small>{app.label}</small>
-            </button>
-          ))}
-        </nav>
-      )}
-
-      {/* Home Indicator (Swipe/click bar at bottom) */}
-      <PhoneHomeIndicator onHome={() => launch('home')} interactive={true} />
     </div>
   )
 }
