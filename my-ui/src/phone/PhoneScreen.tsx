@@ -238,20 +238,18 @@ export function PhoneScreen({ nerve, onClose }: Props) {
 
   const appLabel = PHONE_APPS.find((app) => app.id === activeApp)?.label ?? activeApp
 
+  // Handle Home Indicator action: return to springboard from apps, or close phone when on springboard
+  const handleHomeIndicatorAction = useCallback(() => {
+    if (activeApp !== 'home') {
+      launch('home')
+    } else if (onClose) {
+      onClose()
+    }
+  }, [activeApp, launch, onClose])
+
   return (
     <div className="phone-device" data-roblox-name="PhoneDevice" data-roblox-class="ScreenGui">
-      {/* Close button pill outside top */}
-      {onClose && (
-        <button
-          type="button"
-          className="phone-stage-close-btn"
-          onClick={onClose}
-          aria-label="Close Phone"
-          title="Close Phone (P)"
-        >
-          <span>✕</span> Close Phone
-        </button>
-      )}
+
 
       {/* Frame overlay */}
       <img
@@ -511,7 +509,11 @@ export function PhoneScreen({ nerve, onClose }: Props) {
         />
 
         {/* Home Indicator (Swipe/click bar at bottom) */}
-        <PhoneHomeIndicator onHome={() => launch('home')} interactive={true} />
+        <PhoneHomeIndicator
+          onHome={handleHomeIndicatorAction}
+          isHome={activeApp === 'home'}
+          interactive={true}
+        />
       </div>
     </div>
   )
