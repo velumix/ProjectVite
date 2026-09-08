@@ -461,7 +461,7 @@ export function PhoneScreen({ nerve }: Props) {
       )}
 
       {/* Home Indicator (Swipe/click bar at bottom) */}
-      <PhoneHomeIndicator onHome={() => launch('home')} interactive={activeApp !== 'home'} />
+      <PhoneHomeIndicator onHome={() => launch('home')} interactive={true} />
     </div>
   )
 }

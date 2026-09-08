@@ -57,6 +57,7 @@ test('control center opens with toggles and sliders', async ({ page }) => {
 
 test('dynamic island responds to calls and home indicator navigates to springboard', async ({ page }) => {
   await openPhone(page)
+  await page.locator('.phone-dock').getByRole('button', { name: /Messages/ }).click()
   // Call contact from Messages thread
   await page.locator('.phone-thread header button').click()
   
