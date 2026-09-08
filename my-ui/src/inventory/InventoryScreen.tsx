@@ -7,10 +7,9 @@ import { QuestsScreen } from '../quests/QuestsScreen.tsx'
 import { StatsScreen } from '../stats/StatsScreen.tsx'
 import { SettingsScreen } from '../settings/SettingsScreen.tsx'
 import type { NervePreviewAdapter } from '../nerve/contracts.ts'
-import { PhoneScreen } from '../phone/PhoneScreen.tsx'
 
 const assetRoot = `${import.meta.env.BASE_URL}assets/inventory/`
-const tabs = ['Inventory', 'Quests', 'Map', 'Phone', 'Stats', 'Settings'] as const
+const tabs = ['Inventory', 'Quests', 'Map', 'Stats', 'Settings'] as const
 export type MenuPanel = typeof tabs[number]
 const menuPanelNames = new Set<string>(tabs)
 
@@ -146,7 +145,7 @@ export function InventoryScreen({ panel, bindings, nerve, onPanelChange, onClose
     uiAudio.playEquip()
     dispatch({ type: 'use', id: stack.id })
     if (item.health) bindings.set('Player.HealthPercent', Math.min(1, Number(bindings.get('Player.HealthPercent') ?? 1) + item.health))
-    if (item.id === 'phone') onPanelChange('Phone')
+    if (item.id === 'phone') { bindings.set('UI.PhoneOpen', true); onClose(); }
   }
 
   function startSplit() {
@@ -601,7 +600,7 @@ export function InventoryScreen({ panel, bindings, nerve, onPanelChange, onClose
                 </div>
               </div>
             </div>
-          </> : panel === 'Map' ? <CityMap /> : panel === 'Phone' ? <PhoneScreen nerve={nerve} /> : panel === 'Stats' ? <>
+          </> : panel === 'Map' ? <CityMap /> : panel === 'Stats' ? <>
             <h1>PLAYER STATISTICS</h1><p className="city-subtitle">Your life in Sun City.</p>
             <div className="city-stat-grid">{[
               ['Level', Number(bindings.get('Player.Level') ?? 42)], ['Total experience', '142,500'],

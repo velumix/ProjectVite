@@ -81,9 +81,12 @@ const defaultNotifications: PhoneNotificationItem[] = [
   },
 ]
 
-type Props = { nerve: NervePreviewAdapter }
+type Props = {
+  nerve: NervePreviewAdapter
+  onClose?: () => void
+}
 
-export function PhoneScreen({ nerve }: Props) {
+export function PhoneScreen({ nerve, onClose }: Props) {
   const phone = nerve.GetService<PreviewPhoneService>('PhoneService')
   const [state, setState] = useState<PhoneState>(emptyState)
   const [activeApp, setActiveApp] = useState<PhoneApp>('home')
@@ -237,6 +240,63 @@ export function PhoneScreen({ nerve }: Props) {
 
   return (
     <div className="phone-device" data-roblox-name="PhoneDevice" data-roblox-class="ScreenGui">
+      {/* Close button pill outside top */}
+      {onClose && (
+        <button
+          type="button"
+          className="phone-stage-close-btn"
+          onClick={onClose}
+          aria-label="Close Phone"
+          title="Close Phone (P)"
+        >
+          <span>✕</span> Close Phone
+        </button>
+      )}
+
+      {/* Frame overlay */}
+      <img
+        className="phone-device__frame"
+        src={`${import.meta.env.BASE_URL}assets/phone/frames/black.webp`}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+      />
+
+      {/* Hardware Buttons */}
+      <button
+        type="button"
+        className="phone-hardware-button phone-hardware-button--action"
+        aria-label="Action"
+        title="Action / Mute"
+      />
+      <button
+        type="button"
+        className="phone-hardware-button phone-hardware-button--volume-up"
+        aria-label="Volume Up"
+        title="Volume Up"
+        onClick={() => setVolume((v) => Math.min(100, v + 10))}
+      />
+      <button
+        type="button"
+        className="phone-hardware-button phone-hardware-button--volume-down"
+        aria-label="Volume Down"
+        title="Volume Down"
+        onClick={() => setVolume((v) => Math.max(0, v - 10))}
+      />
+      <button
+        type="button"
+        className="phone-hardware-button phone-hardware-button--power"
+        aria-label="Power"
+        title="Power / Lock (or Close)"
+        onClick={() => {
+          if (onClose && locked) {
+            onClose();
+          } else {
+            setLocked(!locked);
+          }
+        }}
+      />
+
       {/* OS Status Bar with Dynamic Island */}
       <PhoneStatusBar
         carrier={state.settings.airplaneMode ? 'AIRPLANE MODE' : 'SUN CITY'}

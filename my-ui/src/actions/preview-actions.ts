@@ -90,6 +90,13 @@ export function createPreviewActions(
           context.trace.record('action', 'TogglePanel', context.timeMs, { Panel: next })
         },
       },
+      TogglePhone: {
+        run(_payload: unknown, context) {
+          const isOpen = Boolean(context.bindings.get('UI.PhoneOpen'))
+          context.bindings.set('UI.PhoneOpen', !isOpen)
+          context.trace.record('action', 'TogglePhone', context.timeMs, { Open: !isOpen })
+        },
+      },
       ClosePanel: {
         run(_payload: unknown, context) {
           context.bindings.set('UI.ActivePanel', 'None')
@@ -143,7 +150,7 @@ export function createPreviewHandlers(
     },
     SidePhoneButton: {
       Activated: () => {
-        void actions.run('TogglePanel', { Panel: 'Phone' }).promise
+        void actions.run('TogglePhone', {}).promise
       },
     },
     SideQuestsButton: {

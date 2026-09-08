@@ -19,6 +19,7 @@ import { ScenarioInspector } from './scenarios/ScenarioInspector.tsx'
 import { ScenarioParameters } from './scenarios/ScenarioParameters.tsx'
 import { RobloxViewportPreview } from './viewport/RobloxViewportPreview.tsx'
 import { InventoryScreen } from './inventory/InventoryScreen.tsx'
+import { PhoneScreen } from './phone/PhoneScreen.tsx'
 import { setupLivingUiListeners, uiAudio } from './audio/ui-audio.ts'
 
 function App() {
@@ -87,6 +88,14 @@ function App() {
   const [, setBindingVersion] = useState(0)
   const [inspectorOpen, setInspectorOpen] = useState(false)
   const [menuRevision, setMenuRevision] = useState(0)
+  const [phoneOpen, setPhoneOpen] = useState(false)
+
+  useEffect(() => {
+    const unsub = bindingStore.subscribePath('UI.PhoneOpen', (val) => {
+      setPhoneOpen(Boolean(val))
+    })
+    return unsub
+  }, [bindingStore])
 
   const renderedTree = applyEffectPatches(applyBindings(compiledTree, bindingStore), effectPatches)
   // The browser menu replaces these legacy panels; their Roblox export templates remain available.
@@ -120,12 +129,11 @@ function App() {
         void actions.run('TogglePanel', { Panel: 'Inventory' }).promise
       } else if (event.code === 'KeyP') {
         event.preventDefault()
-        const current = String(bindingStore.get('UI.ActivePanel') ?? 'None')
-        if (current === 'Phone') {
-          void actions.run('ClosePanel', {}).promise
-        } else {
-          bindingStore.set('UI.ActivePanel', 'Phone')
-        }
+        setPhoneOpen((open) => {
+          const next = !open
+          bindingStore.set('UI.PhoneOpen', next)
+          return next
+        })
       }
     }
     window.addEventListener('keydown', handleHotkeys)
@@ -271,15 +279,15 @@ function App() {
 
           <button
             type="button"
-            className={`ag-btn-secondary py-1 text-xs ${currentActivePanel === 'Phone' ? 'active text-blue-300 border-blue-500/50' : ''}`}
+            className={`ag-btn-secondary py-1 text-xs ${phoneOpen ? 'active text-blue-300 border-blue-500/50' : ''}`}
             onClick={() => {
-              if (currentActivePanel === 'Phone') {
-                void actions.run('ClosePanel', {}).promise
-              } else {
-                bindingStore.set('UI.ActivePanel', 'Phone')
-              }
+              setPhoneOpen((open) => {
+                const next = !open
+                bindingStore.set('UI.PhoneOpen', next)
+                return next
+              })
             }}
-            aria-label="Toggle Phone" title="Toggle SunPhone (Press P)"
+            aria-label="Toggle Phone" title="Toggle Phone (Press P)"
           >
             <span className="text-xs">📱</span>
             <span>Phone</span>
@@ -316,6 +324,17 @@ function App() {
             <InventoryScreen key={`${scenarioId}-${menuRevision}`} panel={String(bindingStore.get('UI.ActivePanel') ?? 'None')} bindings={bindingStore} nerve={nerve}
               onPanelChange={panel => bindingStore.set('UI.ActivePanel', panel)}
               onClose={() => { void actions.run('ClosePanel', {}).promise }} />
+            {phoneOpen && (
+              <aside className="phone-stage">
+                <PhoneScreen
+                  nerve={nerve}
+                  onClose={() => {
+                    setPhoneOpen(false)
+                    bindingStore.set('UI.PhoneOpen', false)
+                  }}
+                />
+              </aside>
+            )}
           </RobloxViewportPreview>
 
           {/* Bottom Deck: Transport Controls & Parameters */}

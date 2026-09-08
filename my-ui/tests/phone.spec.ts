@@ -3,9 +3,7 @@ import { expect, test, type Page } from '@playwright/test'
 async function openPhone(page: Page) {
   await page.goto('/')
   await expect(page.locator('[data-roblox-name="LoadingScreen"]')).toBeHidden()
-  await page.locator('[data-roblox-name="SideInventoryButton"]').click()
-  await expect(page.getByRole('dialog', { name: 'Inventory menu' })).toBeVisible()
-  await page.getByRole('navigation').getByRole('button', { name: 'PHONE', exact: true }).click()
+  await page.keyboard.press('KeyP')
   await expect(page.locator('[data-roblox-name="PhoneDevice"]')).toBeVisible()
 }
 
