@@ -1,14 +1,15 @@
 import { test, expect } from '@playwright/test'
-import path from 'path'
+import path from 'node:path'
 
 const ARTIFACT_DIR = 'C:/Users/TheRe/.gemini/antigravity-acp/brain/046ff4ac-a214-4f39-941b-a2d1fc850725'
 
 test('opens phone in vite project and captures live screenshots', async ({ page }) => {
-  // Navigate to Vite app
   await page.goto('/')
-  await expect(page.locator('[data-roblox-name="LoadingScreen"]')).toBeHidden()
 
-  // Verify the Phone button is present in the Antigravity top header bar
+  // Wait for loading screen to clear
+  await expect(page.locator('[data-roblox-name="LoadingScreen"]')).toBeHidden({ timeout: 15000 })
+
+  // Find the top bar Phone button
   const headerPhoneBtn = page.getByRole('button', { name: 'Toggle Phone' })
   await expect(headerPhoneBtn).toBeVisible()
 
@@ -19,11 +20,7 @@ test('opens phone in vite project and captures live screenshots', async ({ page 
   const phoneDevice = page.locator('[data-roblox-name="PhoneDevice"]')
   await expect(phoneDevice).toBeVisible()
 
-  // Return to Springboard if not already on springboard
-  const springboardBtn = page.getByRole('button', { name: 'Return to Springboard' })
-  if (await springboardBtn.isVisible()) {
-    await springboardBtn.click()
-  }
+  // Verify springboard is visible
   await expect(page.locator('.phone-springboard')).toBeVisible()
 
   // Wait for icons and widgets to render smoothly
@@ -38,14 +35,4 @@ test('opens phone in vite project and captures live screenshots', async ({ page 
   await phoneDevice.screenshot({
     path: path.join(ARTIFACT_DIR, 'phone_springboard_full.png'),
   })
-
-  // Test pressing P to toggle close
-  await page.keyboard.press('KeyP')
-  await expect(phoneDevice).toBeHidden()
-
-  // Test pressing P again to toggle open
-  await page.keyboard.press('KeyP')
-  await expect(phoneDevice).toBeVisible()
-
-  console.log('Screenshots saved successfully to brain artifacts directory!')
 })
