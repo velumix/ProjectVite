@@ -42,6 +42,8 @@
   width: 390px;
   height: 844px;
   max-height: calc(100% - 24px);
+  max-width: calc((100% - 24px) * 390 / 844);
+  aspect-ratio: 390 / 844;
   padding: 0;
   margin: 0;
   overflow: visible;
@@ -89,24 +91,24 @@
   touch-action: manipulation;
 }
 .phone-hardware-button--action {
-  top: 176px;
+  top: 20.85%;
   left: -7px;
-  height: 44px;
+  height: 5.2%;
 }
 .phone-hardware-button--volume-up {
-  top: 238px;
+  top: 28.2%;
   left: -7px;
-  height: 74px;
+  height: 8.77%;
 }
 .phone-hardware-button--volume-down {
-  top: 315px;
+  top: 37.3%;
   left: -7px;
-  height: 74px;
+  height: 8.77%;
 }
 .phone-hardware-button--power {
-  top: 252px;
+  top: 29.85%;
   right: -7px;
-  height: 62px;
+  height: 7.35%;
 }
 .phone-statusbar {
   position: absolute;
@@ -114,7 +116,7 @@
   left: 0;
   right: 0;
   height: 48px;
-  padding: 13px 26px 0;
+  padding: 14px 24px 0;
   z-index: 97;
   display: flex;
   justify-content: space-between;
@@ -257,10 +259,10 @@
 .phone-screen {
   --phone-screen-radius: 42px;
   position: absolute;
-  top: 20px;
-  left: 11px;
-  width: 368px;
-  height: 804px;
+  top: 2.37%;
+  left: 2.82%;
+  right: 2.82%;
+  bottom: 2.37%;
   overflow: hidden;
   border-radius: var(--phone-screen-radius);
   clip-path: inset(0 round var(--phone-screen-radius));
@@ -300,7 +302,7 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 106px;
+  bottom: 104px;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 54px 14px 16px 14px;
@@ -506,7 +508,7 @@
 .phone-dock {
   position: absolute;
   z-index: 80;
-  bottom: 22px;
+  bottom: 20px;
   left: 14px;
   right: 14px;
   height: 84px;
